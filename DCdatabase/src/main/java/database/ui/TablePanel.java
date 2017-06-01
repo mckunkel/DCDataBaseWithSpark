@@ -65,7 +65,7 @@ public class TablePanel extends JPanel {
 	}
 
 	public void setTableModel(List<EmptyDataPoint> wireList) {
-		this.tableModel.setStudentList(wireList);
+		this.tableModel.setWireList(wireList);
 	}
 
 	public void updateTable() {

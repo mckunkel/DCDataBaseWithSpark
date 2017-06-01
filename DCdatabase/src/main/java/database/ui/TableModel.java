@@ -59,7 +59,7 @@ public class TableModel extends AbstractTableModel {
 		}
 	}
 
-	public void setStudentList(List<EmptyDataPoint> wireList) {
+	public void setWireList(List<EmptyDataPoint> wireList) {
 		this.wireList = wireList;
 	}
 

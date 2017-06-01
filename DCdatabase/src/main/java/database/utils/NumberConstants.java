@@ -20,7 +20,7 @@ public class NumberConstants {
 
 	public static final int APP_WINDOW_SIZE_WIDTH = 850;
 	public static final int APP_WINDOW_SIZE_HEIGHT = 600;
-	public static final int NUM_OF_COLUMNS = 5;
+	public static final int NUM_OF_COLUMNS = 4;
 
 	public static final int USER_FORM_WINDOW_SIZE_HEIGHT = 270;
 	public static final int USER_FORM_WINDOW_SIZE_WIDTH = 400;

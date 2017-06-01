@@ -16,8 +16,10 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -39,6 +41,9 @@ public class MainFrame extends JFrame {
 
 	private MainFrameService mainFrameService;
 	private TablePanel tablePanel;
+	private TablePanel tablePanelEast;
+	private TablePanel tablePanelWest;
+
 	private StatusPanel statusPanel;
 
 	private JTabbedPane tabbedPane = null;
@@ -51,6 +56,7 @@ public class MainFrame extends JFrame {
 	JMenuItem removeItem = null;
 
 	Dataset<Row> aDF = null;
+	JFileChooser fc;
 
 	public MainFrame() {
 		super(StringConstants.APP_NAME);
@@ -58,12 +64,22 @@ public class MainFrame extends JFrame {
 		setJMenuBar(createFrameMenu());
 		initializeVariables();
 		constructLayout();
+		createFileChooser();
+
 		refreshTable();
 		setCallbacks();
 	}
 
+	private void createFileChooser() {
+		fc = new JFileChooser();
+	}
+
 	private void initializeVariables() {
 		this.mainFrameService = new MainFrameServiceImpl(aDF);
+		this.tablePanel = new TablePanel();
+		this.tablePanelEast = new TablePanel();
+		this.tablePanelWest = new TablePanel();
+
 		this.tabbedPane = new JTabbedPane();
 		this.statusPanel = new StatusPanel();
 
@@ -79,6 +95,9 @@ public class MainFrame extends JFrame {
 
 	private void constructLayout() {
 		setLayout(new BorderLayout());
+		add(tablePanelEast, BorderLayout.EAST);
+		add(tablePanel, BorderLayout.CENTER);
+		add(tablePanelWest, BorderLayout.WEST);
 		add(statusPanel, BorderLayout.SOUTH);
 	}
 
@@ -115,6 +134,22 @@ public class MainFrame extends JFrame {
 		jMenu.add(openItem);
 		jMenu.add(exitItem);
 
+		openItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("you clicked me");
+				int returnVal = fc.showOpenDialog(MainFrame.this);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					// This is where a real application would open the file.
+					System.out.println("Opening: " + file.getName() + ".");
+				} else {
+					System.out.println("Open command cancelled by user.");
+				}
+			}
+		});
 		exitItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -122,7 +157,7 @@ public class MainFrame extends JFrame {
 						StringConstants.MAIN_MENU_EXIT_TITLE, JOptionPane.OK_CANCEL_OPTION);
 
 				if (action == JOptionPane.OK_OPTION) {
-					mainFrameService.shutdown();
+					// mainFrameService.shutdown();
 					statusPanel.stopTimer();
 					System.gc();
 					System.exit(0);
