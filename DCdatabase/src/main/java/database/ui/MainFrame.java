@@ -47,14 +47,16 @@ public class MainFrame extends JFrame {
 
 	private StatusPanel statusPanel;
 
+	private SortQueryForm sortQueryForm;
+	private ChooseFileForm chooseFileForm;
+
 	private JTabbedPane tabbedPane = null;
 	ImageIcon icon = new ImageIcon("java-swing-tutorial.JPG");
 
 	JMenuBar menuBar = null;
 	JMenu jMenu = null;
-	JMenu miniMenu = null;
-	JMenuItem addItem = null;
-	JMenuItem removeItem = null;
+	JMenu sortListMenu = null;
+	JMenuItem sortList = null;
 
 	Dataset<Row> aDF = null;
 	JFileChooser fc = null;
@@ -64,52 +66,13 @@ public class MainFrame extends JFrame {
 		super(StringConstants.APP_NAME);
 		constructAppWindow();
 		setJMenuBar(createFrameMenu());
+
 		initializeVariables();
 		constructLayout();
 		createFileChooser();
 
 		refreshTable();
 		setCallbacks();
-	}
-
-	private void createFileChooser() {
-		fc = new JFileChooser();
-	}
-
-	private void initializeVariables() {
-		this.mainFrameService = new MainFrameServiceImpl(aDF);
-		this.tablePanel = new TablePanel();
-		this.tablePanelEast = new TablePanel();
-		this.tablePanelWest = new TablePanel();
-
-		this.tabbedPane = new JTabbedPane();
-		this.statusPanel = new StatusPanel();
-
-	}
-
-	private void setCallbacks() {
-
-	}
-
-	private void refreshTable() {
-
-	}
-
-	private void constructLayout() {
-		setLayout(new BorderLayout());
-		add(tablePanelEast, BorderLayout.EAST);
-		add(tablePanel, BorderLayout.CENTER);
-		add(tablePanelWest, BorderLayout.WEST);
-		add(statusPanel, BorderLayout.SOUTH);
-	}
-
-	protected JPanel createInnerPanel(String text) {
-		JPanel jplPanel = new JPanel();
-		JLabel jlbDisplay = new JLabel(text);
-		jlbDisplay.setHorizontalAlignment(JLabel.CENTER);
-		jplPanel.setLayout(new GridLayout(1, 1));
-		jplPanel.add(jlbDisplay);
-		return jplPanel;
 	}
 
 	private void constructAppWindow() {
@@ -123,6 +86,8 @@ public class MainFrame extends JFrame {
 		menuBar = new JMenuBar();
 
 		menuBar.add(createFileMenu());
+		menuBar.add(createSortMenu());
+		menuBar.add(createTestMenu());
 
 		return menuBar;
 
@@ -169,6 +134,80 @@ public class MainFrame extends JFrame {
 		});
 
 		return jMenu;
+	}
+
+	private JMenu createSortMenu() {
+
+		jMenu = new JMenu(StringConstants.MAIN_MENU_SORT);
+		JMenuItem sortList = new JMenuItem(StringConstants.SORT_FORM_TITLE);
+		jMenu.add(sortList);
+
+		sortList.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				sortQueryForm.resetList();
+				sortQueryForm.setVisible(true);
+			}
+		});
+		return jMenu;
+	}
+
+	private JMenu createTestMenu() {
+
+		jMenu = new JMenu(StringConstants.CHOOSEFILE_FORM_TITLE);
+		JMenuItem sortList = new JMenuItem(StringConstants.SORT_FORM_TITLE);
+		jMenu.add(sortList);
+
+		sortList.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				chooseFileForm.setVisible(true);
+			}
+		});
+		return jMenu;
+	}
+
+	private void createFileChooser() {
+		fc = new JFileChooser();
+	}
+
+	private void initializeVariables() {
+		this.mainFrameService = new MainFrameServiceImpl(aDF);
+		this.tablePanel = new TablePanel();
+		this.tablePanelEast = new TablePanel();
+		this.tablePanelWest = new TablePanel();
+
+		this.tabbedPane = new JTabbedPane();
+		this.statusPanel = new StatusPanel();
+
+		this.sortQueryForm = new SortQueryForm(this);
+		this.chooseFileForm = new ChooseFileForm(this);
+
+	}
+
+	private void setCallbacks() {
+
+	}
+
+	private void refreshTable() {
+
+	}
+
+	private void constructLayout() {
+		setLayout(new BorderLayout());
+		add(tablePanelEast, BorderLayout.EAST);
+		add(tablePanel, BorderLayout.CENTER);
+		add(tablePanelWest, BorderLayout.WEST);
+		add(statusPanel, BorderLayout.SOUTH);
+	}
+
+	protected JPanel createInnerPanel(String text) {
+		JPanel jplPanel = new JPanel();
+		JLabel jlbDisplay = new JLabel(text);
+		jlbDisplay.setHorizontalAlignment(JLabel.CENTER);
+		jplPanel.setLayout(new GridLayout(1, 1));
+		jplPanel.add(jlbDisplay);
+		return jplPanel;
 	}
 
 }

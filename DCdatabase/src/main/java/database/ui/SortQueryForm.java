@@ -1,0 +1,174 @@
+/*  +__^_________,_________,_____,________^-.-------------------,
+ *  | |||||||||   `--------'     |          |                   O
+ *  `+-------------USMC----------^----------|___________________|
+ *    `\_,---------,---------,--------------'
+ *      / X MK X /'|       /'
+ *     / X MK X /  `\    /'
+ *    / X MK X /`-------'
+ *   / X MK X /
+ *  / X MK X /
+ * (________(                @author m.c.kunkel
+ *  `------'
+*/
+
+package database.ui;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+
+import database.utils.NumberConstants;
+import database.utils.StringConstants;
+
+public class SortQueryForm extends JDialog implements ActionListener {// implements
+	// ActionListener
+
+	private JButton cancelButton;
+	private JButton sortButton;
+	private JLabel sectorLabel;
+	private JLabel superLayerLabel;
+	private JTextField sectorField;
+	private JTextField superLayerField;
+	private String[] numberStrings = { "", "1", "2", "3", "4", "5", "6" };
+	JComboBox<String> sectorList;
+	JComboBox<String> superLayerList;
+
+	public SortQueryForm(JFrame parentFrame) {
+		super(parentFrame, StringConstants.SORT_FORM_TITLE, false);
+
+		initializeVariables();
+		constructLayout();
+		setWindow(parentFrame);
+	}
+
+	private void setWindow(JFrame parentFrame) {
+		setSize(NumberConstants.SORT_FORM_WINDOW_SIZE_WIDTH, NumberConstants.SORT_FORM_WINDOW_SIZE_HEIGHT);
+		setLocationRelativeTo(parentFrame);
+	}
+
+	private void initializeVariables() {
+		this.cancelButton = new JButton(StringConstants.SORT_FORM_CANCEL);
+		this.sortButton = new JButton(StringConstants.SORT_FORM_SAVE);
+		this.sectorLabel = new JLabel(StringConstants.SORT_FORM_SECTOR);
+		this.superLayerLabel = new JLabel(StringConstants.SORT_FORM_SUPERLAYER);
+		this.sectorField = new JTextField(NumberConstants.SORT_FORM_WINDOW_FIELD_LENGTH);
+		this.superLayerField = new JTextField(NumberConstants.SORT_FORM_WINDOW_FIELD_LENGTH);
+
+		this.cancelButton.addActionListener(this);
+		this.sortButton.addActionListener(this);
+
+		this.sectorList = new JComboBox(numberStrings);
+		this.superLayerList = new JComboBox(numberStrings);
+		this.sectorList.setSelectedIndex(0);
+		this.superLayerList.setSelectedIndex(0);
+
+	}
+
+	private void constructLayout() {
+
+		JPanel sortInfoPanel = new JPanel();
+		JPanel buttonsPanel = new JPanel();
+
+		int space = 15;
+		Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
+		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.SORT_FORM_SUBTITLE);
+
+		sortInfoPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
+
+		sortInfoPanel.setLayout(new GridBagLayout());
+
+		GridBagConstraints gc = new GridBagConstraints();
+
+		gc.gridy = 0;
+
+		Insets rightPadding = new Insets(0, 0, 0, 15);
+		Insets noPadding = new Insets(0, 0, 0, 0);
+
+		// ///// First row /////////////////////////////
+
+		gc.weightx = 1;
+		gc.weighty = 1;
+		gc.fill = GridBagConstraints.NONE;
+
+		gc.gridx = 0;
+		gc.anchor = GridBagConstraints.EAST;
+		gc.insets = rightPadding;
+		sortInfoPanel.add(sectorLabel, gc);
+
+		gc.gridx++;
+		gc.anchor = GridBagConstraints.WEST;
+		gc.insets = noPadding;
+		sortInfoPanel.add(sectorList, gc);
+
+		// ////// Next row ////////////////////////////
+
+		gc.gridy++;
+
+		gc.weightx = 1;
+		gc.weighty = 1;
+		gc.fill = GridBagConstraints.NONE;
+
+		gc.gridx = 0;
+		gc.anchor = GridBagConstraints.EAST;
+		gc.insets = rightPadding;
+		sortInfoPanel.add(superLayerLabel, gc);
+
+		gc.gridx++;
+		gc.anchor = GridBagConstraints.WEST;
+		gc.insets = noPadding;
+		sortInfoPanel.add(superLayerList, gc);
+
+		// ////////// Buttons Panel ///////////////
+
+		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonsPanel.add(sortButton);
+		buttonsPanel.add(cancelButton);
+
+		Dimension btnSize = cancelButton.getPreferredSize();
+		sortButton.setPreferredSize(btnSize);
+
+		// Add sub panels to dialog
+		setLayout(new BorderLayout());
+		add(sortInfoPanel, BorderLayout.CENTER);
+		add(buttonsPanel, BorderLayout.SOUTH);
+
+	}
+
+	public void resetList() {
+		this.sectorList.setSelectedIndex(0);
+		this.superLayerList.setSelectedIndex(0);
+	}
+
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() == this.cancelButton) {
+			setVisible(false);
+		} else if (event.getSource() == this.sortButton) {
+
+			String sectorString = this.sectorList.getSelectedItem().toString();
+			String superLayerString = this.superLayerList.getSelectedItem().toString();
+			updateQuery(sectorString, superLayerString);
+			this.setVisible(false);
+		}
+	}
+
+	protected void updateQuery(String sectorSelection, String superLayerSelection) {
+		System.out
+				.println("You will be selecting sector " + sectorSelection + " and superlayer " + superLayerSelection);
+	}
+
+}
