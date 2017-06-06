@@ -32,6 +32,7 @@ import javax.swing.JTabbedPane;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
+import database.process.DataProcess;
 import database.service.MainFrameService;
 import database.service.MainFrameServiceImpl;
 import database.utils.NumberConstants;
@@ -56,7 +57,8 @@ public class MainFrame extends JFrame {
 	JMenuItem removeItem = null;
 
 	Dataset<Row> aDF = null;
-	JFileChooser fc;
+	JFileChooser fc = null;
+	File file = null;
 
 	public MainFrame() {
 		super(StringConstants.APP_NAME);
@@ -145,6 +147,7 @@ public class MainFrame extends JFrame {
 					File file = fc.getSelectedFile();
 					// This is where a real application would open the file.
 					System.out.println("Opening: " + file.getName() + ".");
+					DataProcess dataProcess = new DataProcess(file);
 				} else {
 					System.out.println("Open command cancelled by user.");
 				}

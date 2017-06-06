@@ -14,6 +14,7 @@ package database.process;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
+import org.jlab.io.hipo.HipoDataEvent;
 import org.jlab.io.hipo.HipoDataSource;
 
 import database.objects.TBHits;
@@ -54,6 +56,15 @@ public class DataProcess {
 	private int updateTime = 2000;
 
 	private HipoDataSource reader = null;
+
+	public DataProcess(File file) {
+		if (file instanceof HipoDataEvent) {
+
+		}
+		this.reader = reader;
+		init();
+		processEvent();
+	}
 
 	public DataProcess(HipoDataSource reader) {
 		this.reader = reader;
