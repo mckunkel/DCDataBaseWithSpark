@@ -13,13 +13,19 @@
 package database.ui;
 
 import java.awt.BorderLayout;
+import java.awt.FileDialog;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -29,38 +35,36 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-
-import database.process.DataProcess;
-import database.service.MainFrameService;
-import database.service.MainFrameServiceImpl;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class MainFrame extends JFrame {
 
-	private MainFrameService mainFrameService;
 	private TablePanel tablePanel;
 	private TablePanel tablePanelEast;
 	private TablePanel tablePanelWest;
+	private JLabel dataLabel;
+	private JLabel sqlLabel;
+	private JLabel histLabel;
 
 	private StatusPanel statusPanel;
 
+	private RunForm runForm;
 	private SortQueryForm sortQueryForm;
+	private CompareQueryForm compareRunForm;
+
 	private ChooseFileForm chooseFileForm;
 
 	private JTabbedPane tabbedPane = null;
 	ImageIcon icon = new ImageIcon("java-swing-tutorial.JPG");
 
-	JMenuBar menuBar = null;
-	JMenu jMenu = null;
-	JMenu sortListMenu = null;
-	JMenuItem sortList = null;
+	private JMenuBar menuBar = null;
+	private JMenu jMenu = null;
 
-	Dataset<Row> aDF = null;
-	JFileChooser fc = null;
-	File file = null;
+	private FileDialog fileDialog = null;
+
+	private File[] fileList = null;
+	private ArrayList<String> fileArray = null;
 
 	public MainFrame() {
 		super(StringConstants.APP_NAME);
@@ -86,10 +90,35 @@ public class MainFrame extends JFrame {
 		menuBar = new JMenuBar();
 
 		menuBar.add(createFileMenu());
+		menuBar.add(createRunMenu());
+
 		menuBar.add(createSortMenu());
-		menuBar.add(createTestMenu());
+		// menuBar.add(createTestMenu());
+		menuBar.add(createCompareMenu());
 
 		return menuBar;
+
+	}
+
+	private void initializeVariables() {
+		this.tablePanel = new TablePanel();
+		this.tablePanelEast = new TablePanel();
+		this.tablePanelWest = new TablePanel();
+
+		this.dataLabel = new JLabel(StringConstants.MAIN_FORM_DATA);
+		dataLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));
+		this.sqlLabel = new JLabel(StringConstants.MAIN_FORM_SQL);
+		sqlLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));
+		this.histLabel = new JLabel(StringConstants.MAIN_FORM_HIST);
+		histLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));
+
+		this.tabbedPane = new JTabbedPane();
+		this.statusPanel = new StatusPanel();
+
+		this.runForm = new RunForm(this);
+		this.sortQueryForm = new SortQueryForm(this);
+		this.chooseFileForm = new ChooseFileForm(this);
+		this.compareRunForm = new CompareQueryForm(this);
 
 	}
 
@@ -105,17 +134,33 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("you clicked me");
-				int returnVal = fc.showOpenDialog(MainFrame.this);
+				// fc.setMultiSelectionEnabled(true);
+				// fc.showOpenDialog(null);
+				// fileList = fc.getSelectedFiles();
+				// for (File file : fileList) {
+				// System.out.println("Readying file " + file);
+				// fileArray.add(file.toString());
+				// }
+				// This was with awt fileDialog
 
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					// This is where a real application would open the file.
-					System.out.println("Opening: " + file.getName() + ".");
-					DataProcess dataProcess = new DataProcess(file);
-				} else {
-					System.out.println("Open command cancelled by user.");
+				HipoFilter filter = new HipoFilter();
+				fileDialog.setFilenameFilter(filter);
+				fileDialog.setVisible(true);
+				fileList = fileDialog.getFiles();
+				String dir = fileDialog.getDirectory();
+				fileArray = new ArrayList<String>();
+				for (File file : fileList) {
+					fileArray.add(file.toString());
+
 				}
+				runForm.setDirectory(dir);
+				runForm.setFileList(fileArray);
+				compareRunForm.setReady();
+				sortQueryForm.setReady();
+				// for (File file : fileList) {
+				// System.out.println("File: " + file.getName());
+				// }
+
 			}
 		});
 		exitItem.addActionListener(new ActionListener() {
@@ -136,6 +181,20 @@ public class MainFrame extends JFrame {
 		return jMenu;
 	}
 
+	private JMenu createRunMenu() {
+		jMenu = new JMenu(StringConstants.RUN_FORM_TITLE);
+		JMenuItem sortList = new JMenuItem(StringConstants.FORM_RUN);
+		jMenu.add(sortList);
+
+		sortList.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				runForm.setVisible(true);
+			}
+		});
+		return jMenu;
+	}
+
 	private JMenu createSortMenu() {
 
 		jMenu = new JMenu(StringConstants.MAIN_MENU_SORT);
@@ -152,52 +211,88 @@ public class MainFrame extends JFrame {
 		return jMenu;
 	}
 
-	private JMenu createTestMenu() {
+	private JMenu createCompareMenu() {
 
-		jMenu = new JMenu(StringConstants.CHOOSEFILE_FORM_TITLE);
-		JMenuItem sortList = new JMenuItem(StringConstants.SORT_FORM_TITLE);
+		jMenu = new JMenu(StringConstants.MAIN_MENU_COMPARE);
+		JMenuItem sortList = new JMenuItem(StringConstants.COMPARE_FORM_COMPARE);
 		jMenu.add(sortList);
 
 		sortList.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				chooseFileForm.setVisible(true);
+				compareRunForm.setVisible(true);
 			}
 		});
 		return jMenu;
 	}
 
 	private void createFileChooser() {
-		fc = new JFileChooser();
-	}
-
-	private void initializeVariables() {
-		this.mainFrameService = new MainFrameServiceImpl(aDF);
-		this.tablePanel = new TablePanel();
-		this.tablePanelEast = new TablePanel();
-		this.tablePanelWest = new TablePanel();
-
-		this.tabbedPane = new JTabbedPane();
-		this.statusPanel = new StatusPanel();
-
-		this.sortQueryForm = new SortQueryForm(this);
-		this.chooseFileForm = new ChooseFileForm(this);
-
-	}
-
-	private void setCallbacks() {
-
-	}
-
-	private void refreshTable() {
-
+		this.fileDialog = new FileDialog(this, "FileDialog", FileDialog.LOAD);
+		fileDialog.setMultipleMode(true);
 	}
 
 	private void constructLayout() {
+		JPanel layoutPanel = new JPanel();
+		layoutPanel.setLayout(new GridBagLayout());
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridy = 0;
+		Insets rightPadding = new Insets(0, 0, 0, 15);
+		Insets noPadding = new Insets(0, 0, 0, 0);
+
+		// ///// First row /////////////////////////////
+		gc.weightx = 1.5;
+		gc.weighty = 0.0;
+		gc.ipady = 40; // make this component tall
+		// gc.ipadx = 40; // make this component wide
+
+		gc.fill = GridBagConstraints.VERTICAL;
+
+		gc.gridx = 0;
+		// gc.anchor = GridBagConstraints.EAST;
+		// gc.insets = noPadding;
+		layoutPanel.add(dataLabel, gc);
+
+		gc.gridx++;
+		// gc.anchor = GridBagConstraints.CENTER;
+		// gc.insets = noPadding;
+		layoutPanel.add(sqlLabel, gc);
+		//
+		gc.gridx++;
+		// gc.anchor = GridBagConstraints.WEST;
+		// gc.insets = noPadding;
+		layoutPanel.add(histLabel, gc);
+
+		gc.gridy++;
+
+		gc.weightx = 0.5;
+		gc.weighty = 1;
+		gc.ipady = 0; // make this component tall
+		gc.ipadx = 0; // make this component wide
+
+		gc.fill = GridBagConstraints.BOTH;
+
+		gc.gridx = 0;
+		// gc.anchor = GridBagConstraints.EAST;
+		// gc.insets = noPadding;
+		layoutPanel.add(tablePanelEast, gc);
+
+		gc.gridx++;
+		gc.fill = GridBagConstraints.BOTH;
+
+		// gc.anchor = GridBagConstraints.CENTER;
+		// gc.insets = noPadding;
+		layoutPanel.add(tablePanel, gc);
+		//
+		gc.gridx++;
+		// gc.anchor = GridBagConstraints.WEST;
+		// gc.insets = noPadding;
+		layoutPanel.add(tablePanelWest, gc);
+
 		setLayout(new BorderLayout());
-		add(tablePanelEast, BorderLayout.EAST);
-		add(tablePanel, BorderLayout.CENTER);
-		add(tablePanelWest, BorderLayout.WEST);
+		// add(tablePanelEast, BorderLayout.EAST);
+		// add(tablePanel, BorderLayout.CENTER);
+		// add(tablePanelWest, BorderLayout.WEST);
+		add(layoutPanel, BorderLayout.CENTER);
 		add(statusPanel, BorderLayout.SOUTH);
 	}
 
@@ -208,6 +303,22 @@ public class MainFrame extends JFrame {
 		jplPanel.setLayout(new GridLayout(1, 1));
 		jplPanel.add(jlbDisplay);
 		return jplPanel;
+	}
+
+	private void setCallbacks() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void refreshTable() {
+		// TODO Auto-generated method stub
+
+	}
+
+	class HipoFilter implements FilenameFilter {
+		public boolean accept(File dir, String name) {
+			return (name.endsWith(".hipo"));
+		}
 	}
 
 }

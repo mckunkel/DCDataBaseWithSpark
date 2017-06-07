@@ -14,7 +14,6 @@ package database.process;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +22,6 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
@@ -35,13 +31,11 @@ import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
-import org.jlab.io.hipo.HipoDataEvent;
 import org.jlab.io.hipo.HipoDataSource;
 
 import database.objects.TBHits;
 import database.utils.Coordinate;
 import database.utils.EmptyDataPoint;
-import spark.utils.SparkConnection;
 
 public class DataProcess {
 	private Dimension screensize = null;
@@ -57,11 +51,13 @@ public class DataProcess {
 
 	private HipoDataSource reader = null;
 
-	public DataProcess(File file) {
-		if (file instanceof HipoDataEvent) {
+	public DataProcess() {
+		this.reader = new HipoDataSource();
+	}
 
-		}
-		this.reader = reader;
+	public DataProcess(String str) {
+		this.reader = new HipoDataSource();
+		this.reader.open(str);
 		init();
 		processEvent();
 	}
@@ -70,6 +66,11 @@ public class DataProcess {
 		this.reader = reader;
 		init();
 		processEvent();
+	}
+
+	public void openFile(String str) {
+		System.out.println("will open " + str);
+		this.reader.open(str);
 	}
 
 	private void createHistograms() {
@@ -223,21 +224,21 @@ public class DataProcess {
 		frame.setVisible(true);
 	}
 
-	public static void main(String[] args) {
-
-		HipoDataSource chain = new HipoDataSource();
-		chain.open("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/out_clas12_000762_a00000.hipo");
-		DataProcess dataProcess = new DataProcess(chain);
-		Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
-		Logger.getLogger("org").setLevel(Level.OFF);
-		Logger.getLogger("akka").setLevel(Level.OFF);
-		SparkSession spSession = SparkConnection.getSession();
-
-		JavaSparkContext spContext = SparkConnection.getContext();
-		dataProcess.processMyJunk(spSession);
-		dataProcess.drawPlots();
-		dataProcess.addCanvasToPane();
-
-	}
+	// public static void main(String[] args) {
+	//
+	// HipoDataSource chain = new HipoDataSource();
+	// chain.open("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/out_clas12_000762_a00000.hipo");
+	// DataProcess dataProcess = new DataProcess(chain);
+	// Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
+	// Logger.getLogger("org").setLevel(Level.OFF);
+	// Logger.getLogger("akka").setLevel(Level.OFF);
+	// SparkSession spSession = SparkConnection.getSession();
+	//
+	// JavaSparkContext spContext = SparkConnection.getContext();
+	// dataProcess.processMyJunk(spSession);
+	// dataProcess.drawPlots();
+	// dataProcess.addCanvasToPane();
+	//
+	// }
 
 }

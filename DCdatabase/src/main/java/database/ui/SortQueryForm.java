@@ -28,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -47,6 +48,7 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 	private String[] numberStrings = { "", "1", "2", "3", "4", "5", "6" };
 	JComboBox<String> sectorList;
 	JComboBox<String> superLayerList;
+	private boolean isReady = false;
 
 	public SortQueryForm(JFrame parentFrame) {
 		super(parentFrame, StringConstants.SORT_FORM_TITLE, false);
@@ -159,11 +161,27 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 			setVisible(false);
 		} else if (event.getSource() == this.sortButton) {
 
-			String sectorString = this.sectorList.getSelectedItem().toString();
-			String superLayerString = this.superLayerList.getSelectedItem().toString();
-			updateQuery(sectorString, superLayerString);
+			if (isReady) {
+				String sectorString = this.sectorList.getSelectedItem().toString();
+				String superLayerString = this.superLayerList.getSelectedItem().toString();
+				updateQuery(sectorString, superLayerString);
+			} else {
+				JFrame errorFrame = new JFrame("");
+				System.out.println("Problem");
+				JOptionPane.showMessageDialog(errorFrame, "Would you like some green eggs to go with that ham?",
+						"Please choose a file", JOptionPane.ERROR_MESSAGE);
+			}
+
 			this.setVisible(false);
 		}
+	}
+
+	public void setReady() {
+		isReady = true;
+	}
+
+	public boolean getIsReady() {
+		return isReady;
 	}
 
 	protected void updateQuery(String sectorSelection, String superLayerSelection) {

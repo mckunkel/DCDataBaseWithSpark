@@ -28,6 +28,7 @@ public class StringConstants {
 	public static final String MAIN_MENU_OPEN = "Open";
 	public static final String MAIN_MENU_EXIT = "Exit";
 	public static final String MAIN_MENU_SORT = "Sort";
+	public static final String MAIN_MENU_COMPARE = "Compare";
 
 	public static final String MAIN_MENU_EXIT_TEXT = "Do you really want to exit?";
 	public static final String MAIN_MENU_EXIT_TITLE = "Confirm Exit";
@@ -43,5 +44,16 @@ public class StringConstants {
 
 	public static final String CHOOSEFILE_FORM_TITLE = "PLEASE CHOOSE A FILE";
 	public static final String FORM_OK = "OK";
+	public static final String COMPARE_FORM_TITLE = "Compare";
+	public static final String COMPARE_FORM_COMPARE = "Compare Run";
+	public static final String COMPARE_FORM_RUN = "Run";
+	public static final String COMPARE_FORM_SUBTITLE = "Compare with Database";
+	public static final String RUN_FORM_TITLE = "Run";
+	public static final String FORM_RUN = "Run";
+	public static final String FILE_FORM_SELECT = "Select File to Analyze";
+	public static final String FILE_FORM = "Hipo File:";
+	public static final String MAIN_FORM_DATA = "From Data Run:";
+	public static final String MAIN_FORM_SQL = "From SQL Query Run:";
+	public static final String MAIN_FORM_HIST = "Plot For Run:";
 
 }

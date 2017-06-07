@@ -12,14 +12,18 @@
 */
 package database.utils;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 public class NumberConstants {
 
 	private NumberConstants() {
 
 	}
 
-	public static final int APP_WINDOW_SIZE_WIDTH = 850;
-	public static final int APP_WINDOW_SIZE_HEIGHT = 600;
+	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	public static final int APP_WINDOW_SIZE_WIDTH = (int) screenSize.getWidth() - (int) screenSize.getWidth() / 6;
+	public static final int APP_WINDOW_SIZE_HEIGHT = (int) screenSize.getHeight() - (int) screenSize.getHeight() / 6;
 	public static final int NUM_OF_COLUMNS = 4;
 
 	public static final int USER_FORM_WINDOW_SIZE_HEIGHT = 270;
