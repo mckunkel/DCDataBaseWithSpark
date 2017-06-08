@@ -26,10 +26,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -38,7 +36,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
 
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
@@ -268,17 +265,6 @@ public class MainFrame extends JFrame {
 		c.gridy = 0;
 		histgramControlsPanel.add(tablePanelWest, c);
 
-		JPanel controls = new JPanel();
-		int space = 15;
-		Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.FAULT_FORM_LABEL);
-
-		controls.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-		controls.setLayout(new GridLayout(0, 2));
-		// lets set up the combox box for the fault indicators
-		JComboBox<String> faultComboBox = new JComboBox(StringConstants.PROBLEM_TYPES);
-		controls.add(new JLabel("Fault:"));
-		controls.add(faultComboBox);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.5;
 		c.gridx = 0;
