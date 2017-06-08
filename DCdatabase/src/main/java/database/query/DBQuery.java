@@ -18,8 +18,7 @@ public class DBQuery {
 
 	public List<String> getAllRuns() {
 		Dataset<Row> dataDF = SparkMySQLConnection.mySqlDataset().select("runno").sort(asc("runno")).distinct();
-		List<String> listTwo = dataDF.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
-		return listTwo;
+		return dataDF.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
 	}
 
 	public Dataset<Row> getAllRunsDataset() {
@@ -48,6 +47,17 @@ public class DBQuery {
 		// dataDF.foreach((ForeachFunction<Row>) row -> System.out
 		// .println("Run from Query " + row.get(0) + " " + row.get(1) + " " +
 		// row.get(2) + " "));
+
+	}
+
+	public List<String> getAllProblems() {
+		Dataset<Row> dataDF = SparkMySQLConnection.mySqlDataset().select("problem_type").sort(asc("problem_type"))
+				.distinct();
+		return dataDF.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
+	}
+
+	public Dataset<Row> getAllProblemsDataset() {
+		return SparkMySQLConnection.mySqlDataset().select("problem_type").sort(asc("problem_type")).distinct();
 
 	}
 }

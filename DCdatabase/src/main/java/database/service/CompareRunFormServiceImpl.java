@@ -27,4 +27,14 @@ public class CompareRunFormServiceImpl implements CompareRunFormService {
 		return this.dbQuery.getAllRunsDataset();
 	}
 
+	public List<String> getAllProblems() {
+		return this.dbQuery.getAllProblems();
+
+	}
+
+	public Dataset<Row> getAllProblemsDataset() {
+		return this.dbQuery.getAllProblemsDataset();
+
+	}
+
 }

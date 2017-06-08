@@ -13,4 +13,8 @@ public interface CompareRunFormService {
 
 	public Dataset<Row> getAllRunsDataset();
 
+	public List<String> getAllProblems();
+
+	public Dataset<Row> getAllProblemsDataset();
+
 }
