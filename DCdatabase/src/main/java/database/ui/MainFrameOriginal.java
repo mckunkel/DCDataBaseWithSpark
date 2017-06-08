@@ -13,23 +13,18 @@
 package database.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Label;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -38,12 +33,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
 
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
-public class MainFrame extends JFrame {
+public class MainFrameOriginal extends JFrame {
 
 	private TablePanel tablePanel;
 	private TablePanel tablePanelEast;
@@ -70,7 +64,7 @@ public class MainFrame extends JFrame {
 	private File[] fileList = null;
 	private ArrayList<String> fileArray = null;
 
-	public MainFrame() {
+	public MainFrameOriginal() {
 		super(StringConstants.APP_NAME);
 		constructAppWindow();
 		setJMenuBar(createFrameMenu());
@@ -167,7 +161,7 @@ public class MainFrame extends JFrame {
 		exitItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int action = JOptionPane.showConfirmDialog(MainFrame.this, StringConstants.MAIN_MENU_EXIT_TEXT,
+				int action = JOptionPane.showConfirmDialog(MainFrameOriginal.this, StringConstants.MAIN_MENU_EXIT_TEXT,
 						StringConstants.MAIN_MENU_EXIT_TITLE, JOptionPane.OK_CANCEL_OPTION);
 
 				if (action == JOptionPane.OK_OPTION) {
@@ -233,67 +227,74 @@ public class MainFrame extends JFrame {
 	}
 
 	private void constructLayout() {
-		JButton b = new JButton("Just fake button");
-		Dimension buttonSize = b.getPreferredSize();
-		int maxGap = 20;
-		// for title of lists
-		JPanel titlePanel = new JPanel();
-		titlePanel.setLayout(new GridLayout(0, 9));
-		titlePanel.setPreferredSize(new Dimension(20, 20));
-		titlePanel.add(new Label(""));
-		titlePanel.add(dataLabel);
-		titlePanel.add(new Label(""));
-		titlePanel.add(new Label(""));
-		titlePanel.add(sqlLabel);
-		titlePanel.add(new Label(""));
-		titlePanel.add(new Label(""));
-		titlePanel.add(histLabel);
-
-		// for lists
 		JPanel layoutPanel = new JPanel();
+		// layoutPanel.setLayout(new GridBagLayout());
 		layoutPanel.setLayout(new GridLayout(0, 3));
-		layoutPanel.setPreferredSize(new Dimension((int) (buttonSize.getWidth() * 2.5) + maxGap,
-				(int) (buttonSize.getHeight() * 3.5) + maxGap * 2));
-		layoutPanel.add(tablePanelEast);
-		layoutPanel.add(tablePanel);
-		// for histograms and controls to go into layoutPanel
-		JPanel histgramControlsPanel = new JPanel();
-		histgramControlsPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.ipady = 40; // make this component tall
-		c.weightx = 0.0;
-		// c.gridwidth = 3;
-		c.gridx = 0;
-		c.gridy = 0;
-		histgramControlsPanel.add(tablePanelWest, c);
 
-		JPanel controls = new JPanel();
-		int space = 15;
-		Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.FAULT_FORM_LABEL);
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridy = 0;
+		Insets rightPadding = new Insets(0, 0, 0, 15);
+		Insets noPadding = new Insets(0, 0, 0, 0);
 
-		controls.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-		controls.setLayout(new GridLayout(0, 2));
-		// lets set up the combox box for the fault indicators
-		JComboBox<String> faultComboBox = new JComboBox(StringConstants.PROBLEM_TYPES);
-		controls.add(new JLabel("Fault:"));
-		controls.add(faultComboBox);
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.5;
-		c.gridx = 0;
-		c.gridy = 1;
-		// add controls to histogram panel
-		histgramControlsPanel.add(faultPanel, c);
-		// add histogram panel to layout
-		layoutPanel.add(histgramControlsPanel);
+		// ///// First row /////////////////////////////
+		gc.weightx = 1.5;
+		gc.weighty = 0.0;
+		// gc.ipady = 40; // make this component tall
+		// gc.ipadx = 40; // make this component wide
+
+		gc.fill = GridBagConstraints.VERTICAL;
+
+		gc.gridx = 0;
+		// gc.anchor = GridBagConstraints.EAST;
+		// gc.insets = noPadding;
+		layoutPanel.add(dataLabel, gc);
+
+		gc.gridx++;
+		// gc.anchor = GridBagConstraints.CENTER;
+		// gc.insets = noPadding;
+		layoutPanel.add(sqlLabel, gc);
+		//
+		gc.gridx++;
+		// gc.anchor = GridBagConstraints.WEST;
+		// gc.insets = noPadding;
+		layoutPanel.add(histLabel, gc);
+
+		gc.gridy++;
+
+		gc.weightx = 1.75;
+		gc.weighty = 1;
+		gc.ipady = 1; // make this component tall
+		gc.ipadx = 5; // make this component wide
+
+		gc.fill = GridBagConstraints.BOTH;
+
+		gc.gridx = 0;
+		// gc.anchor = GridBagConstraints.EAST;
+		// gc.insets = noPadding;
+		layoutPanel.add(tablePanelEast, gc);
+
+		gc.gridx++;
+		gc.fill = GridBagConstraints.BOTH;
+		// gc.ipadx = 0; // make this component wide
+
+		// gc.anchor = GridBagConstraints.CENTER;
+		// gc.insets = noPadding;
+		layoutPanel.add(tablePanel, gc);
+		//
+		gc.gridx++;
+		gc.ipady = 0; // make this component tall
+
+		// gc.anchor = GridBagConstraints.WEST;
+		// gc.insets = noPadding;
+		layoutPanel.add(tablePanelWest, gc);
+
+		gc.gridy++;
+		layoutPanel.add(faultPanel, gc);
 
 		setLayout(new BorderLayout());
 		// add(tablePanelEast, BorderLayout.EAST);
 		// add(tablePanel, BorderLayout.CENTER);
 		// add(tablePanelWest, BorderLayout.WEST);
-		add(titlePanel, BorderLayout.NORTH);
-
 		add(layoutPanel, BorderLayout.CENTER);
 		add(statusPanel, BorderLayout.SOUTH);
 	}

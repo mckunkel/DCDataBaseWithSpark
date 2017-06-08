@@ -33,7 +33,6 @@ public class RunForm extends JDialog implements ActionListener {
 	private JLabel fileLabel;
 
 	private ArrayList<String> fileList = null;
-	private ChooseFileForm chooseFileForm;
 	private DataProcess dataProcess = null;
 	private String dirLocation = null;
 

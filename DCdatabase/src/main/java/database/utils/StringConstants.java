@@ -52,8 +52,12 @@ public class StringConstants {
 	public static final String FORM_RUN = "Run";
 	public static final String FILE_FORM_SELECT = "Select File to Analyze";
 	public static final String FILE_FORM = "Hipo File:";
-	public static final String MAIN_FORM_DATA = "From Data Run:";
-	public static final String MAIN_FORM_SQL = "From SQL Query Run:";
+	public static final String MAIN_FORM_DATA = "Data Run:";
+	public static final String MAIN_FORM_SQL = "SQL Query Run:";
 	public static final String MAIN_FORM_HIST = "Plot For Run:";
+
+	public static final String[] PROBLEM_TYPES = { "", "ind.wire_hot", "lvfuse", "hvpin", "other" };
+	public static final String FAULT_FORM_LABEL = "Type of Fault:";
+	public static final String FAULT_FORM_SET = "Set Fault";
 
 }
