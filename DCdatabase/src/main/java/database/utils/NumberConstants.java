@@ -37,6 +37,7 @@ public class NumberConstants {
 	public static final int SORT_FORM_WINDOW_SIZE_WIDTH = 400;
 	public static final int SORT_FORM_WINDOW_FIELD_LENGTH = 15;
 	public static final int SORT_REMOVE_FORM_WINDOW_SIZE_HEIGHT = 160;
+	public static final int OTHER_FORM_WINDOW_FIELD_LENGTH = 15;
 
 }
 

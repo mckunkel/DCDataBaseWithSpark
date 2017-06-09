@@ -34,6 +34,9 @@ public class StringConstants {
 	public static final String MAIN_MENU_EXIT_TITLE = "Confirm Exit";
 	public static final String STATUS_PANEL_TEXT = "mkunkel@fz-juelich.de";
 
+	public static final String FORM_CANCEL = "Cancel";
+	public static final String FORM_SAVE = "Save";
+
 	// For sort query
 	public static final String SORT_FORM_TITLE = "Sort By:";
 	public static final String SORT_FORM_CANCEL = "Cancel";
@@ -59,5 +62,7 @@ public class StringConstants {
 	public static final String[] PROBLEM_TYPES = { "", "ind.wire_hot", "lvfuse", "hvpin", "other" };
 	public static final String FAULT_FORM_LABEL = "Type of Fault:";
 	public static final String FAULT_FORM_SET = "Set Fault";
+	public static final String OTHER_FORM_TITLE = "Other";
+	public static final String OTHER_FORM_INPUT = "Specify other:";
 
 }
