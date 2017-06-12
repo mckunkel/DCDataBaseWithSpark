@@ -66,5 +66,8 @@ public class StringConstants {
 	public static final String FAULT_FORM_SET = "Set Fault";
 	public static final String OTHER_FORM_TITLE = "Other";
 	public static final String OTHER_FORM_INPUT = "Specify other:";
+	public static final String DATA_FORM_LABEL = "From Data:";
+	public static final String HISTOGRAM_FORM_LABEL = "Histogram For Data:";
+	public static final String SQL_FORM_LABEL = "SQL Query";
 
 }

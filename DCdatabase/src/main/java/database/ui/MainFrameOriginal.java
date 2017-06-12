@@ -34,6 +34,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import database.ui.panels.FaultPanel;
+import database.ui.panels.StatusPanel;
+import database.ui.panels.TablePanel;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 

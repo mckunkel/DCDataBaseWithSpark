@@ -19,7 +19,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,14 +36,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import database.ui.panels.DataPanel;
+import database.ui.panels.FaultPanel;
+import database.ui.panels.HistogramPanel;
+import database.ui.panels.SQLPanel;
+import database.ui.panels.StatusPanel;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class MainFrame extends JFrame {
 
-	private TablePanel tablePanel;
-	private TablePanel tablePanelEast;
-	private TablePanel tablePanelWest;
+	private SQLPanel sqlPanel;
+	private DataPanel dataPanel;
+	private HistogramPanel histogramPanel;
 	private JLabel dataLabel;
 	private JLabel sqlLabel;
 	private JLabel histLabel;
@@ -102,9 +106,9 @@ public class MainFrame extends JFrame {
 	}
 
 	private void initializeVariables() {
-		this.tablePanel = new TablePanel();
-		this.tablePanelEast = new TablePanel();
-		this.tablePanelWest = new TablePanel();
+		this.sqlPanel = new SQLPanel();
+		this.dataPanel = new DataPanel();
+		this.histogramPanel = new HistogramPanel();
 
 		this.dataLabel = new JLabel(StringConstants.MAIN_FORM_DATA);
 		dataLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));
@@ -232,27 +236,16 @@ public class MainFrame extends JFrame {
 	private void constructLayout() {
 		JButton b = new JButton("Just fake button");
 		Dimension buttonSize = b.getPreferredSize();
-		int maxGap = 20;
-		// for title of lists
-		JPanel titlePanel = new JPanel();
-		titlePanel.setLayout(new GridLayout(0, 9));
-		titlePanel.setPreferredSize(new Dimension(20, 20));
-		titlePanel.add(new Label(""));
-		titlePanel.add(dataLabel);
-		titlePanel.add(new Label(""));
-		titlePanel.add(new Label(""));
-		titlePanel.add(sqlLabel);
-		titlePanel.add(new Label(""));
-		titlePanel.add(new Label(""));
-		titlePanel.add(histLabel);
+		int maxGap = 10;
 
 		// for lists
 		JPanel layoutPanel = new JPanel();
 		layoutPanel.setLayout(new GridLayout(0, 3));
-		layoutPanel.setPreferredSize(new Dimension((int) (buttonSize.getWidth() * 2.5) + maxGap,
-				(int) (buttonSize.getHeight() * 3.5) + maxGap * 2));
-		layoutPanel.add(tablePanelEast);
-		layoutPanel.add(tablePanel);
+		// layoutPanel.setPreferredSize(new Dimension((int)
+		// (buttonSize.getWidth() * 2.5) + maxGap,
+		// (int) (buttonSize.getHeight() * 3.5) + maxGap * 2));
+		layoutPanel.add(dataPanel);
+		layoutPanel.add(sqlPanel);
 		// for histograms and controls to go into layoutPanel
 		JPanel histgramControlsPanel = new JPanel();
 		histgramControlsPanel.setLayout(new GridBagLayout());
@@ -263,7 +256,7 @@ public class MainFrame extends JFrame {
 		// c.gridwidth = 3;
 		c.gridx = 0;
 		c.gridy = 0;
-		histgramControlsPanel.add(tablePanelWest, c);
+		histgramControlsPanel.add(histogramPanel, c);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.5;
@@ -275,11 +268,6 @@ public class MainFrame extends JFrame {
 		layoutPanel.add(histgramControlsPanel);
 
 		setLayout(new BorderLayout());
-		// add(tablePanelEast, BorderLayout.EAST);
-		// add(tablePanel, BorderLayout.CENTER);
-		// add(tablePanelWest, BorderLayout.WEST);
-		add(titlePanel, BorderLayout.NORTH);
-
 		add(layoutPanel, BorderLayout.CENTER);
 		add(statusPanel, BorderLayout.SOUTH);
 	}
