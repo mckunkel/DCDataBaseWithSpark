@@ -13,6 +13,7 @@
 package database.process;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ import database.objects.TBHits;
 import database.utils.Coordinate;
 import database.utils.EmptyDataPoint;
 
-public class DataProcess {
+public class DataProcessOriginal {
 	private Dimension screensize = null;
 	private JFrame frame = null;
 	private JTabbedPane tabbedPane = null;
@@ -50,19 +51,18 @@ public class DataProcess {
 
 	private HipoDataSource reader = null;
 
-	public DataProcess() {
+	public DataProcessOriginal() {
 		this.reader = new HipoDataSource();
-		init();
 	}
 
-	public DataProcess(String str) {
+	public DataProcessOriginal(String str) {
 		this.reader = new HipoDataSource();
 		this.reader.open(str);
 		init();
 		processEvent();
 	}
 
-	public DataProcess(HipoDataSource reader) {
+	public DataProcessOriginal(HipoDataSource reader) {
 		this.reader = reader;
 		init();
 		processEvent();
@@ -84,14 +84,42 @@ public class DataProcess {
 		}
 	}
 
+	private void createCanvas() {
+		can1 = new EmbeddedCanvas();
+		can1.initTimer(updateTime);
+		can2 = new EmbeddedCanvas();
+		can2.initTimer(updateTime);
+
+		can1.divide(6, 6);
+		can2.divide(6, 6);
+
+	}
+
+	private void setScreenSize() {
+		screensize = Toolkit.getDefaultToolkit().getScreenSize();
+	}
+
+	private void setJFrame() {
+		frame = new JFrame("DC MONITORING");
+		frame.setSize((int) (screensize.getHeight() * .75 * 1.618), (int) (screensize.getHeight() * .75));
+	}
+
+	private void setJTabbedPane() {
+		tabbedPane = new JTabbedPane();
+	}
+
 	private void init() {
+		setScreenSize();
+		setJFrame();
+		setJTabbedPane();
+		createCanvas();
 		createHistograms();
 	}
 
-	public void processEvent() {
+	private void processEvent() {
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < 4000) {// && counter < 4000
+		while (reader.hasEvent() && counter < 400) {// && counter < 4000
 			if (counter % 500 == 0)
 				System.out.println("done " + counter + " events");
 			DataEvent event = reader.getNextEvent();
@@ -178,16 +206,39 @@ public class DataProcess {
 		}
 	}
 
-	public static int getRunNumber(HipoDataSource reader) {
+	private void drawPlots() {
 
-		return reader.gotoEvent(0).getBank("RUN::config").getInt("run", 0);
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				can1.cd(6 * i + j);
+				can1.draw(occupanciesByCoordinate.get(new Coordinate(i, j)));
+			}
+		}
+		can1.update();
 	}
 
-	public Map<Coordinate, H2F> getCoordinateMap() {
-		return this.occupanciesByCoordinate;
+	private void addCanvasToPane() {
+		tabbedPane.add("Occupancies all", can1);
+		frame.add(tabbedPane);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
-	public H2F getHistogramByMap(int superLayer, int sector) {
-		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
-	}
+	// public static void main(String[] args) {
+	//
+	// HipoDataSource chain = new HipoDataSource();
+	// chain.open("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/out_clas12_000762_a00000.hipo");
+	// DataProcess dataProcess = new DataProcess(chain);
+	// Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
+	// Logger.getLogger("org").setLevel(Level.OFF);
+	// Logger.getLogger("akka").setLevel(Level.OFF);
+	// SparkSession spSession = SparkConnection.getSession();
+	//
+	// JavaSparkContext spContext = SparkConnection.getContext();
+	// dataProcess.processMyJunk(spSession);
+	// dataProcess.drawPlots();
+	// dataProcess.addCanvasToPane();
+	//
+	// }
+
 }

@@ -36,15 +36,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.apache.spark.sql.Dataset;
+
+import database.process.DataProcess;
 import database.ui.panels.DataPanel;
 import database.ui.panels.FaultPanel;
 import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
 import database.ui.panels.StatusPanel;
+import database.ui.panels.UpdatePanel;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements UpdatePanel {
+	private DataProcess dataProcess = null;
 
 	private SQLPanel sqlPanel;
 	private DataPanel dataPanel;
@@ -106,9 +111,11 @@ public class MainFrame extends JFrame {
 	}
 
 	private void initializeVariables() {
+		this.dataProcess = new DataProcess();
+
 		this.sqlPanel = new SQLPanel();
 		this.dataPanel = new DataPanel();
-		this.histogramPanel = new HistogramPanel();
+		this.histogramPanel = new HistogramPanel(this.dataProcess);
 
 		this.dataLabel = new JLabel(StringConstants.MAIN_FORM_DATA);
 		dataLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));
@@ -120,7 +127,7 @@ public class MainFrame extends JFrame {
 		this.tabbedPane = new JTabbedPane();
 		this.statusPanel = new StatusPanel();
 
-		this.runForm = new RunForm(this);
+		this.runForm = new RunForm(this, this.dataProcess);
 		this.sortQueryForm = new SortQueryForm(this);
 		this.compareRunForm = new CompareQueryForm(this);
 		this.faultPanel = new FaultPanel();
@@ -250,8 +257,8 @@ public class MainFrame extends JFrame {
 		JPanel histgramControlsPanel = new JPanel();
 		histgramControlsPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.ipady = 40; // make this component tall
+		c.fill = GridBagConstraints.BOTH;
+		c.ipady = 400; // make this component tall
 		c.weightx = 0.0;
 		// c.gridwidth = 3;
 		c.gridx = 0;
@@ -259,6 +266,8 @@ public class MainFrame extends JFrame {
 		histgramControlsPanel.add(histogramPanel, c);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.ipady = 1; // make this component tall
+
 		c.weightx = 0.5;
 		c.gridx = 0;
 		c.gridy = 1;
@@ -286,15 +295,25 @@ public class MainFrame extends JFrame {
 
 	}
 
-	private void refreshTable() {
-		// TODO Auto-generated method stub
-
-	}
-
 	class HipoFilter implements FilenameFilter {
 		public boolean accept(File dir, String name) {
 			return (name.endsWith(".hipo"));
 		}
+	}
+
+	private void refreshTable() {
+		Dataset<Row> data = this.mainFrameService.getDataset();
+
+		this.dataPanel.setTableModel(data);
+		this.dataPanel.updateTable();
+
+	}
+
+	@Override
+	public void updatePanel(int superLayer, int sector) {
+		refreshTable();
+		this.dataPanel.loadData();
+
 	}
 
 }

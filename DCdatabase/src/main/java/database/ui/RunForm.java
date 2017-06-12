@@ -38,8 +38,9 @@ public class RunForm extends JDialog implements ActionListener {
 
 	private JFrame errorFrame;
 
-	public RunForm(JFrame parentFrame) {
+	public RunForm(JFrame parentFrame, DataProcess dataProcess) {
 		super(parentFrame, StringConstants.RUN_FORM_TITLE, false);
+		this.dataProcess = dataProcess;
 		initializeVariables();
 		constructLayout();
 		setWindow(parentFrame);
@@ -72,7 +73,6 @@ public class RunForm extends JDialog implements ActionListener {
 
 		this.okButton.addActionListener(this);
 		this.fileList = new ArrayList<String>();
-		this.dataProcess = new DataProcess();
 
 		this.fileComboBox = new JComboBox<String>();
 		this.fileLabel = new JLabel(StringConstants.FILE_FORM);
@@ -148,6 +148,7 @@ public class RunForm extends JDialog implements ActionListener {
 			if (checkFile) {
 				String str = (String) this.fileComboBox.getSelectedItem();
 				dataProcess.openFile(dirLocation + str);
+				dataProcess.processEvent();
 
 			} else {
 				System.out.println("Problem");

@@ -39,6 +39,9 @@ public class NumberConstants {
 	public static final int SORT_REMOVE_FORM_WINDOW_SIZE_HEIGHT = 160;
 	public static final int OTHER_FORM_WINDOW_FIELD_LENGTH = 15;
 	public static final int BORDER_SPACING = 15;
+	public static final int CANVAS_UPDATE = 2000;
+	public static final int DEFAULT_HIST_SUPERLAYER = 2;
+	public static final int DEFAULT_HIST_SECTOR = 2;
 
 }
 
