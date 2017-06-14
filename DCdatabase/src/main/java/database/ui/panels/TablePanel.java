@@ -21,8 +21,9 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.apache.spark.sql.Row;
+
 import database.ui.TableModel;
-import database.utils.EmptyDataPoint;
 
 public class TablePanel extends JPanel {
 
@@ -65,7 +66,7 @@ public class TablePanel extends JPanel {
 		this.aTable = new JTable(tableModel);
 	}
 
-	public void setTableModel(List<EmptyDataPoint> wireList) {
+	public void setTableModel(List<Row> wireList) {
 		this.tableModel.setWireList(wireList);
 	}
 

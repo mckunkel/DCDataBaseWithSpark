@@ -22,6 +22,9 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
@@ -36,8 +39,10 @@ import org.jlab.io.hipo.HipoDataSource;
 import database.objects.TBHits;
 import database.utils.Coordinate;
 import database.utils.EmptyDataPoint;
+import spark.utils.SparkManager;
 
 public class DataProcessOriginal {
+	private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(DataProcessOriginal.class);
 	private Dimension screensize = null;
 	private JFrame frame = null;
 	private JTabbedPane tabbedPane = null;
@@ -50,6 +55,8 @@ public class DataProcessOriginal {
 	private int updateTime = 2000;
 
 	private HipoDataSource reader = null;
+
+	private long startTime;
 
 	public DataProcessOriginal() {
 		this.reader = new HipoDataSource();
@@ -114,6 +121,7 @@ public class DataProcessOriginal {
 		setJTabbedPane();
 		createCanvas();
 		createHistograms();
+		startTime = System.currentTimeMillis();
 	}
 
 	private void processEvent() {
@@ -175,15 +183,31 @@ public class DataProcessOriginal {
 		System.out.println("subtract : ");
 
 		Dataset<Row> subDf = emptyDF.except(dataDF);
-		subDf.show();
+		// subDf.show();
+		// Encoder<EmptyDataPoint2> EmptyDataPointEncoder =
+		// Encoders.bean(EmptyDataPoint2.class);
+		// List<EmptyDataPoint2> queryList =
+		// subDf.as(EmptyDataPointEncoder).collectAsList();
 
-		Dataset<Row> subDfII = subDf.filter(subDf.col("wire").equalTo(1).and(subDf.col("layer").equalTo(2)));
-		subDfII.show();
+		List<Row> rowList = subDf.collectAsList();
+
+		System.out.println("a test " + rowList.get(3));
+
+		for (Row row : rowList) {
+			System.out.println(
+					" something is one " + row.get(0) + " " + row.get(1) + "  " + row.get(2) + "  " + row.get(3));
+			// LOGGER.info(row);
+		}
+		// Dataset<Row> subDfII =
+		// subDf.filter(subDf.col("wire").equalTo(1).and(subDf.col("layer").equalTo(2)));
+		// subDfII.show();
 
 		// subDf.foreach((ForeachFunction<Row>) row -> System.out.println("layer
 		// " + row.get(0) + " superlayer "
 		// + row.get(1) + " sector " + row.get(2) + " wire " + row.get(3) +
 		// ""));
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time: " + (endTime - startTime) + "ms");
 
 	}
 
@@ -224,21 +248,29 @@ public class DataProcessOriginal {
 		frame.setVisible(true);
 	}
 
-	// public static void main(String[] args) {
-	//
-	// HipoDataSource chain = new HipoDataSource();
-	// chain.open("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/out_clas12_000762_a00000.hipo");
-	// DataProcess dataProcess = new DataProcess(chain);
-	// Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
-	// Logger.getLogger("org").setLevel(Level.OFF);
-	// Logger.getLogger("akka").setLevel(Level.OFF);
-	// SparkSession spSession = SparkConnection.getSession();
-	//
-	// JavaSparkContext spContext = SparkConnection.getContext();
-	// dataProcess.processMyJunk(spSession);
-	// dataProcess.drawPlots();
-	// dataProcess.addCanvasToPane();
-	//
-	// }
+	public static void main(String[] args) {
+
+		HipoDataSource chain = new HipoDataSource();
+		chain.open("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/out_clas12_000762_a00000.hipo");
+		DataProcessOriginal dataProcess = new DataProcessOriginal(chain);
+		Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
+		Logger.getLogger("org").setLevel(Level.OFF);
+		Logger.getLogger("akka").setLevel(Level.OFF);
+		SparkSession spSession = SparkManager.getSession();
+
+		JavaSparkContext spContext = SparkManager.getContext();
+		dataProcess.processMyJunk(spSession);
+		dataProcess.drawPlots();
+		dataProcess.addCanvasToPane();
+
+		// different test
+		// DataProcess dataProcessGUIVersion = new DataProcess();
+		//
+		// dataProcessGUIVersion
+		// .openFile("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/out_clas12_000762_a00000.hipo");
+		// dataProcessGUIVersion.processFile();
+		// dataProcessGUIVersion.createDataset();
+
+	}
 
 }

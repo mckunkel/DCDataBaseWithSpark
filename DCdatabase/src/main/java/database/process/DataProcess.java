@@ -12,14 +12,10 @@
 */
 package database.process;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoder;
@@ -27,31 +23,35 @@ import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.jlab.groot.data.H2F;
-import org.jlab.groot.graphics.EmbeddedCanvas;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
 import org.jlab.io.hipo.HipoDataSource;
 
 import database.objects.TBHits;
+import database.service.MainFrameService;
 import database.utils.Coordinate;
 import database.utils.EmptyDataPoint;
+import database.utils.MainFrameServiceManager;
+import spark.utils.SparkManager;
 
 public class DataProcess {
-	private Dimension screensize = null;
-	private JFrame frame = null;
-	private JTabbedPane tabbedPane = null;
+	private MainFrameService mainFrameService = null;
 
 	private Map<Coordinate, H2F> occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
 	private List<TBHits> tbHitList = new ArrayList<TBHits>();
-	private EmbeddedCanvas can1 = null;
-	private EmbeddedCanvas can2 = null;
-
-	private int updateTime = 2000;
-
+	private Dataset<Row> subtractedDataset = null;
+	SparkSession spSession = null;
 	private HipoDataSource reader = null;
+	private long startTime;
 
 	public DataProcess() {
 		this.reader = new HipoDataSource();
+		init();
+	}
+
+	public DataProcess(SparkSession spSession) {
+		this.reader = new HipoDataSource();
+		this.spSession = spSession;
 		init();
 	}
 
@@ -59,13 +59,13 @@ public class DataProcess {
 		this.reader = new HipoDataSource();
 		this.reader.open(str);
 		init();
-		processEvent();
+		processFile();
 	}
 
 	public DataProcess(HipoDataSource reader) {
 		this.reader = reader;
 		init();
-		processEvent();
+		processFile();
 	}
 
 	public void openFile(String str) {
@@ -85,13 +85,17 @@ public class DataProcess {
 	}
 
 	private void init() {
+		this.mainFrameService = MainFrameServiceManager.getSession();
+
 		createHistograms();
+		startTime = System.currentTimeMillis();
+
 	}
 
-	public void processEvent() {
+	public void processFile() {
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < 4000) {// && counter < 4000
+		while (reader.hasEvent() && counter < 400) {// && counter < 4000
 			if (counter % 500 == 0)
 				System.out.println("done " + counter + " events");
 			DataEvent event = reader.getNextEvent();
@@ -101,62 +105,7 @@ public class DataProcess {
 			}
 
 		}
-	}
-
-	private void processMyJunk(SparkSession spSession) {
-
-		System.out.println("My Junk");
-
-		// data
-		Encoder<TBHits> TBHitsEncoder = Encoders.bean(TBHits.class);
-		// Dataset<TBHits> tbHitDf = spSession.createDataset(tbHitList,
-		// TBHitsEncoder);
-		Dataset<Row> tbHitDfRow = spSession.createDataset(tbHitList, TBHitsEncoder).toDF();
-
-		System.out.println("Contents of TBHits DF : ");
-		Dataset<Row> testDF = tbHitDfRow.groupBy("sector", "layer", "superLayer", "wire").count()
-				.sort("sector", "layer", "superLayer", "wire").toDF("sector", "layer", "superLayer", "wire", "counts");
-		// testDF.select("wire", "sector", "layer", "superLayer",
-		// "counts").write().format("com.databricks.spark.csv")
-		// .option("header", "true").save("data/countedData.csv"); //
-		// csv("/data/countedData.csv");
-		testDF.createOrReplaceTempView("DataView");
-		Dataset<Row> dataDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM DataView").sort("sector",
-				"superlayer", "layer", "wire");
-		// dataDF.show();
-		// Compare with histgram data
-		// System.out.println("occupanciesByCoordinate");
-		// System.out.println("|layer|superLayer|sector|wire|");
-		// for (int ybin = 0; ybin < 6; ybin++) {
-		// for (int xbin = 0; xbin < 112; xbin++) {
-		// double value = occupanciesByCoordinate.get(new Coordinate(0,
-		// 1)).getData(xbin, ybin);
-		// if (value == 0) {
-		// System.out.println(" " + (ybin + 1) + " | 1 | 2 \t| " + (xbin + 1));
-		// }
-		// }
-		// }
-
-		System.out.println("TESTDF");
-		// Empty Data
-		Dataset<Row> collData = EmptyDataPoint.getEmptyDCData();
-		collData.createOrReplaceTempView("testView");
-		Dataset<Row> emptyDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM testView").sort("sector",
-				"superlayer", "layer", "wire");
-
-		System.out.println("subtract : ");
-
-		Dataset<Row> subDf = emptyDF.except(dataDF);
-		subDf.show();
-
-		Dataset<Row> subDfII = subDf.filter(subDf.col("wire").equalTo(1).and(subDf.col("layer").equalTo(2)));
-		subDfII.show();
-
-		// subDf.foreach((ForeachFunction<Row>) row -> System.out.println("layer
-		// " + row.get(0) + " superlayer "
-		// + row.get(1) + " sector " + row.get(2) + " wire " + row.get(3) +
-		// ""));
-
+		createDataset();
 	}
 
 	private void processTBHits(DataEvent event) {
@@ -171,11 +120,53 @@ public class DataProcess {
 					(bnkHits.getFloat("Z", i)), (bnkHits.getFloat("B", i)), (bnkHits.getInt("clusterID", i)),
 					(bnkHits.getInt("trkID", i)));
 
-			tbHitList.add(tbHits);
-			occupanciesByCoordinate
+			this.tbHitList.add(tbHits);
+			this.occupanciesByCoordinate
 					.get(new Coordinate(bnkHits.getInt("superlayer", i) - 1, bnkHits.getInt("sector", i) - 1))
 					.fill(bnkHits.getInt("wire", i), bnkHits.getInt("layer", i));
 		}
+	}
+
+	private void createDataset() {
+		SparkSession spSession = SparkManager.getSession();
+		Encoder<TBHits> TBHitsEncoder = Encoders.bean(TBHits.class);
+		Dataset<Row> tbHitDfRow = spSession.createDataset(this.tbHitList, TBHitsEncoder).toDF();
+
+		// OK, we have the CLAS data in a dataset, now we have to sort it to
+		// only the relevant data
+		// Then create a temporary view of this to compare it to an empty set
+		// Empty set is for comparing and finding wires with 0 hits.
+		// This is done because when filling a dataset, its relational, so
+		// it doesnt know if a wire should be zero
+		Dataset<Row> testDF = tbHitDfRow.groupBy("sector", "layer", "superLayer", "wire").count()
+				.sort("sector", "layer", "superLayer", "wire").toDF("sector", "layer", "superLayer", "wire", "counts");
+		testDF.createOrReplaceTempView("DataView");
+		Dataset<Row> dataDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM DataView").sort("sector",
+				"superlayer", "layer", "wire");
+
+		// Empty Data to compare to the dataset above
+		Dataset<Row> emptyData = EmptyDataPoint.getEmptyDCData();
+		emptyData.createOrReplaceTempView("testView");
+		Dataset<Row> emptyDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM testView").sort("sector",
+				"superlayer", "layer", "wire");
+
+		// Now find those in emptyDF that are not in dataDF and return this
+		// dataset
+		// Dataset<Row> subDf = emptyDF.except(dataDF);
+		// System.out.println("I should show here");
+		// subDf.show();
+
+		this.subtractedDataset = emptyDF.except(dataDF);
+		// this.subtractedDataset.show();
+		setDataset();
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total execution time: " + (endTime - startTime) + "ms");
+	}
+
+	private void setDataset() {
+		this.mainFrameService.setDatasetStruct(this.subtractedDataset);
+		this.mainFrameService.setDataList(this.subtractedDataset.collectAsList());
+
 	}
 
 	public static int getRunNumber(HipoDataSource reader) {
@@ -190,4 +181,9 @@ public class DataProcess {
 	public H2F getHistogramByMap(int superLayer, int sector) {
 		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
 	}
+
+	public Dataset<Row> getDataset() {
+		return this.subtractedDataset;
+	}
+
 }

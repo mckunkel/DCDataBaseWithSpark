@@ -8,7 +8,11 @@ import org.apache.spark.sql.Row;
 public class MainFrameQuery extends AbstractQuery {
 	Dataset<Row> queryDF;
 
-	public MainFrameQuery(Dataset<Row> queryDF) {
+	public MainFrameQuery() {
+
+	}
+
+	public void setDataset(Dataset<Row> queryDF) {
 		this.queryDF = queryDF;
 	}
 

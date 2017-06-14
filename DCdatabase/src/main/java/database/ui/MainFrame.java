@@ -36,24 +36,29 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.apache.spark.sql.Dataset;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import database.process.DataProcess;
+import database.service.MainFrameService;
 import database.ui.panels.DataPanel;
 import database.ui.panels.FaultPanel;
 import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
 import database.ui.panels.StatusPanel;
-import database.ui.panels.UpdatePanel;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
-public class MainFrame extends JFrame implements UpdatePanel {
+public class MainFrame extends JFrame {
+
 	private DataProcess dataProcess = null;
+	private MainFrameService mainFrameService = null;
 
 	private SQLPanel sqlPanel;
 	private DataPanel dataPanel;
 	private HistogramPanel histogramPanel;
+
 	private JLabel dataLabel;
 	private JLabel sqlLabel;
 	private JLabel histLabel;
@@ -78,6 +83,9 @@ public class MainFrame extends JFrame implements UpdatePanel {
 
 	public MainFrame() {
 		super(StringConstants.APP_NAME);
+		Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
+		Logger.getLogger("org").setLevel(Level.OFF);
+		Logger.getLogger("akka").setLevel(Level.OFF);
 		constructAppWindow();
 		setJMenuBar(createFrameMenu());
 
@@ -85,8 +93,23 @@ public class MainFrame extends JFrame implements UpdatePanel {
 		constructLayout();
 		createFileChooser();
 
-		refreshTable();
 		setCallbacks();
+	}
+
+	public DataProcess getDataProcess() {
+		return dataProcess;
+	}
+
+	public SQLPanel getSqlPanel() {
+		return sqlPanel;
+	}
+
+	public DataPanel getDataPanel() {
+		return dataPanel;
+	}
+
+	public HistogramPanel getHistogramPanel() {
+		return histogramPanel;
 	}
 
 	private void constructAppWindow() {
@@ -111,7 +134,9 @@ public class MainFrame extends JFrame implements UpdatePanel {
 	}
 
 	private void initializeVariables() {
+
 		this.dataProcess = new DataProcess();
+		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		this.sqlPanel = new SQLPanel();
 		this.dataPanel = new DataPanel();
@@ -127,7 +152,7 @@ public class MainFrame extends JFrame implements UpdatePanel {
 		this.tabbedPane = new JTabbedPane();
 		this.statusPanel = new StatusPanel();
 
-		this.runForm = new RunForm(this, this.dataProcess);
+		this.runForm = new RunForm(this);
 		this.sortQueryForm = new SortQueryForm(this);
 		this.compareRunForm = new CompareQueryForm(this);
 		this.faultPanel = new FaultPanel();
@@ -179,7 +204,7 @@ public class MainFrame extends JFrame implements UpdatePanel {
 						StringConstants.MAIN_MENU_EXIT_TITLE, JOptionPane.OK_CANCEL_OPTION);
 
 				if (action == JOptionPane.OK_OPTION) {
-					// mainFrameService.shutdown();
+					mainFrameService.shutdown();
 					statusPanel.stopTimer();
 					System.gc();
 					System.exit(0);
@@ -281,15 +306,6 @@ public class MainFrame extends JFrame implements UpdatePanel {
 		add(statusPanel, BorderLayout.SOUTH);
 	}
 
-	protected JPanel createInnerPanel(String text) {
-		JPanel jplPanel = new JPanel();
-		JLabel jlbDisplay = new JLabel(text);
-		jlbDisplay.setHorizontalAlignment(JLabel.CENTER);
-		jplPanel.setLayout(new GridLayout(1, 1));
-		jplPanel.add(jlbDisplay);
-		return jplPanel;
-	}
-
 	private void setCallbacks() {
 		// TODO Auto-generated method stub
 
@@ -301,19 +317,21 @@ public class MainFrame extends JFrame implements UpdatePanel {
 		}
 	}
 
-	private void refreshTable() {
-		Dataset<Row> data = this.mainFrameService.getDataset();
+	// private void refreshTable() {
+	// List<EmptyDataPoint> data =
+	// this.dataProcess.getMainFrameService().getDatasetAsList();
+	// for (EmptyDataPoint emptyDataPoint : data) {
+	// System.out.println(emptyDataPoint.getLayer());
+	// }
+	// // this.dataPanel.setTableModel(data);
+	// // this.dataPanel.updateTable();
+	//
+	// }
 
-		this.dataPanel.setTableModel(data);
-		this.dataPanel.updateTable();
-
-	}
-
-	@Override
-	public void updatePanel(int superLayer, int sector) {
-		refreshTable();
-		this.dataPanel.loadData();
-
-	}
+	// private void updatePanel(int superLayer, int sector) {
+	// refreshTable();
+	// this.dataPanel.loadData();
+	//
+	// }
 
 }

@@ -22,8 +22,9 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.apache.spark.sql.Row;
+
 import database.ui.TableModel;
-import database.utils.EmptyDataPoint;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
@@ -74,7 +75,7 @@ public class SQLPanel extends JPanel {
 		this.aTable = new JTable(tableModel);
 	}
 
-	public void setTableModel(List<EmptyDataPoint> wireList) {
+	public void setTableModel(List<Row> wireList) {
 		this.tableModel.setWireList(wireList);
 	}
 

@@ -17,16 +17,19 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import database.utils.EmptyDataPoint;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+
 import database.utils.NumberConstants;
 
 public class TableModel extends AbstractTableModel {
 
-	private List<EmptyDataPoint> wireList;
+	private List<Row> wireList;
+	private Dataset<Row> wireDF;
 	private String[] colNames = { "Sector", "SuperLayer", "Layer", "Wire" };
 
 	public TableModel() {
-		this.wireList = new ArrayList<EmptyDataPoint>();
+		this.wireList = new ArrayList<Row>();
 	}
 
 	public int getRowCount() {
@@ -43,24 +46,28 @@ public class TableModel extends AbstractTableModel {
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		EmptyDataPoint dataPoint = this.wireList.get(rowIndex);
+		Row dataPoint = this.wireList.get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
-			return dataPoint.getSector();
+			return dataPoint.get(2);
 		case 1:
-			return dataPoint.getSuperLayer();
+			return dataPoint.get(1);
 		case 2:
-			return dataPoint.getLayer();
+			return dataPoint.get(0);
 		case 3:
-			return dataPoint.getWire();
+			return dataPoint.get(3);
 		default:
 			return null;
 		}
 	}
 
-	public void setWireList(List<EmptyDataPoint> wireList) {
+	public void setWireList(List<Row> wireList) {
 		this.wireList = wireList;
+	}
+
+	public void setWireSet(Dataset<Row> wireDF) {
+		this.wireDF = wireDF;
 	}
 
 	public void updateTable() {

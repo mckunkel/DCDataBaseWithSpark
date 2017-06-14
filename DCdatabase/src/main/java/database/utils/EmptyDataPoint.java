@@ -21,7 +21,7 @@ import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import spark.utils.SparkConnection;
+import spark.utils.SparkManager;
 
 public class EmptyDataPoint {
 	private int superLayer;
@@ -82,7 +82,7 @@ public class EmptyDataPoint {
 	}
 
 	public static Dataset<Row> getEmptyDCData() {
-		SparkSession spSession = SparkConnection.getSession();
+		SparkSession spSession = SparkManager.getSession();
 		List<EmptyDataPoint> emptyList = new ArrayList<EmptyDataPoint>();
 		for (int superLayer = 1; superLayer <= 6; superLayer++) {
 			for (int sector = 2; sector <= 2; sector++) {

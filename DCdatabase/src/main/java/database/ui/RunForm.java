@@ -21,26 +21,34 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.api.java.function.MapFunction;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
 
-import database.process.DataProcess;
+import database.service.MainFrameService;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class RunForm extends JDialog implements ActionListener {
+	private MainFrame mainFrame = null;
+	private MainFrameService mainFrameService = null;
 
 	private JButton okButton;
 	private JComboBox<String> fileComboBox;
 	private JLabel fileLabel;
 
 	private ArrayList<String> fileList = null;
-	private DataProcess dataProcess = null;
 	private String dirLocation = null;
 
 	private JFrame errorFrame;
 
-	public RunForm(JFrame parentFrame, DataProcess dataProcess) {
+	public RunForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.RUN_FORM_TITLE, false);
-		this.dataProcess = dataProcess;
+		this.mainFrame = parentFrame;
+		this.mainFrameService = MainFrameServiceManager.getSession();
+
 		initializeVariables();
 		constructLayout();
 		setWindow(parentFrame);
@@ -147,8 +155,7 @@ public class RunForm extends JDialog implements ActionListener {
 			boolean checkFile = checkValidFile();
 			if (checkFile) {
 				String str = (String) this.fileComboBox.getSelectedItem();
-				dataProcess.openFile(dirLocation + str);
-				dataProcess.processEvent();
+				this.mainFrame.getDataProcess().openFile(dirLocation + str);
 
 			} else {
 				System.out.println("Problem");
@@ -156,8 +163,21 @@ public class RunForm extends JDialog implements ActionListener {
 						JOptionPane.ERROR_MESSAGE);
 			}
 			setVisible(false);
-
+			this.mainFrame.getDataProcess().processFile();
+			processCommands();
 		}
 	}
 
+	private void processCommands() {
+		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getDatasetAsList());
+		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getDataset());
+		Dataset<String> testDF = this.mainFrameService.getDataset().map(new MapFunction<Row, String>() {
+			@Override
+			public String call(Row row) throws Exception {
+				return "Name: " + row.getInt(0) + "  " + row.getInt(1);
+			}
+		}, Encoders.STRING());
+		testDF.show();
+		this.mainFrame.getDataPanel().updateTable();
+	}
 }

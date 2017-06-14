@@ -38,7 +38,7 @@ import database.utils.StringConstants;
 
 public class SortQueryForm extends JDialog implements ActionListener {// implements
 	// ActionListener
-
+	private MainFrame mainFrame = null;
 	private JButton cancelButton;
 	private JButton sortButton;
 	private JLabel sectorLabel;
@@ -50,12 +50,15 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 	JComboBox<String> superLayerList;
 	private boolean isReady = false;
 
-	public SortQueryForm(JFrame parentFrame) {
+	public SortQueryForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.SORT_FORM_TITLE, false);
+
+		this.mainFrame = parentFrame;
 
 		initializeVariables();
 		constructLayout();
 		setWindow(parentFrame);
+		// parentFrame.dataProcess.getDataset();
 	}
 
 	private void setWindow(JFrame parentFrame) {
