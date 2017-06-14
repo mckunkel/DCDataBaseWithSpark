@@ -12,6 +12,8 @@
 */
 package spark.utils;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.MapFunction;
@@ -45,6 +47,9 @@ public class Person {
 	}
 
 	public static void main(String[] args) {
+		Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
+		Logger.getLogger("org").setLevel(Level.OFF);
+		Logger.getLogger("akka").setLevel(Level.OFF);
 		SparkSession spark = SparkManager.getSession();
 		// Create an RDD of Person objects from a text file
 		JavaRDD<Person> peopleRDD = spark.read()
@@ -84,6 +89,8 @@ public class Person {
 				return null;
 			}
 		};
+		System.out.println("#############################");
+		teenagersDF.printSchema();
 		Dataset<String> teenagerNamesByIndexDF = teenagersDF.map(new MapFunction<Row, String>() {
 			@Override
 			public String call(Row row) throws Exception {
@@ -91,6 +98,7 @@ public class Person {
 			}
 		}, stringEncoder);
 		teenagerNamesByIndexDF.show();
+		System.out.println("#############################");
 		// +------------+
 		// | value|
 		// +------------+
@@ -112,12 +120,13 @@ public class Person {
 		// +------------+
 
 		// MK test
-		Dataset<Row> testDF = teenagerNamesByFieldDF.map(new MapFunction<String, Row>() {
-			@Override
-			public Row call(String row) throws Exception {
-				return row.toLowerCase();
-			}
-		}, encoder);
-		testDF.show();
+		// Dataset<Row> testDF = teenagerNamesByFieldDF.map(new
+		// MapFunction<String, Row>() {
+		// @Override
+		// public Row call(String row) throws Exception {
+		// return row.toLowerCase();
+		// }
+		// }, encoder);
+		// testDF.show();
 	}
 }

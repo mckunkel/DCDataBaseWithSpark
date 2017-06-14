@@ -140,7 +140,7 @@ public class MainFrame extends JFrame {
 
 		this.sqlPanel = new SQLPanel();
 		this.dataPanel = new DataPanel();
-		this.histogramPanel = new HistogramPanel(this.dataProcess);
+		this.histogramPanel = new HistogramPanel();
 
 		this.dataLabel = new JLabel(StringConstants.MAIN_FORM_DATA);
 		dataLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));

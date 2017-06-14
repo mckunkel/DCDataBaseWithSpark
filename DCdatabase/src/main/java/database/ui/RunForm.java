@@ -21,10 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.spark.api.java.function.MapFunction;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.Row;
 
 import database.service.MainFrameService;
 import database.utils.MainFrameServiceManager;
@@ -169,15 +165,6 @@ public class RunForm extends JDialog implements ActionListener {
 	}
 
 	private void processCommands() {
-		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getDatasetAsList());
-		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getDataset());
-		Dataset<String> testDF = this.mainFrameService.getDataset().map(new MapFunction<Row, String>() {
-			@Override
-			public String call(Row row) throws Exception {
-				return "Name: " + row.getInt(0) + "  " + row.getInt(1);
-			}
-		}, Encoders.STRING());
-		testDF.show();
-		this.mainFrame.getDataPanel().updateTable();
+		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getBySectorAndSuperLayer(2, 2));
 	}
 }

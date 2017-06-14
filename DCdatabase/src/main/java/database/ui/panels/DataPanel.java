@@ -13,7 +13,6 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -76,10 +75,6 @@ public class DataPanel extends JPanel {
 		this.aTable = new JTable(tableModel);
 	}
 
-	public void setTableModel(List<Row> wireList) {
-		this.tableModel.setWireList(wireList);
-	}
-
 	public void setTableModel(Dataset<Row> wireSet) {
 		this.tableModel.setWireSet(wireSet);
 	}
@@ -90,8 +85,6 @@ public class DataPanel extends JPanel {
 
 	public void loadData() {
 		this.aTable.removeAll();
-		// setTableModel
-
 	}
 
 }

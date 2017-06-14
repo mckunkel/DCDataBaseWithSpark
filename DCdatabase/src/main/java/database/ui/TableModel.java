@@ -25,7 +25,6 @@ import database.utils.NumberConstants;
 public class TableModel extends AbstractTableModel {
 
 	private List<Row> wireList;
-	private Dataset<Row> wireDF;
 	private String[] colNames = { "Sector", "SuperLayer", "Layer", "Wire" };
 
 	public TableModel() {
@@ -62,12 +61,13 @@ public class TableModel extends AbstractTableModel {
 		}
 	}
 
-	public void setWireList(List<Row> wireList) {
-		this.wireList = wireList;
+	public void setWireSet(Dataset<Row> wireDF) {
+		setWireList(wireDF.collectAsList());
+		updateTable();
 	}
 
-	public void setWireSet(Dataset<Row> wireDF) {
-		this.wireDF = wireDF;
+	public void setWireList(List<Row> wireList) {
+		this.wireList = wireList;
 	}
 
 	public void updateTable() {

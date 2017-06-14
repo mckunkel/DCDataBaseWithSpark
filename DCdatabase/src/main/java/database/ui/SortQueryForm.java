@@ -33,12 +33,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import database.service.MainFrameService;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class SortQueryForm extends JDialog implements ActionListener {// implements
 	// ActionListener
 	private MainFrame mainFrame = null;
+	private MainFrameService mainFrameService = null;
+
 	private JButton cancelButton;
 	private JButton sortButton;
 	private JLabel sectorLabel;
@@ -54,6 +58,7 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 		super(parentFrame, StringConstants.SORT_FORM_TITLE, false);
 
 		this.mainFrame = parentFrame;
+		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		initializeVariables();
 		constructLayout();
@@ -163,11 +168,13 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 		if (event.getSource() == this.cancelButton) {
 			setVisible(false);
 		} else if (event.getSource() == this.sortButton) {
-
+			int sectorString = 2;
+			int superLayerString = 2;
+			boolean wasReady = false;
 			if (isReady) {
-				String sectorString = this.sectorList.getSelectedItem().toString();
-				String superLayerString = this.superLayerList.getSelectedItem().toString();
-				updateQuery(sectorString, superLayerString);
+				wasReady = true;
+				sectorString = Integer.parseInt(this.sectorList.getSelectedItem().toString());
+				superLayerString = Integer.parseInt(this.superLayerList.getSelectedItem().toString());
 			} else {
 				JFrame errorFrame = new JFrame("");
 				System.out.println("Problem");
@@ -176,6 +183,8 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 			}
 
 			this.setVisible(false);
+			updateQuery(wasReady, sectorString, superLayerString);
+
 		}
 	}
 
@@ -187,9 +196,13 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 		return isReady;
 	}
 
-	protected void updateQuery(String sectorSelection, String superLayerSelection) {
-		System.out
-				.println("You will be selecting sector " + sectorSelection + " and superlayer " + superLayerSelection);
+	protected void updateQuery(boolean wasReady, int sectorSelection, int superLayerSelection) {
+		if (wasReady) {
+			this.mainFrame.getDataPanel().setTableModel(
+					this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
+			this.mainFrame.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
+		}
+
 	}
 
 }

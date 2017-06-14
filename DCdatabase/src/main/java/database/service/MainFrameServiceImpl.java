@@ -1,54 +1,35 @@
 package database.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoder;
-import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder;
-import org.apache.spark.sql.catalyst.encoders.RowEncoder;
+import org.jlab.groot.data.H2F;
 
-import database.objects.TBHits;
+import database.utils.Coordinate;
 import spark.utils.MainFrameQuery;
-import spark.utils.SparkManager;
 
 public class MainFrameServiceImpl implements MainFrameService {
 
 	private MainFrameQuery mainFrameQuery;
 	private Dataset<Row> queryDF = null;
-	private List<Row> queryList = null;
 
-	// testing
-	private List<TBHits> tbHitList = new ArrayList<TBHits>();
-	private Encoder<TBHits> TBHitsEncoder = Encoders.bean(TBHits.class);
+	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
-		this.queryList = new ArrayList<Row>();
-	}
-
-	public void setDatasetStruct(Dataset<Row> queryDF) {
-		ExpressionEncoder<Row> encoder = RowEncoder.apply(queryDF.schema());
-		this.queryDF = new Dataset<Row>(SparkManager.getSession(), queryDF.queryExecution().logical(), encoder);
-		setDataset(queryDF);
+		this.occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
+		createHistograms();
 	}
 
 	public void setDataset(Dataset<Row> queryDF) {
 		this.queryDF = queryDF;
-	}
-
-	public void setDataList(List<Row> collectAsList) {
-		this.queryList = collectAsList;
+		this.mainFrameQuery.setDataset(queryDF);
 	}
 
 	public Dataset<Row> getDataset() {
 		return this.queryDF;
-	}
-
-	public List<Row> getDatasetAsList() {
-		return this.queryList;
 	}
 
 	public Dataset<Row> getBySector(int sector) {
@@ -71,12 +52,27 @@ public class MainFrameServiceImpl implements MainFrameService {
 		return this.mainFrameQuery.getBySectorAndSuperLayerAndLayer(sector, superLayer, layer);
 	}
 
-	public void shutdown() {
-		this.mainFrameQuery.shutdown();
+	public Map<Coordinate, H2F> getHistogramMap() {
+		return this.occupanciesByCoordinate;
 	}
 
-	public void setSchema() {
+	private void createHistograms() {
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				occupanciesByCoordinate.put(new Coordinate(i, j),
+						new H2F("Occupancy all hits SL" + i + "sector" + j, "", 112, 1, 113, 6, 1, 7));
+				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleX("Wire Sector" + (j + 1));
+				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleY("Layer SL" + (i + 1));
+			}
+		}
+	}
 
+	public H2F getHistogramByMap(int superLayer, int sector) {
+		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
+	}
+
+	public void shutdown() {
+		this.mainFrameQuery.shutdown();
 	}
 
 }

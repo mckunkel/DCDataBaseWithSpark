@@ -13,30 +13,34 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
-import database.process.DataProcess;
+import database.service.MainFrameService;
+import database.utils.Coordinate;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class HistogramPanel extends JPanel implements UpdatePanel {
-
-	private DataProcess dataProcess = null;
+	private MainFrameService mainFrameService = null;
 
 	private EmbeddedCanvas canvas = null;
+	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
+
 	int updateTime = NumberConstants.CANVAS_UPDATE;
 
 	final int space = NumberConstants.BORDER_SPACING;
 	Border spaceBorder = null;
 	Border titleBorder = null;
 
-	public HistogramPanel(DataProcess dataProcess) {
-		this.dataProcess = dataProcess;
+	public HistogramPanel() {
 		initializeVariables();
 		constructLayout();
 	}
@@ -56,6 +60,7 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 	}
 
 	private void initializeVariables() {
+		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		this.canvas = new EmbeddedCanvas();
 		this.canvas.initTimer(updateTime);
@@ -63,12 +68,12 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.HISTOGRAM_FORM_LABEL);
 
-		this.canvas.draw(this.dataProcess.getHistogramByMap(NumberConstants.DEFAULT_HIST_SUPERLAYER,
+		this.canvas.draw(this.mainFrameService.getHistogramByMap(NumberConstants.DEFAULT_HIST_SUPERLAYER,
 				NumberConstants.DEFAULT_HIST_SECTOR));
 	}
 
 	public void updateCanvas(int superLayer, int sector) {
-		this.canvas.draw(this.dataProcess.getHistogramByMap(superLayer, sector));
+		this.canvas.draw(this.mainFrameService.getHistogramByMap(superLayer, sector));
 		this.canvas.update();
 	}
 

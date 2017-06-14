@@ -13,16 +13,13 @@
 package database.process;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.jlab.groot.data.H2F;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
 import org.jlab.io.hipo.HipoDataSource;
@@ -36,36 +33,14 @@ import spark.utils.SparkManager;
 
 public class DataProcess {
 	private MainFrameService mainFrameService = null;
+	private SparkSession spSession = null;
+	private List<TBHits> tbHitList = null;
 
-	private Map<Coordinate, H2F> occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
-	private List<TBHits> tbHitList = new ArrayList<TBHits>();
-	private Dataset<Row> subtractedDataset = null;
-	SparkSession spSession = null;
 	private HipoDataSource reader = null;
-	private long startTime;
 
 	public DataProcess() {
 		this.reader = new HipoDataSource();
 		init();
-	}
-
-	public DataProcess(SparkSession spSession) {
-		this.reader = new HipoDataSource();
-		this.spSession = spSession;
-		init();
-	}
-
-	public DataProcess(String str) {
-		this.reader = new HipoDataSource();
-		this.reader.open(str);
-		init();
-		processFile();
-	}
-
-	public DataProcess(HipoDataSource reader) {
-		this.reader = reader;
-		init();
-		processFile();
 	}
 
 	public void openFile(String str) {
@@ -73,29 +48,17 @@ public class DataProcess {
 		this.reader.open(str);
 	}
 
-	private void createHistograms() {
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				occupanciesByCoordinate.put(new Coordinate(i, j),
-						new H2F("Occupancy all hits SL" + i + "sector" + j, "", 112, 1, 113, 6, 1, 7));
-				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleX("Wire Sector" + (j + 1));
-				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleY("Layer SL" + (i + 1));
-			}
-		}
-	}
-
 	private void init() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
-
-		createHistograms();
-		startTime = System.currentTimeMillis();
-
+		this.spSession = SparkManager.getSession();
+		this.tbHitList = new ArrayList<TBHits>();
+		// createHistograms();
 	}
 
 	public void processFile() {
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < 400) {// && counter < 4000
+		while (reader.hasEvent() && counter < 4000) {// && counter < 4000
 			if (counter % 500 == 0)
 				System.out.println("done " + counter + " events");
 			DataEvent event = reader.getNextEvent();
@@ -121,16 +84,15 @@ public class DataProcess {
 					(bnkHits.getInt("trkID", i)));
 
 			this.tbHitList.add(tbHits);
-			this.occupanciesByCoordinate
+			this.mainFrameService.getHistogramMap()
 					.get(new Coordinate(bnkHits.getInt("superlayer", i) - 1, bnkHits.getInt("sector", i) - 1))
 					.fill(bnkHits.getInt("wire", i), bnkHits.getInt("layer", i));
 		}
 	}
 
 	private void createDataset() {
-		SparkSession spSession = SparkManager.getSession();
 		Encoder<TBHits> TBHitsEncoder = Encoders.bean(TBHits.class);
-		Dataset<Row> tbHitDfRow = spSession.createDataset(this.tbHitList, TBHitsEncoder).toDF();
+		Dataset<Row> tbHitDfRow = this.spSession.createDataset(this.tbHitList, TBHitsEncoder).toDF();
 
 		// OK, we have the CLAS data in a dataset, now we have to sort it to
 		// only the relevant data
@@ -156,34 +118,12 @@ public class DataProcess {
 		// System.out.println("I should show here");
 		// subDf.show();
 
-		this.subtractedDataset = emptyDF.except(dataDF);
-		// this.subtractedDataset.show();
-		setDataset();
-		long endTime = System.currentTimeMillis();
-		System.out.println("Total execution time: " + (endTime - startTime) + "ms");
-	}
-
-	private void setDataset() {
-		this.mainFrameService.setDatasetStruct(this.subtractedDataset);
-		this.mainFrameService.setDataList(this.subtractedDataset.collectAsList());
-
+		this.mainFrameService.setDataset(emptyDF.except(dataDF));
 	}
 
 	public static int getRunNumber(HipoDataSource reader) {
 
 		return reader.gotoEvent(0).getBank("RUN::config").getInt("run", 0);
-	}
-
-	public Map<Coordinate, H2F> getCoordinateMap() {
-		return this.occupanciesByCoordinate;
-	}
-
-	public H2F getHistogramByMap(int superLayer, int sector) {
-		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
-	}
-
-	public Dataset<Row> getDataset() {
-		return this.subtractedDataset;
 	}
 
 }
