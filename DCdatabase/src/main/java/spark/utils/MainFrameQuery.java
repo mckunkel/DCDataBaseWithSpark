@@ -36,4 +36,7 @@ public class MainFrameQuery extends AbstractQuery {
 		return this.getBySectorAndSuperLayer(sector, superLayer).filter(col("layer").equalTo(layer));
 	}
 
+	public void prepareMYDQLQuery() {
+
+	}
 }

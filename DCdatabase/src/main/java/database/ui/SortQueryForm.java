@@ -172,17 +172,29 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 			int superLayerString = 2;
 			boolean wasReady = false;
 			if (isReady) {
-				wasReady = true;
-				sectorString = Integer.parseInt(this.sectorList.getSelectedItem().toString());
-				superLayerString = Integer.parseInt(this.superLayerList.getSelectedItem().toString());
+
+				if (this.sectorList.getSelectedItem().toString().isEmpty()
+						|| this.sectorList.getSelectedItem().toString().equalsIgnoreCase("")) {
+					JFrame errorFrame = new JFrame("");
+					JOptionPane.showMessageDialog(errorFrame, "Please enter a sector to sort",
+							"Missing Sector Selection", JOptionPane.ERROR_MESSAGE);
+				} else if (this.superLayerList.getSelectedItem().toString().isEmpty()
+						|| this.superLayerList.getSelectedItem().toString().equalsIgnoreCase("")) {
+					JFrame errorFrame = new JFrame("");
+					JOptionPane.showMessageDialog(errorFrame, "Please enter a superlayer to sort",
+							"Missing Superlayer Selection", JOptionPane.ERROR_MESSAGE);
+
+				} else {
+					wasReady = true;
+					sectorString = Integer.parseInt(this.sectorList.getSelectedItem().toString());
+					superLayerString = Integer.parseInt(this.superLayerList.getSelectedItem().toString());
+				}
 			} else {
 				JFrame errorFrame = new JFrame("");
-				System.out.println("Problem");
 				JOptionPane.showMessageDialog(errorFrame, "Would you like some green eggs to go with that ham?",
 						"Please choose a file", JOptionPane.ERROR_MESSAGE);
+				this.setVisible(false);
 			}
-
-			this.setVisible(false);
 			updateQuery(wasReady, sectorString, superLayerString);
 
 		}
@@ -198,6 +210,7 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 
 	protected void updateQuery(boolean wasReady, int sectorSelection, int superLayerSelection) {
 		if (wasReady) {
+			this.setVisible(false);
 			this.mainFrame.getDataPanel().setTableModel(
 					this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
 			this.mainFrame.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);

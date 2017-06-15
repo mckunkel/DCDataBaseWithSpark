@@ -58,7 +58,7 @@ public class DataProcess {
 	public void processFile() {
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < 4000) {// && counter < 4000
+		while (reader.hasEvent() && counter < 4000) {// && counter < 40
 			if (counter % 500 == 0)
 				System.out.println("done " + counter + " events");
 			DataEvent event = reader.getNextEvent();

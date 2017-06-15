@@ -1,7 +1,12 @@
 package spark.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 import database.utils.StringConstants;
@@ -31,7 +36,7 @@ public enum SparkManager {
 
 			// Create Spark Context from configuration
 			spContext = new JavaSparkContext(conf);
-
+			// spContext.addJar("/usr/local/Cellar/apache-spark/2.1.1/mysql-connector-java-5.1.40-bin.jar");
 			sparkSession = SparkSession.builder().appName(appName).master(sparkMaster)
 					.config("spark.sql.warehouse.dir", tempDir).getOrCreate();
 
@@ -52,6 +57,31 @@ public enum SparkManager {
 			getConnection();
 		}
 		return sparkSession;
+	}
+
+	public static Map<String, String> jdbcOptions() {
+		Map<String, String> jdbcOptions = new HashMap<String, String>();
+		jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test");
+		// jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
+		jdbcOptions.put("dbtable", "status_change");
+		jdbcOptions.put("user", "root");
+		jdbcOptions.put("password", "");
+
+		return jdbcOptions;
+	}
+
+	public static String jdbcAppendOptions() {
+
+		return SparkManager.jdbcOptions().get("url") + "?user=" + SparkManager.jdbcOptions().get("user") + "&password="
+				+ SparkManager.jdbcOptions().get("password");
+	}
+
+	public static Dataset<Row> mySqlDataset() {
+		SparkSession spSession = getSession();
+
+		Dataset<Row> demoDf = spSession.read().format("jdbc").options(jdbcOptions()).load();
+
+		return demoDf;
 	}
 
 	public static void hold() {

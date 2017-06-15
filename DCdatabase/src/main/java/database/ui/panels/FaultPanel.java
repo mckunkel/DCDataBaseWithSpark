@@ -21,7 +21,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -54,7 +53,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	public FaultPanel() {
 		initializeVariables();
-		loadData();
+		// loadData();
 		initialLayout();
 	}
 
@@ -62,9 +61,11 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.compareRunFormService = new CompareRunFormServiceImpl();
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.FAULT_FORM_LABEL);
-		this.faultComboBox = new JComboBox<String>();
-		this.applyButton = new JButton("Apply Fault");
-		this.sendButton = new JButton("Send to DB");
+		// this.faultComboBox = new JComboBox<String>();
+		this.faultComboBox = new JComboBox(StringConstants.PROBLEM_TYPES);
+
+		this.applyButton = new JButton(StringConstants.FAULT_FORM_APPLY);
+		this.sendButton = new JButton(StringConstants.FAULT_FORM_SEND);
 
 		this.applyButton.addActionListener(this);
 		this.sendButton.addActionListener(this);
@@ -75,11 +76,12 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 		this.faultComboBox.removeAllItems();
 
-		List<String> problems = this.compareRunFormService.getAllProblems();
-
-		for (String str : problems) {
-			this.faultComboBox.addItem(str);
-		}
+		// List<String> problems = this.compareRunFormService.getAllProblems();
+		// faultComboBox.setModel(new
+		// DefaultComboBoxModel(this.compareRunFormService.getAllProblems().toArray()));
+		// for (String str : problems) {
+		// this.faultComboBox.addItem(str);
+		// }
 		this.faultComboBox.addItem("other");
 	}
 

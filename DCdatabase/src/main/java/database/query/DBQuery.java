@@ -9,7 +9,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 
-import spark.utils.SparkMySQLConnection;
+import spark.utils.SparkManager;
 
 public class DBQuery {
 
@@ -17,28 +17,26 @@ public class DBQuery {
 	}
 
 	public List<String> getAllRuns() {
-		Dataset<Row> dataDF = SparkMySQLConnection.mySqlDataset().select("runno").sort(asc("runno")).distinct();
+		Dataset<Row> dataDF = SparkManager.mySqlDataset().select("runno").sort(asc("runno")).distinct();
 		return dataDF.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
 	}
 
 	public Dataset<Row> getAllRunsDataset() {
-		return SparkMySQLConnection.mySqlDataset().select("runno").sort(asc("runno")).distinct();
+		return SparkManager.mySqlDataset().select("runno").sort(asc("runno")).distinct();
 	}
 
 	public Dataset<Row> compareRun(String str) {
-		return SparkMySQLConnection.mySqlDataset()
-				.select("loclayer", "superLayer", "sector", "locwire", "status_change_type")
+		return SparkManager.mySqlDataset().select("loclayer", "superLayer", "sector", "locwire", "status_change_type")
 				.filter(col("runno").equalTo(str));
 	}
 
 	public List<String> getAllProblems() {
-		Dataset<Row> dataDF = SparkMySQLConnection.mySqlDataset().select("problem_type").sort(asc("problem_type"))
-				.distinct();
+		Dataset<Row> dataDF = SparkManager.mySqlDataset().select("problem_type").sort(asc("problem_type")).distinct();
 		return dataDF.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
 	}
 
 	public Dataset<Row> getAllProblemsDataset() {
-		return SparkMySQLConnection.mySqlDataset().select("problem_type").sort(asc("problem_type")).distinct();
+		return SparkManager.mySqlDataset().select("problem_type").sort(asc("problem_type")).distinct();
 
 	}
 

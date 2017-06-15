@@ -13,6 +13,7 @@
 package database.utils;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Toolkit;
 
 public class NumberConstants {
@@ -42,6 +43,7 @@ public class NumberConstants {
 	public static final int CANVAS_UPDATE = 2000;
 	public static final int DEFAULT_HIST_SUPERLAYER = 2;
 	public static final int DEFAULT_HIST_SECTOR = 2;
+	public static final Insets insets = new Insets(0, 0, 0, 0);
 
 }
 

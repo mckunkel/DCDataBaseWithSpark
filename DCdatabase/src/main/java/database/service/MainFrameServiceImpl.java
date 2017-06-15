@@ -1,24 +1,28 @@
 package database.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.jlab.groot.data.H2F;
 
+import database.objects.StatusChangeDB;
 import database.utils.Coordinate;
 import spark.utils.MainFrameQuery;
 
 public class MainFrameServiceImpl implements MainFrameService {
 
 	private MainFrameQuery mainFrameQuery;
+	private InsertMYSqlQuery insertMYSqlQuery;
 	private Dataset<Row> queryDF = null;
 
 	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
+		this.insertMYSqlQuery = new InsertMYSqlQueryImpl();
 		this.occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
 		createHistograms();
 	}
@@ -69,6 +73,13 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	public H2F getHistogramByMap(int superLayer, int sector) {
 		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
+	}
+
+	// for inserting into MYSQL
+	public void prepareMYSQLQuery(List<StatusChangeDB> queryList) {
+		for (StatusChangeDB statusChangeDB : queryList) {
+			System.out.println(statusChangeDB);
+		}
 	}
 
 	public void shutdown() {
