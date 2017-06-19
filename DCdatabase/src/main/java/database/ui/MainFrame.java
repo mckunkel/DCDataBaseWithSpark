@@ -13,8 +13,6 @@
 package database.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
@@ -51,6 +49,7 @@ import database.ui.panels.SQLPanel;
 import database.ui.panels.StatusPanel;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
+import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class MainFrame extends JFrame {
@@ -179,14 +178,6 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// fc.setMultiSelectionEnabled(true);
-				// fc.showOpenDialog(null);
-				// fileList = fc.getSelectedFiles();
-				// for (File file : fileList) {
-				// System.out.println("Readying file " + file);
-				// fileArray.add(file.toString());
-				// }
-				// This was with awt fileDialog
 
 				HipoFilter filter = new HipoFilter();
 				fileDialog.setFilenameFilter(filter);
@@ -273,27 +264,15 @@ public class MainFrame extends JFrame {
 		fileDialog.setMultipleMode(true);
 	}
 
-	private static void addComponent(Container container, Component component, int gridx, int gridy, int gridwidth,
-			int gridheight, int anchor, int fill, int ipadx, int ipady) {
-		GridBagConstraints gbc = new GridBagConstraints(gridx, gridy, gridwidth, gridheight, 1.0, 1.0, anchor, fill,
-				NumberConstants.insets, ipadx, ipady);
-		container.add(component, gbc);
-	}
-
 	private JPanel dataControlsPanel() {
 		JButton b = new JButton("Just fake button");
 		Dimension buttonSize = b.getPreferredSize();
 		int maxGap = 10;
 
 		JPanel dataControlsPanel = new JPanel(new GridBagLayout());
-		Dimension panelSize = dataControlsPanel.getPreferredSize();
-		// dataControlsPanel.setPreferredSize(new Dimension(60, 60));
-		// dataControlsPanel.setPreferredSize(new Dimension((int)
-		// (buttonSize.getWidth() * 2.5) + maxGap,
-		// (int) (buttonSize.getHeight() * 3.5) + maxGap * 2));
-		addComponent(dataControlsPanel, dataPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START, GridBagConstraints.BOTH,
-				0, 425);
-		addComponent(dataControlsPanel, faultPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		PanelConstraints.addComponent(dataControlsPanel, dataPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
+				GridBagConstraints.BOTH, 0, 425);
+		PanelConstraints.addComponent(dataControlsPanel, faultPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.REMAINDER, 0, 0);
 
 		return dataControlsPanel;
@@ -301,10 +280,9 @@ public class MainFrame extends JFrame {
 
 	private JPanel sqlControlsPanel() {
 		JPanel sqlControlsPanel = new JPanel(new GridBagLayout());
-		// dataControlsPanel.setPreferredSize(new Dimension(60, 60));
-		addComponent(sqlControlsPanel, sqlPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START, GridBagConstraints.BOTH, 0,
-				425);
-		addComponent(sqlControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		PanelConstraints.addComponent(sqlControlsPanel, sqlPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
+				GridBagConstraints.BOTH, 0, 425);
+		PanelConstraints.addComponent(sqlControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.RELATIVE, 0, 0);
 
 		return sqlControlsPanel;
@@ -312,14 +290,12 @@ public class MainFrame extends JFrame {
 
 	private JPanel histogramControlsPanel() {
 		JPanel histgramControlsPanel = new JPanel();
-		// dataControlsPanel.setPreferredSize(new Dimension(60, 60));
-
 		histgramControlsPanel.setLayout(new GridBagLayout());
-		addComponent(histgramControlsPanel, histogramPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
+		PanelConstraints.addComponent(histgramControlsPanel, histogramPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH, 0, 435);
 
 		// add controls to histogram panel
-		addComponent(histgramControlsPanel, ccdbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		PanelConstraints.addComponent(histgramControlsPanel, ccdbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.RELATIVE, 0, 0);
 		return histgramControlsPanel;
 
@@ -331,17 +307,6 @@ public class MainFrame extends JFrame {
 		layoutPanel.add(dataControlsPanel());
 		layoutPanel.add(sqlControlsPanel());
 		layoutPanel.add(histogramControlsPanel());
-
-		// layoutPanel.setLayout(new GridBagLayout());
-		// addComponent(layoutPanel, dataControlsPanel(), 0, 0, 1, 1,
-		// GridBagConstraints.FIRST_LINE_START,
-		// GridBagConstraints.BOTH, 1, 1);
-		// addComponent(layoutPanel, sqlControlsPanel(), 1, 0, 1, 1,
-		// GridBagConstraints.PAGE_START,
-		// GridBagConstraints.BOTH, 1, 1);
-		// addComponent(layoutPanel, histogramControlsPanel(), 2, 0, 1, 1,
-		// GridBagConstraints.FIRST_LINE_END,
-		// GridBagConstraints.BASELINE_TRAILING, 1, 1);
 
 		setLayout(new BorderLayout());
 		add(layoutPanel, BorderLayout.CENTER);

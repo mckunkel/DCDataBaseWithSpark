@@ -35,16 +35,16 @@ import database.utils.EmptyDataPoint;
 import database.utils.MainFrameServiceManager;
 import spark.utils.SparkManager;
 
-public class DataProcess {
+public class DataProcess2 {
 	private MainFrameService mainFrameService = null;
 	private SparkSession spSession = null;
 	private List<TBHits> tbHitList = null;
 
 	private Map<Coordinate, List<TBHits>> tbHitListByCoordinate = null;
-	private Coordinate emptyCoordinate = null;
+
 	private HipoDataSource reader = null;
 
-	public DataProcess() {
+	public DataProcess2() {
 		this.reader = new HipoDataSource();
 		init();
 	}
@@ -74,7 +74,7 @@ public class DataProcess {
 	public void processFile() {
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < 10000) {// && counter < 40
+		while (reader.hasEvent() && counter < 400) {// && counter < 40
 			if (counter % 500 == 0)
 				System.out.println("done " + counter + " events");
 			DataEvent event = reader.getNextEvent();
@@ -111,6 +111,34 @@ public class DataProcess {
 
 	private void createDataset() {
 		Encoder<TBHits> TBHitsEncoder = Encoders.bean(TBHits.class);
+		Dataset<Row> tbHitDfRow = this.spSession.createDataset(this.tbHitList, TBHitsEncoder).toDF();
+		// OK, we have the CLAS data in a dataset, now we have to sort it to
+		// only the relevant data
+		// Then create a temporary view of this to compare it to an empty set
+		// Empty set is for comparing and finding wires with 0 hits.
+		// This is done because when filling a dataset, its relational, so
+		// it doesnt know if a wire should be zero
+		Dataset<Row> testDF = tbHitDfRow.groupBy("sector", "layer", "superLayer", "wire").count()
+				.sort("sector", "layer", "superLayer", "wire").toDF("sector", "layer", "superLayer", "wire", "counts");
+		testDF.createOrReplaceTempView("DataView");
+		Dataset<Row> dataDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM DataView").sort("sector",
+				"superlayer", "layer", "wire");
+
+		// Empty Data to compare to the dataset above
+		Dataset<Row> emptyData = EmptyDataPoint.getEmptyDCData();
+		emptyData.createOrReplaceTempView("testView");
+		Dataset<Row> emptyDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM testView").sort("sector",
+				"superlayer", "layer", "wire");
+
+		// Now find those in emptyDF that are not in dataDF and return this
+		// dataset
+		// Dataset<Row> subDf = emptyDF.except(dataDF);
+		// System.out.println("I should show here");
+		// subDf.show();
+
+		// this.mainFrameService.setDataset(emptyDF.except(dataDF));
+
+		// testing new implementation of datasetbyMap
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
 				Dataset<Row> tbHitDf = this.spSession
@@ -141,9 +169,20 @@ public class DataProcess {
 				// Now find those in emptyDF that are not in dataDF and return
 				// this
 				// dataset
-				// Dataset<Row> subDf = emptyByCoordinateDF.except(dataset);
+				Dataset<Row> subDf = emptyByCoordinateDF.except(dataset);
 				// subDf.show();
 				this.mainFrameService.getDataSetMap().put(new Coordinate(i, j), emptyByCoordinateDF.except(dataset));
+			}
+		}
+	}
+
+	public void testMapSequence() {
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				System.out.println("I should show here for superLayer " + (i + 1) + " and sector " + (j + 1)
+						+ " in testMapSequence");
+
+				this.mainFrameService.getDatasetByMap(i, j).show();
 			}
 		}
 	}

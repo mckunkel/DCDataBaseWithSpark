@@ -6,7 +6,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 public class MainFrameQuery extends AbstractQuery {
-	Dataset<Row> queryDF;
+	private Dataset<Row> queryDF = null;
 
 	public MainFrameQuery() {
 

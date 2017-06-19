@@ -1,3 +1,15 @@
+/*  +__^_________,_________,_____,________^-.-------------------,
+ *  | |||||||||   `--------'     |          |                   O
+ *  `+-------------USMC----------^----------|___________________|
+ *    `\_,---------,---------,--------------'
+ *      / X MK X /'|       /'
+ *     / X MK X /  `\    /'
+ *    / X MK X /`-------'
+ *   / X MK X /
+ *  / X MK X /
+ * (________(                @author m.c.kunkel
+ *  `------'
+*/
 package database.ui;
 
 import java.awt.BorderLayout;
@@ -23,13 +35,16 @@ import javax.swing.border.Border;
 import org.apache.commons.lang3.StringUtils;
 
 import database.service.MainFrameService;
+import database.ui.panels.SortPanel;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
+import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class RunForm extends JDialog implements ActionListener {
 	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
+	private SortPanel sortPanel = null;
 
 	private JButton okButton;
 	private JComboBox<String> fileComboBox;
@@ -44,6 +59,7 @@ public class RunForm extends JDialog implements ActionListener {
 		super(parentFrame, StringConstants.RUN_FORM_TITLE, false);
 		this.mainFrame = parentFrame;
 		this.mainFrameService = MainFrameServiceManager.getSession();
+		this.sortPanel = new SortPanel();
 
 		initializeVariables();
 		constructLayout();
@@ -98,41 +114,26 @@ public class RunForm extends JDialog implements ActionListener {
 	private void constructLayout() {
 
 		JPanel fileInfoPanel = new JPanel();
-		JPanel buttonsPanel = new JPanel();
-		// ////////// Buttons Panel ///////////////
-		int space = 15;
-		Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
+		Border spaceBorder = BorderFactory.createEmptyBorder(NumberConstants.BORDER_SPACING,
+				NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING);
 		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.FILE_FORM_SELECT);
-
 		fileInfoPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-
 		fileInfoPanel.setLayout(new GridBagLayout());
 
-		GridBagConstraints gc = new GridBagConstraints();
-
-		gc.gridy = 0;
-
-		Insets rightPadding = new Insets(0, 0, 0, 15);
+		// Insets rightPadding = new Insets(0, 0, 0, 15);
+		Insets leftPadding = new Insets(0, 0, 0, 0);
+		Insets rightPadding = new Insets(0, -300, 0, 0);
 		Insets noPadding = new Insets(0, 0, 0, 0);
 
-		// ///// First row /////////////////////////////
-
-		gc.weightx = 1;
-		gc.weighty = 1;
-		gc.fill = GridBagConstraints.NONE;
-
-		gc.gridx = 0;
-		gc.anchor = GridBagConstraints.EAST;
-		gc.insets = rightPadding;
-		fileInfoPanel.add(fileLabel, gc);
-
-		gc.gridx++;
-		gc.anchor = GridBagConstraints.WEST;
-		gc.insets = noPadding;
-		fileInfoPanel.add(fileComboBox, gc);
-
+		///// First row /////////////////////////////
+		PanelConstraints.addComponent(fileInfoPanel, fileLabel, 0, 0, 1, 1, GridBagConstraints.LINE_START,
+				GridBagConstraints.BOTH, leftPadding, 0, 0);
+		PanelConstraints.addComponent(fileInfoPanel, fileComboBox, 1, 0, 1, 1, GridBagConstraints.LINE_END,
+				GridBagConstraints.BOTH, rightPadding, 0, 0);
+		PanelConstraints.addComponent(fileInfoPanel, sortPanel, 0, 1, 1, 1, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, noPadding, 0, 0);
 		// ////////// Buttons Panel ///////////////
-
+		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		buttonsPanel.add(okButton);
 
@@ -165,6 +166,11 @@ public class RunForm extends JDialog implements ActionListener {
 	}
 
 	private void processCommands() {
-		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getBySectorAndSuperLayer(2, 2));
+		this.mainFrame.getDataPanel()
+				.setTableModel(this.mainFrameService.getBySectorAndSuperLayer(
+						Integer.parseInt(this.sortPanel.getSelectedSector()),
+						Integer.parseInt(this.sortPanel.getSelectedSuperLayer())));
+		this.mainFrame.getHistogramPanel().updateCanvas(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()),
+				Integer.parseInt(this.sortPanel.getSelectedSector()));
 	}
 }

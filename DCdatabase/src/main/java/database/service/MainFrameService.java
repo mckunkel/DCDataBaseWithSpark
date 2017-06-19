@@ -12,19 +12,7 @@ import database.utils.Coordinate;
 
 public interface MainFrameService {
 
-	public void setDataset(Dataset<Row> queryDF);
-
-	public Dataset<Row> getDataset();
-
-	public Dataset<Row> getBySector(int sector);
-
-	public Dataset<Row> getBySuperLayer(int superLayer);
-
-	public Dataset<Row> getByLayer(int layer);
-
 	public Dataset<Row> getBySectorAndSuperLayer(int sector, int superLayer);
-
-	public Dataset<Row> getBySectorAndSuperLayerAndLayer(int sector, int superLayer, int layer);
 
 	public Map<Coordinate, H2F> getHistogramMap();
 
@@ -32,7 +20,7 @@ public interface MainFrameService {
 
 	public Dataset<Row> getDatasetByMap(int superLayer, int sector);
 
-	public void setDatasetByMap(Map<Coordinate, Dataset<Row>> queryDF);
+	public Map<Coordinate, Dataset<Row>> getDataSetMap();
 
 	public void prepareMYSQLQuery(List<StatusChangeDB> queryList);
 

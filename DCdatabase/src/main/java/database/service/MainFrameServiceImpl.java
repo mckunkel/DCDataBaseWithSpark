@@ -17,7 +17,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private MainFrameQuery mainFrameQuery;
 	private InsertMYSqlQuery insertMYSqlQuery;
 	private Dataset<Row> queryDF = null;
-
+	private Coordinate coordinate;
 	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
 	private Map<Coordinate, Dataset<Row>> dataSetByCoordinate = null;
 
@@ -31,33 +31,9 @@ public class MainFrameServiceImpl implements MainFrameService {
 		createDatasets();
 	}
 
-	public void setDataset(Dataset<Row> queryDF) {
-		this.queryDF = queryDF;
-		this.mainFrameQuery.setDataset(queryDF);
-	}
-
-	public Dataset<Row> getDataset() {
-		return this.queryDF;
-	}
-
-	public Dataset<Row> getBySector(int sector) {
-		return this.mainFrameQuery.getBySector(sector);
-	}
-
-	public Dataset<Row> getBySuperLayer(int superLayer) {
-		return this.mainFrameQuery.getBySuperLayer(superLayer);
-	}
-
-	public Dataset<Row> getByLayer(int layer) {
-		return this.mainFrameQuery.getByLayer(layer);
-	}
-
 	public Dataset<Row> getBySectorAndSuperLayer(int sector, int superLayer) {
+		this.mainFrameQuery.setDataset(getDatasetByMap(superLayer, sector));
 		return this.mainFrameQuery.getBySectorAndSuperLayer(sector, superLayer);
-	}
-
-	public Dataset<Row> getBySectorAndSuperLayerAndLayer(int sector, int superLayer, int layer) {
-		return this.mainFrameQuery.getBySectorAndSuperLayerAndLayer(sector, superLayer, layer);
 	}
 
 	public Map<Coordinate, H2F> getHistogramMap() {
@@ -80,7 +56,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private void createDatasets() {
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				dataSetByCoordinate.put(new Coordinate(i, j), queryDF);
+				Dataset<Row> test = null;
+				dataSetByCoordinate.put(new Coordinate(i, j), test);
 			}
 		}
 	}
@@ -93,8 +70,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 		return this.dataSetByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
 	}
 
-	public void setDatasetByMap(Map<Coordinate, Dataset<Row>> queryDF) {
-		this.dataSetByCoordinate = queryDF;
+	public Map<Coordinate, Dataset<Row>> getDataSetMap() {
+		return this.dataSetByCoordinate;
 	}
 
 	// for inserting into MYSQL

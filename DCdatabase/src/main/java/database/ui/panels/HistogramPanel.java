@@ -73,9 +73,6 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.HISTOGRAM_FORM_LABEL);
-
-		this.canvas.draw(this.mainFrameService.getHistogramByMap(NumberConstants.DEFAULT_HIST_SUPERLAYER,
-				NumberConstants.DEFAULT_HIST_SECTOR));
 	}
 
 	public void updateCanvas(int superLayer, int sector) {

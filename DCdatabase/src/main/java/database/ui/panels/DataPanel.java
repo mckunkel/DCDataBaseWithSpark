@@ -100,7 +100,6 @@ public class DataPanel extends JPanel {
 	}
 
 	private void mouseListener() {
-		List<Row> aTestList = new ArrayList<Row>();
 		List<StatusChangeDB> queryList = new ArrayList<>();
 		StatusChangeDB statusChangeDB = new StatusChangeDB();
 		this.aTable.addMouseListener(new MouseAdapter() {
