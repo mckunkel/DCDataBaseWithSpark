@@ -30,6 +30,10 @@ public interface MainFrameService {
 
 	public H2F getHistogramByMap(int superLayer, int sector);
 
+	public Dataset<Row> getDatasetByMap(int superLayer, int sector);
+
+	public void setDatasetByMap(Map<Coordinate, Dataset<Row>> queryDF);
+
 	public void prepareMYSQLQuery(List<StatusChangeDB> queryList);
 
 	public void shutdown();

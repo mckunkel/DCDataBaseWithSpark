@@ -46,16 +46,22 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 	}
 
 	private void constructLayout() {
+		setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
+		setLayout(new BorderLayout());
+
 		JPanel aTestPanel = new JPanel();
-		aTestPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
+		int thisSpace = 0;
+		aTestPanel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createEmptyBorder(thisSpace, thisSpace, thisSpace, thisSpace),
+				BorderFactory.createTitledBorder("")));
+		aTestPanel.setLayout(new BorderLayout());
+		canvas.setAxisTitleSize(10);
+		canvas.setAxisFontSize(50);
+		canvas.setAxisLabelSize(10);
+
 		aTestPanel.add(canvas, BorderLayout.CENTER);
 
-		// setBorder(BorderFactory.createCompoundBorder(spaceBorder,
-		// titleBorder));
-		// setLayout(new BorderLayout());
-		// add(new JScrollPane(canvas), BorderLayout.CENTER);
-		// add(canvas, BorderLayout.CENTER);
-		add(aTestPanel);
+		add(aTestPanel, BorderLayout.CENTER);
 
 	}
 

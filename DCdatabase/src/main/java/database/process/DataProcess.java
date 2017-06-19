@@ -12,8 +12,12 @@
 */
 package database.process;
 
+import static org.apache.spark.sql.functions.col;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoder;
@@ -36,6 +40,8 @@ public class DataProcess {
 	private SparkSession spSession = null;
 	private List<TBHits> tbHitList = null;
 
+	private Map<Coordinate, List<TBHits>> tbHitListByCoordinate = null;
+
 	private HipoDataSource reader = null;
 
 	public DataProcess() {
@@ -52,7 +58,17 @@ public class DataProcess {
 		this.mainFrameService = MainFrameServiceManager.getSession();
 		this.spSession = SparkManager.getSession();
 		this.tbHitList = new ArrayList<TBHits>();
-		// createHistograms();
+		this.tbHitListByCoordinate = new HashMap<Coordinate, List<TBHits>>();
+
+		createLists();
+	}
+
+	private void createLists() {
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				this.tbHitListByCoordinate.put(new Coordinate(i, j), new ArrayList<TBHits>());
+			}
+		}
 	}
 
 	public void processFile() {
@@ -84,6 +100,9 @@ public class DataProcess {
 					(bnkHits.getInt("trkID", i)));
 
 			this.tbHitList.add(tbHits);
+			this.tbHitListByCoordinate.put(
+					new Coordinate(bnkHits.getInt("superlayer", i) - 1, bnkHits.getInt("sector", i) - 1),
+					this.tbHitList);
 			this.mainFrameService.getHistogramMap()
 					.get(new Coordinate(bnkHits.getInt("superlayer", i) - 1, bnkHits.getInt("sector", i) - 1))
 					.fill(bnkHits.getInt("wire", i), bnkHits.getInt("layer", i));
@@ -93,7 +112,6 @@ public class DataProcess {
 	private void createDataset() {
 		Encoder<TBHits> TBHitsEncoder = Encoders.bean(TBHits.class);
 		Dataset<Row> tbHitDfRow = this.spSession.createDataset(this.tbHitList, TBHitsEncoder).toDF();
-
 		// OK, we have the CLAS data in a dataset, now we have to sort it to
 		// only the relevant data
 		// Then create a temporary view of this to compare it to an empty set
@@ -119,6 +137,45 @@ public class DataProcess {
 		// subDf.show();
 
 		this.mainFrameService.setDataset(emptyDF.except(dataDF));
+
+		// testing new implementation of datasetbyMap
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				Dataset<Row> tbHitDf = this.spSession
+						.createDataset(this.tbHitListByCoordinate.get(new Coordinate(i, j)), TBHitsEncoder).toDF();
+				// OK, we have the CLAS data in a dataset, now we have to sort
+				// it to
+				// only the relevant data
+				// Then create a temporary view of this to compare it to an
+				// empty set
+				// Empty set is for comparing and finding wires with 0 hits.
+				// This is done because when filling a dataset, its relational,
+				// so
+				// it doesnt know if a wire should be zero
+				Dataset<Row> placerDF = tbHitDf.groupBy("sector", "layer", "superLayer", "wire").count()
+						.sort("sector", "layer", "superLayer", "wire")
+						.toDF("sector", "layer", "superLayer", "wire", "counts");
+				placerDF.createOrReplaceTempView("DataView");
+				Dataset<Row> dataset = spSession.sql("SELECT layer, superLayer, sector, wire FROM DataView")
+						.sort("sector", "superlayer", "layer", "wire");
+
+				// Empty Data to compare to the dataset above
+				Dataset<Row> emptyplacerDF = EmptyDataPoint.getEmptyDCData();
+				emptyplacerDF.createOrReplaceTempView("testView");
+				Dataset<Row> emptyByCoordinateDF = spSession.sql("SELECT layer, superLayer, sector, wire FROM testView")
+						.filter(col("sector").equalTo(j + 1)).filter(col("superLayer").equalTo(i + 1))
+						.sort("sector", "superlayer", "layer", "wire");
+
+				// Now find those in emptyDF that are not in dataDF and return
+				// this
+				// dataset
+				Dataset<Row> subDf = emptyByCoordinateDF.except(dataset);
+				System.out.println("I should show here for superLayer " + (i + 1) + " and sector " + (j + 1));
+				subDf.show();
+
+				// this.mainFrameService.setDatasetb(emptyDF.except(dataDF));
+			}
+		}
 	}
 
 	public static int getRunNumber(HipoDataSource reader) {

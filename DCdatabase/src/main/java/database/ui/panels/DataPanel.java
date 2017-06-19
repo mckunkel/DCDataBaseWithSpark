@@ -47,10 +47,11 @@ public class DataPanel extends JPanel {
 
 	public DataPanel() {
 		initializeVariables();
-		constructLayout();
+
 		initializeTableAlignment();
 		initializeHeaderAlignment();
 		mouseListener();
+		constructLayout();
 	}
 
 	private void initializeTableAlignment() {

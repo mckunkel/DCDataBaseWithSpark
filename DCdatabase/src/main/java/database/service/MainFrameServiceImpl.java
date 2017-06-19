@@ -19,12 +19,16 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private Dataset<Row> queryDF = null;
 
 	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
+	private Map<Coordinate, Dataset<Row>> dataSetByCoordinate = null;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
 		this.insertMYSqlQuery = new InsertMYSqlQueryImpl();
 		this.occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
+		this.dataSetByCoordinate = new HashMap<Coordinate, Dataset<Row>>();
+
 		createHistograms();
+		createDatasets();
 	}
 
 	public void setDataset(Dataset<Row> queryDF) {
@@ -65,14 +69,32 @@ public class MainFrameServiceImpl implements MainFrameService {
 			for (int j = 0; j < 6; j++) {
 				occupanciesByCoordinate.put(new Coordinate(i, j),
 						new H2F("Occupancy all hits SL" + i + "sector" + j, "", 112, 1, 113, 6, 1, 7));
-				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleX("Wire Sector" + (j + 1));
-				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleY("Layer SL" + (i + 1));
+				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleX("Wire");
+				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleY("Layer");
+				occupanciesByCoordinate.get(new Coordinate(i, j))
+						.setTitle("Sector " + (j + 1) + " Superlayer" + (i + 1));
+			}
+		}
+	}
+
+	private void createDatasets() {
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				dataSetByCoordinate.put(new Coordinate(i, j), queryDF);
 			}
 		}
 	}
 
 	public H2F getHistogramByMap(int superLayer, int sector) {
 		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
+	}
+
+	public Dataset<Row> getDatasetByMap(int superLayer, int sector) {
+		return this.dataSetByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
+	}
+
+	public void setDatasetByMap(Map<Coordinate, Dataset<Row>> queryDF) {
+		this.dataSetByCoordinate = queryDF;
 	}
 
 	// for inserting into MYSQL
