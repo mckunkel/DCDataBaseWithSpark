@@ -18,7 +18,6 @@ import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -160,7 +159,7 @@ public class MainFrame extends JFrame {
 		this.runForm = new RunForm(this);
 		this.sortQueryForm = new SortQueryForm(this);
 		this.compareRunForm = new CompareQueryForm(this);
-		this.faultPanel = new FaultPanel();
+		this.faultPanel = new FaultPanel(this);
 		this.dbSendPanel = new DBSendPanel();
 		this.ccdbSendPanel = new CCDBSendPanel();
 
@@ -303,10 +302,18 @@ public class MainFrame extends JFrame {
 
 	private void constructLayout() {
 		JPanel layoutPanel = new JPanel();
-		layoutPanel.setLayout(new GridLayout(0, 3));
-		layoutPanel.add(dataControlsPanel());
-		layoutPanel.add(sqlControlsPanel());
-		layoutPanel.add(histogramControlsPanel());
+		// layoutPanel.setLayout(new GridLayout(0, 3));
+		// layoutPanel.add(dataControlsPanel());
+		// layoutPanel.add(sqlControlsPanel());
+		// layoutPanel.add(histogramControlsPanel());
+
+		layoutPanel.setLayout(new GridBagLayout());
+		PanelConstraints.addComponent(layoutPanel, dataControlsPanel(), 0, 0, 1, 1, 0.5, 1,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, 0, 0);
+		PanelConstraints.addComponent(layoutPanel, sqlControlsPanel(), 1, 0, 1, 1, 1, 1, GridBagConstraints.PAGE_START,
+				GridBagConstraints.BOTH, 0, 0);
+		PanelConstraints.addComponent(layoutPanel, histogramControlsPanel(), 2, 0, 1, 1, 0.5, 1,
+				GridBagConstraints.FIRST_LINE_END, GridBagConstraints.BOTH, 0, 0);
 
 		setLayout(new BorderLayout());
 		add(layoutPanel, BorderLayout.CENTER);

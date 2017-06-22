@@ -160,12 +160,13 @@ public class RunForm extends JDialog implements ActionListener {
 						JOptionPane.ERROR_MESSAGE);
 			}
 			setVisible(false);
-			this.mainFrame.getDataProcess().processFile();
 			processCommands();
 		}
 	}
 
 	private void processCommands() {
+		this.mainFrame.getDataProcess().processFile();
+
 		this.mainFrame.getDataPanel()
 				.setTableModel(this.mainFrameService.getBySectorAndSuperLayer(
 						Integer.parseInt(this.sortPanel.getSelectedSector()),

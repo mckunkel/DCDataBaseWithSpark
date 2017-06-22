@@ -3,37 +3,38 @@ package spark.utils;
 import static org.apache.spark.sql.functions.col;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
+
+import database.objects.StatusChangeDB;
 
 public class MainFrameQuery extends AbstractQuery {
-	private Dataset<Row> queryDF = null;
+	private Dataset<StatusChangeDB> queryDF = null;
 
 	public MainFrameQuery() {
 
 	}
 
-	public void setDataset(Dataset<Row> queryDF) {
+	public void setDataset(Dataset<StatusChangeDB> queryDF) {
 		this.queryDF = queryDF;
 	}
 
-	public Dataset<Row> getBySector(int sector) {
+	public Dataset<StatusChangeDB> getBySector(int sector) {
 		return queryDF.filter(col("sector").equalTo(sector));
 	}
 
-	public Dataset<Row> getBySuperLayer(int superLayer) {
-		return queryDF.filter(col("superLayer").equalTo(superLayer));
+	public Dataset<StatusChangeDB> getBySuperLayer(int superLayer) {
+		return queryDF.filter(col("superlayer").equalTo(superLayer));
 	}
 
-	public Dataset<Row> getByLayer(int layer) {
-		return queryDF.filter(col("layer").equalTo(layer));
+	public Dataset<StatusChangeDB> getByLayer(int layer) {
+		return queryDF.filter(col("loclayer").equalTo(layer));
 	}
 
-	public Dataset<Row> getBySectorAndSuperLayer(int sector, int superLayer) {
-		return this.getBySector(sector).filter(col("superLayer").equalTo(superLayer));
+	public Dataset<StatusChangeDB> getBySectorAndSuperLayer(int sector, int superLayer) {
+		return this.getBySector(sector).filter(col("superlayer").equalTo(superLayer));
 	}
 
-	public Dataset<Row> getBySectorAndSuperLayerAndLayer(int sector, int superLayer, int layer) {
-		return this.getBySectorAndSuperLayer(sector, superLayer).filter(col("layer").equalTo(layer));
+	public Dataset<StatusChangeDB> getBySectorAndSuperLayerAndLayer(int sector, int superLayer, int layer) {
+		return this.getBySectorAndSuperLayer(sector, superLayer).filter(col("loclayer").equalTo(layer));
 	}
 
 	public void prepareMYDQLQuery() {

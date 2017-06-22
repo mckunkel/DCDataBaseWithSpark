@@ -66,7 +66,7 @@ public class StringConstants {
 			"ind.wire_dead", "ind.wire_hot" };
 	public static final String FAULT_FORM_LABEL = "Type of Fault:";
 	public static final String FAULT_FORM_SET = "Set Fault";
-	public static final String FAULT_FORM_APPLY = "Apply Fault";
+	public static final String FAULT_FORM_APPLY = "Apply";
 	public static final String FAULT_FORM_SEND = "Send to List";
 
 	public static final String OTHER_FORM_TITLE = "Other";

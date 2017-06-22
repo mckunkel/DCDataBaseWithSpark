@@ -47,6 +47,9 @@ public class StatusPanel extends JPanel {
 	public void stopTimer() {
 		this.timer.setRunning(false);
 	}
+	// public void stopTimer() {
+	// this.timer.stop();
+	// }
 
 	private void initializeVariables() {
 		this.statusLabel = new JLabel();

@@ -12,77 +12,64 @@
 */
 package database.ui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import database.objects.StatusChangeDB;
 import database.service.CompareRunFormService;
 import database.service.CompareRunFormServiceImpl;
+import database.service.MainFrameService;
+import database.ui.MainFrame;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class FaultPanel extends JPanel implements ActionListener {// implements
-																	// ActionListener
+	private MainFrameService mainFrameService = null;
+	private MainFrame mainFrame = null;
 
 	final int space = NumberConstants.BORDER_SPACING;
-	Border spaceBorder = null;
-	Border titleBorder = null;
-	JComboBox<String> faultComboBox = null;
+	private Border spaceBorder = null;
+	private Border titleBorder = null;
+	private JComboBox<String> faultComboBox = null;
 	private CompareRunFormService compareRunFormService;
-	JButton applyButton = null;
-	JButton sendButton = null;
+	private JButton applyButton = null;
 
-	private AddOtherForm addOtherForm = null;
+	private JCheckBox cb1 = null;
+	private JCheckBox cb2 = null;
 
-	public FaultPanel() {
+	public FaultPanel(MainFrame parentFrame) {
+		this.mainFrame = parentFrame;
 		initializeVariables();
-		// loadData();
 		initialLayout();
 	}
 
 	private void initializeVariables() {
+		this.mainFrameService = MainFrameServiceManager.getSession();
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.compareRunFormService = new CompareRunFormServiceImpl();
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.FAULT_FORM_LABEL);
-		// this.faultComboBox = new JComboBox<String>();
 		this.faultComboBox = new JComboBox(StringConstants.PROBLEM_TYPES);
 
 		this.applyButton = new JButton(StringConstants.FAULT_FORM_APPLY);
-		this.sendButton = new JButton(StringConstants.FAULT_FORM_SEND);
 
+		this.cb1 = new JCheckBox("broken");
+		this.cb2 = new JCheckBox("fixed");
 		this.applyButton.addActionListener(this);
-		this.sendButton.addActionListener(this);
+		this.cb1.addActionListener(this);
+		this.cb2.addActionListener(this);
 
-	}
-
-	public void loadData() {
-
-		this.faultComboBox.removeAllItems();
-
-		// List<String> problems = this.compareRunFormService.getAllProblems();
-		// faultComboBox.setModel(new
-		// DefaultComboBoxModel(this.compareRunFormService.getAllProblems().toArray()));
-		// for (String str : problems) {
-		// this.faultComboBox.addItem(str);
-		// }
-		this.faultComboBox.addItem("other");
 	}
 
 	private void initialLayout() {
@@ -90,30 +77,63 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		setLayout(new GridLayout(0, 2));
 		add(new JLabel("Fault:"));
 		add(faultComboBox);
+		add(checkBoxPanel());
 		add(applyButton);
-		add(sendButton);
+
+	}
+
+	private JPanel checkBoxPanel() {
+		checkBoxGroup();
+		JPanel checkBoxPanel = new JPanel();
+		checkBoxPanel.setLayout(new GridLayout(0, 2));
+		checkBoxPanel.add(cb1);
+		checkBoxPanel.add(cb2);
+
+		return checkBoxPanel;
+
+	}
+
+	private ButtonGroup checkBoxGroup() {
+		ButtonGroup checkBoxGroup = new ButtonGroup();
+		checkBoxGroup.add(cb1);
+		checkBoxGroup.add(cb2);
+
+		return checkBoxGroup;
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		String str = null;
-		if (event.getSource() == this.sendButton) {
-			System.out.println("Will send the query with selected faults and wires");
-		} else if (event.getSource() == this.applyButton) {
+
+		String brokenOrfixed = null;
+		if (cb1.isSelected()) {
+			System.out.println("it will be broken");
+			brokenOrfixed = "broken";
+		}
+		if (cb2.isSelected()) {
+			System.out.println("it will be fixed");
+			brokenOrfixed = "fixed";
+
+		}
+
+		if (event.getSource() == this.applyButton) {
+			String str = null;
+
+			TreeSet<StatusChangeDB> queryList = this.mainFrameService.getMYSQLQuery();
 
 			str = (String) this.faultComboBox.getSelectedItem();
-			// synchronized (str) {
+			for (StatusChangeDB statusChangeDB : queryList) {
+				statusChangeDB.setProblem_type(str);
+				statusChangeDB.setStatus_change_type(brokenOrfixed);
+			}
+			System.out.println("here 0 " + queryList.size());
 
-			if (str == "other") {
-				System.out.println("you chose other");
-				this.addOtherForm = new AddOtherForm(this);
-				str = addOtherForm.getOtherFault();
-				// str.notify();
-				System.out.println("prepared query with " + str);
+			this.mainFrameService.addToCompleteSQLList(queryList);
+			this.mainFrame.getDataPanel().removeItems(queryList);
 
-			} else
-				System.out.println("prepared query with " + str);
+			this.mainFrameService.clearTempSQLList();
+			this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+
 		}
 
 		// }
@@ -134,112 +154,5 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		// System.out.println(str);
 		// // ....
 		// }
-	}
-
-	class AddOtherForm extends JDialog implements ActionListener {
-		private JButton cancelButton;
-		private JButton saveButton;
-		private JLabel otherLabel;
-		private JTextField otherField;
-		private String userInputFault;
-
-		public AddOtherForm(FaultPanel faultPanel) {
-			super();
-
-			initializeOtherVariables();
-			constructLayout();
-			setWindow(faultPanel);
-		}
-
-		private void setWindow(FaultPanel faultPanel) {
-			setSize(NumberConstants.SORT_FORM_WINDOW_SIZE_WIDTH, NumberConstants.SORT_FORM_WINDOW_SIZE_HEIGHT);
-			setLocationRelativeTo(faultPanel);
-			setVisible(true);
-
-		}
-
-		private void initializeOtherVariables() {
-			this.cancelButton = new JButton(StringConstants.FORM_CANCEL);
-			this.saveButton = new JButton(StringConstants.FORM_SAVE);
-			this.otherLabel = new JLabel(StringConstants.OTHER_FORM_INPUT);
-			this.otherField = new JTextField(NumberConstants.OTHER_FORM_WINDOW_FIELD_LENGTH);
-
-			this.cancelButton.addActionListener(this);
-			this.saveButton.addActionListener(this);
-		}
-
-		private void constructLayout() {
-
-			JPanel otherInfoPanel = new JPanel();
-			JPanel buttonsPanel = new JPanel();
-
-			otherInfoPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-
-			otherInfoPanel.setLayout(new GridBagLayout());
-
-			GridBagConstraints gc = new GridBagConstraints();
-
-			gc.gridy = 0;
-
-			Insets rightPadding = new Insets(0, 0, 0, 15);
-			Insets noPadding = new Insets(0, 0, 0, 0);
-
-			// ///// First row /////////////////////////////
-
-			gc.weightx = 1;
-			gc.weighty = 1;
-			gc.fill = GridBagConstraints.NONE;
-
-			gc.gridx = 0;
-			gc.anchor = GridBagConstraints.EAST;
-			gc.insets = rightPadding;
-			otherInfoPanel.add(otherLabel, gc);
-
-			gc.gridx++;
-			gc.anchor = GridBagConstraints.WEST;
-			gc.insets = noPadding;
-			otherInfoPanel.add(otherField, gc);
-
-			// ////////// Buttons Panel ///////////////
-
-			buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			buttonsPanel.add(saveButton);
-			buttonsPanel.add(cancelButton);
-
-			Dimension btnSize = cancelButton.getPreferredSize();
-			saveButton.setPreferredSize(btnSize);
-
-			// Add sub panels to dialog
-			setLayout(new BorderLayout());
-			add(otherInfoPanel, BorderLayout.CENTER);
-			add(buttonsPanel, BorderLayout.SOUTH);
-
-		}
-
-		protected String getOtherFault() {
-			return userInputFault;
-		}
-
-		private void setOtherFault(String userInputFault) {
-			this.userInputFault = userInputFault;
-		}
-
-		public void actionPerformed(ActionEvent event) {
-			if (event.getSource() == this.cancelButton) {
-				setVisible(false);
-			} else if (event.getSource() == this.saveButton) {
-
-				String name = this.otherField.getText();
-				if (name.isEmpty()) {
-					JFrame errorFrame = new JFrame("");
-					JOptionPane.showMessageDialog(errorFrame, "In a box? Would you eat them, with a fox? ",
-							"Please input the fault", JOptionPane.ERROR_MESSAGE);
-					errorFrame.dispose();
-				}
-				setOtherFault(name);
-				this.setVisible(false);
-			}
-		}
-
 	}
 }

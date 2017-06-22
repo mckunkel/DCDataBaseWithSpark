@@ -1,11 +1,10 @@
 package database.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 import org.jlab.groot.data.H2F;
 
 import database.objects.StatusChangeDB;
@@ -15,23 +14,25 @@ import spark.utils.MainFrameQuery;
 public class MainFrameServiceImpl implements MainFrameService {
 
 	private MainFrameQuery mainFrameQuery;
-	private InsertMYSqlQuery insertMYSqlQuery;
-	private Dataset<Row> queryDF = null;
-	private Coordinate coordinate;
 	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
-	private Map<Coordinate, Dataset<Row>> dataSetByCoordinate = null;
+	private Map<Coordinate, Dataset<StatusChangeDB>> dataSetByCoordinate = null;
+	private TreeSet<StatusChangeDB> queryList = null;
+	private TreeSet<StatusChangeDB> completeQueryList = null;
+	TreeSet<Integer> intList = null;
+	private int nEventsInFile;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
-		this.insertMYSqlQuery = new InsertMYSqlQueryImpl();
 		this.occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
-		this.dataSetByCoordinate = new HashMap<Coordinate, Dataset<Row>>();
-
+		this.dataSetByCoordinate = new HashMap<Coordinate, Dataset<StatusChangeDB>>();
+		this.queryList = new TreeSet<>();
+		this.completeQueryList = new TreeSet<>();
+		this.intList = new TreeSet<>();
 		createHistograms();
 		createDatasets();
 	}
 
-	public Dataset<Row> getBySectorAndSuperLayer(int sector, int superLayer) {
+	public Dataset<StatusChangeDB> getBySectorAndSuperLayer(int sector, int superLayer) {
 		this.mainFrameQuery.setDataset(getDatasetByMap(superLayer, sector));
 		return this.mainFrameQuery.getBySectorAndSuperLayer(sector, superLayer);
 	}
@@ -56,7 +57,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private void createDatasets() {
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				Dataset<Row> test = null;
+				Dataset<StatusChangeDB> test = null;
 				dataSetByCoordinate.put(new Coordinate(i, j), test);
 			}
 		}
@@ -66,19 +67,56 @@ public class MainFrameServiceImpl implements MainFrameService {
 		return this.occupanciesByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
 	}
 
-	public Dataset<Row> getDatasetByMap(int superLayer, int sector) {
+	public Dataset<StatusChangeDB> getDatasetByMap(int superLayer, int sector) {
 		return this.dataSetByCoordinate.get(new Coordinate(superLayer - 1, sector - 1));
 	}
 
-	public Map<Coordinate, Dataset<Row>> getDataSetMap() {
+	public Map<Coordinate, Dataset<StatusChangeDB>> getDataSetMap() {
 		return this.dataSetByCoordinate;
 	}
 
 	// for inserting into MYSQL
-	public void prepareMYSQLQuery(List<StatusChangeDB> queryList) {
+	public void prepareMYSQLQuery(TreeSet<StatusChangeDB> queryList) {
+		this.queryList = queryList;
 		for (StatusChangeDB statusChangeDB : queryList) {
 			System.out.println(statusChangeDB);
 		}
+	}
+
+	public TreeSet<StatusChangeDB> getMYSQLQuery() {
+		return this.queryList;
+	}
+
+	public void addToCompleteSQLList(TreeSet<StatusChangeDB> tempList) {
+		this.completeQueryList.addAll(tempList);
+	};
+
+	public TreeSet<StatusChangeDB> getCompleteSQLList() {
+		return this.completeQueryList;
+	};
+
+	public void setListIndices(TreeSet<Integer> intList) {
+		this.intList = intList;
+	}
+
+	public TreeSet<Integer> getListIndices() {
+		return this.intList;
+	}
+
+	public void clearTempSQLList() {
+		this.queryList.clear();
+	};
+
+	public void setSQLList() {
+
+	};
+
+	public int getnEventsInFile() {
+		return nEventsInFile;
+	}
+
+	public void setnEventsInFile(int nEventsInFile) {
+		this.nEventsInFile = nEventsInFile;
 	}
 
 	public void shutdown() {

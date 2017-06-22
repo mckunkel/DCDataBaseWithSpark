@@ -15,8 +15,7 @@ package database.ui.panels;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -26,7 +25,6 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 
 import database.objects.StatusChangeDB;
 import database.service.MainFrameService;
@@ -87,7 +85,7 @@ public class DataPanel extends JPanel {
 		this.aTable = new JTable(tableModel);
 	}
 
-	public void setTableModel(Dataset<Row> wireSet) {
+	public void setTableModel(Dataset<StatusChangeDB> wireSet) {
 		this.tableModel.setWireSet(wireSet);
 	}
 
@@ -99,28 +97,43 @@ public class DataPanel extends JPanel {
 		this.aTable.removeAll();
 	}
 
+	public void removeItems(TreeSet<StatusChangeDB> statusChangeDBs) {
+		this.tableModel.removeRow(statusChangeDBs);
+	}
+
+	public void compareWithSQLPanel(Dataset<StatusChangeDB> wireSet) {
+		this.tableModel.compareWithSQLPanel(wireSet, this.mainFrameService.getCompleteSQLList());
+	}
+	// private final int[] selection = null;
+
 	private void mouseListener() {
-		List<StatusChangeDB> queryList = new ArrayList<>();
-		StatusChangeDB statusChangeDB = new StatusChangeDB();
+		// List<StatusChangeDB> queryList = new ArrayList<>();
+		TreeSet<StatusChangeDB> queryList = new TreeSet<>();
+		TreeSet<Integer> intList = new TreeSet<>();
+
 		this.aTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				if (e.getClickCount() == 1) {
 					final JTable target = (JTable) e.getSource();
+					// target.setRowSelectionAllowed(true);
+					// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					int[] selection = target.getSelectedRows();
 					for (int i : selection) {
+						intList.add(i);
+						StatusChangeDB statusChangeDB = new StatusChangeDB();
 						statusChangeDB.setSector(target.getValueAt(i, 0).toString());
 						statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
 						statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
 						statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
-						System.out.println(statusChangeDB.toString());
 						queryList.add(statusChangeDB);
-
 					}
 				}
 			}
 		});
+
 		this.mainFrameService.prepareMYSQLQuery(queryList);
+		this.mainFrameService.setListIndices(intList);
 
 	}
 }

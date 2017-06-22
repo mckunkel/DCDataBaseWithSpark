@@ -14,21 +14,22 @@ package database.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 
+import database.objects.StatusChangeDB;
 import database.utils.NumberConstants;
 
 public class TableModel extends AbstractTableModel {
 
-	private List<Row> wireList;
+	private List<StatusChangeDB> wireList;
 	private String[] colNames = { "Sector", "SuperLayer", "Layer", "Wire" };
 
 	public TableModel() {
-		this.wireList = new ArrayList<Row>();
+		this.wireList = new ArrayList<StatusChangeDB>();
 	}
 
 	public int getRowCount() {
@@ -45,29 +46,83 @@ public class TableModel extends AbstractTableModel {
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		Row dataPoint = this.wireList.get(rowIndex);
+		StatusChangeDB dataPoint = this.wireList.get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
-			return dataPoint.get(2);
+			return dataPoint.getSector();
 		case 1:
-			return dataPoint.get(1);
+			return dataPoint.getSuperlayer();
 		case 2:
-			return dataPoint.get(0);
+			return dataPoint.getLoclayer();
 		case 3:
-			return dataPoint.get(3);
+			return dataPoint.getLocwire();
 		default:
 			return null;
 		}
 	}
 
-	public void setWireSet(Dataset<Row> wireDF) {
+	public void setWireSet(Dataset<StatusChangeDB> wireDF) {
 		setWireList(wireDF.collectAsList());
 		updateTable();
 	}
 
-	public void setWireList(List<Row> wireList) {
-		this.wireList = wireList;
+	public void setWireList(List<StatusChangeDB> wireList) {
+		this.wireList.clear();
+		this.wireList.addAll(wireList);
+
+	}
+
+	public List<StatusChangeDB> getWireList() {
+		return this.wireList;
+	}
+
+	public void compareWithSQLPanel(Dataset<StatusChangeDB> wireDF, TreeSet<StatusChangeDB> sqlList) {
+		List<StatusChangeDB> wireList = new ArrayList<StatusChangeDB>();
+		wireList.addAll(wireDF.collectAsList());
+		ArrayList<StatusChangeDB> listToRemove = new ArrayList<>();
+
+		for (StatusChangeDB ro : sqlList) {
+			for (StatusChangeDB statusChangeDB : wireList) {
+
+				if (statusChangeDB.getSector().equals(ro.getSector())
+						&& statusChangeDB.getSuperlayer().equals(ro.getSuperlayer())
+						&& statusChangeDB.getLoclayer().equals(ro.getLoclayer())
+						&& statusChangeDB.getLocwire().equals(ro.getLocwire())) {
+					listToRemove.add(statusChangeDB);
+				}
+			}
+		}
+		// printTable(wireList);
+		wireList.removeAll(listToRemove);
+		setWireList(wireList);
+		updateTable();
+
+	}
+
+	public void removeRow(TreeSet<StatusChangeDB> statusChangeDBs) {
+		ArrayList<StatusChangeDB> listToRemove = new ArrayList<>();
+
+		for (StatusChangeDB ro : statusChangeDBs) {
+			for (StatusChangeDB statusChangeDB : wireList) {
+				if (statusChangeDB.getSector().equals(ro.getSector())
+						&& statusChangeDB.getSuperlayer().equals(ro.getSuperlayer())
+						&& statusChangeDB.getLoclayer().equals(ro.getLoclayer())
+						&& statusChangeDB.getLocwire().equals(ro.getLocwire())) {
+					listToRemove.add(statusChangeDB);
+				}
+			}
+		}
+		this.wireList.removeAll(listToRemove);
+		updateTable();
+	}
+
+	private void printTable(List<StatusChangeDB> wireList) {
+
+		for (StatusChangeDB statusChangeDB : wireList) {
+			System.out.println(statusChangeDB.getSector() + " " + statusChangeDB.getSuperlayer() + " "
+					+ statusChangeDB.getLoclayer() + " " + statusChangeDB.getLocwire());
+		}
 	}
 
 	public void updateTable() {

@@ -13,7 +13,7 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
-import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -22,16 +22,15 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.apache.spark.sql.Row;
-
-import database.ui.TableModel;
+import database.objects.StatusChangeDB;
+import database.ui.SQLTableModel;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class SQLPanel extends JPanel {
 
 	private JTable aTable;
-	private TableModel tableModel;
+	private SQLTableModel tableModel;
 
 	final int space = NumberConstants.BORDER_SPACING;
 	Border spaceBorder = null;
@@ -53,6 +52,8 @@ public class SQLPanel extends JPanel {
 		this.aTable.getColumnModel().getColumn(1).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(2).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+		this.aTable.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+		this.aTable.getColumnModel().getColumn(5).setCellRenderer(tableCellRenderer);
 
 	}
 
@@ -71,12 +72,12 @@ public class SQLPanel extends JPanel {
 	private void initializeVariables() {
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.SQL_FORM_LABEL);
-		this.tableModel = new TableModel();
+		this.tableModel = new SQLTableModel();
 		this.aTable = new JTable(tableModel);
 	}
 
-	public void setTableModel(List<Row> wireList) {
-		this.tableModel.setWireList(wireList);
+	public void setTableModel(TreeSet<StatusChangeDB> wireList) {
+		this.tableModel.setWireSet(wireList);
 	}
 
 	public void updateTable() {

@@ -132,8 +132,8 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 	protected void updateQuery(int sectorSelection, int superLayerSelection) {
 
 		this.setVisible(false);
-		this.mainFrame.getDataPanel()
-				.setTableModel(this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
+		this.mainFrame.getDataPanel().compareWithSQLPanel(
+				this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
 		this.mainFrame.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
 
 	}
