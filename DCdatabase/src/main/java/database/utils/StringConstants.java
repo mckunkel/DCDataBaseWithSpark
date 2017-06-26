@@ -30,6 +30,8 @@ public class StringConstants {
 	public static final String MAIN_MENU_FILE = "File";
 	public static final String MAIN_MENU_OPEN = "Open";
 	public static final String MAIN_MENU_EXIT = "Exit";
+	public static final String OPTIONS_FORM_TITLE = "Options";
+
 	public static final String MAIN_MENU_SORT = "Sort";
 	public static final String MAIN_MENU_COMPARE = "Compare";
 

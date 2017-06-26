@@ -27,6 +27,7 @@ import org.apache.spark.sql.Row;
 import database.service.CompareRunFormService;
 import database.service.CompareRunFormServiceImpl;
 import database.utils.NumberConstants;
+import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class CompareQueryForm extends JDialog implements ActionListener {// implements
@@ -118,13 +119,15 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 		gc.gridx = 0;
 		gc.anchor = GridBagConstraints.EAST;
 		gc.insets = rightPadding;
-		runInfoPanel.add(runLabel, gc);
-
+		// runInfoPanel.add(runLabel, gc);
+		PanelConstraints.addComponent(runInfoPanel, runLabel, 0, 0, 1, 1, 1, 1, GridBagConstraints.EAST,
+				GridBagConstraints.BOTH, rightPadding, 1, 1);
 		gc.gridx++;
 		gc.anchor = GridBagConstraints.WEST;
 		gc.insets = noPadding;
-		runInfoPanel.add(compareRunComboBox, gc);
-
+		// runInfoPanel.add(compareRunComboBox, gc);
+		PanelConstraints.addComponent(runInfoPanel, compareRunComboBox, 1, 0, 1, 1, 1, 1, GridBagConstraints.EAST,
+				GridBagConstraints.BOTH, noPadding, 1, 1);
 		// ////////// Buttons Panel ///////////////
 
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));

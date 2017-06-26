@@ -92,8 +92,6 @@ public class MainFrame extends JFrame {
 		initializeVariables();
 		constructLayout();
 		createFileChooser();
-
-		setCallbacks();
 		constructAppWindow();
 
 	}
@@ -128,6 +126,7 @@ public class MainFrame extends JFrame {
 		menuBar = new JMenuBar();
 
 		menuBar.add(createFileMenu());
+		menuBar.add(createOptionsMenu());
 		menuBar.add(createRunMenu());
 
 		menuBar.add(createSortMenu());
@@ -210,6 +209,29 @@ public class MainFrame extends JFrame {
 			}
 		});
 
+		return jMenu;
+	}
+
+	private JMenu createOptionsMenu() {
+		jMenu = new JMenu(StringConstants.OPTIONS_FORM_TITLE);
+		JMenuItem runList = new JMenuItem(StringConstants.FORM_RUN);
+		jMenu.add(runList);
+		JMenuItem sortList = new JMenuItem(StringConstants.SORT_FORM_TITLE);
+		jMenu.add(sortList);
+
+		runList.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				runForm.setVisible(true);
+			}
+		});
+		sortList.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				sortQueryForm.resetList();
+				sortQueryForm.setVisible(true);
+			}
+		});
 		return jMenu;
 	}
 
@@ -308,11 +330,11 @@ public class MainFrame extends JFrame {
 		// layoutPanel.add(histogramControlsPanel());
 
 		layoutPanel.setLayout(new GridBagLayout());
-		PanelConstraints.addComponent(layoutPanel, dataControlsPanel(), 0, 0, 1, 1, 0.5, 1,
+		PanelConstraints.addComponent(layoutPanel, dataControlsPanel(), 0, 0, 1, 1, 0.25, 1,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, 0, 0);
-		PanelConstraints.addComponent(layoutPanel, sqlControlsPanel(), 1, 0, 1, 1, 1, 1, GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH, 0, 0);
-		PanelConstraints.addComponent(layoutPanel, histogramControlsPanel(), 2, 0, 1, 1, 0.5, 1,
+		PanelConstraints.addComponent(layoutPanel, sqlControlsPanel(), 1, 0, 1, 1, 0.5, 1,
+				GridBagConstraints.PAGE_START, GridBagConstraints.BOTH, 250, 0);
+		PanelConstraints.addComponent(layoutPanel, histogramControlsPanel(), 2, 0, 1, 1, 0.25, 1,
 				GridBagConstraints.FIRST_LINE_END, GridBagConstraints.BOTH, 0, 0);
 
 		setLayout(new BorderLayout());
@@ -320,32 +342,10 @@ public class MainFrame extends JFrame {
 		add(statusPanel, BorderLayout.PAGE_END);
 	}
 
-	private void setCallbacks() {
-		// TODO Auto-generated method stub
-
-	}
-
 	class HipoFilter implements FilenameFilter {
 		public boolean accept(File dir, String name) {
 			return (name.endsWith(".hipo"));
 		}
 	}
-
-	// private void refreshTable() {
-	// List<EmptyDataPoint> data =
-	// this.dataProcess.getMainFrameService().getDatasetAsList();
-	// for (EmptyDataPoint emptyDataPoint : data) {
-	// System.out.println(emptyDataPoint.getLayer());
-	// }
-	// // this.dataPanel.setTableModel(data);
-	// // this.dataPanel.updateTable();
-	//
-	// }
-
-	// private void updatePanel(int superLayer, int sector) {
-	// refreshTable();
-	// this.dataPanel.loadData();
-	//
-	// }
 
 }

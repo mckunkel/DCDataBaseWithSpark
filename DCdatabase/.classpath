@@ -25,15 +25,5 @@
 	<classpathentry kind="lib" path="needs/clasrec-dc.jar"/>
 	<classpathentry kind="lib" path="needs/coat-libs-3.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="needs/jclara-4.3-SNAPSHOT.jar"/>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
