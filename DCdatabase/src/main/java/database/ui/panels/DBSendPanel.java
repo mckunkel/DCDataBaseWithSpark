@@ -22,23 +22,35 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import database.service.InsertMYSqlQuery;
+import database.service.InsertMYSqlServiceManager;
+import database.service.MainFrameService;
+import database.ui.MainFrame;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
+import spark.utils.SparkManager;
 
 public class DBSendPanel extends JPanel implements ActionListener {
-
+	private InsertMYSqlQuery insertMYSqlQuery = null;
+	private MainFrame mainFrame = null;
+	private MainFrameService mainFrameService = null;
 	final int space = NumberConstants.BORDER_SPACING;
 	Border spaceBorder = null;
 	Border titleBorder = null;
 	JButton removeButton = null;
 	JButton sendButton = null;
 
-	public DBSendPanel() {
+	public DBSendPanel(MainFrame parentFrame) {
+		this.mainFrame = parentFrame;
 		initializeVariables();
 		initialLayout();
 	}
 
 	private void initializeVariables() {
+		this.insertMYSqlQuery = InsertMYSqlServiceManager.getSession();
+		this.mainFrameService = MainFrameServiceManager.getSession();
+
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.DBSEND_FORM_LABEL);
 
@@ -64,6 +76,10 @@ public class DBSendPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == this.sendButton) {
 			System.out.println("Will send the query with selected faults and wires from teh sql panel");
+			this.insertMYSqlQuery.prepareMYSQLQuery();
+			this.mainFrameService.getCompleteSQLList().clear();
+			this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+			SparkManager.restart();
 		} else if (event.getSource() == this.removeButton) {
 
 			System.out.println("This will remove from teh list");

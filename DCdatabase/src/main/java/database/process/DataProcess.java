@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoder;
-import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.jlab.io.base.DataBank;
@@ -44,6 +42,7 @@ public class DataProcess {
 	public void openFile(String str) {
 		System.out.println("will open " + str);
 		this.reader.open(str);
+		this.mainFrameService.setRunNumber(getRunNumber());
 		setNEvents();
 	}
 
@@ -80,8 +79,8 @@ public class DataProcess {
 	}
 
 	private void createDataset() {
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
+		for (int i = 0; i < 6; i++) {// superLayer
+			for (int j = 0; j < 6; j++) { // sector
 				int xbins = this.mainFrameService.getHistogramMap().get(new Coordinate(i, j)).getXAxis().getNBins();
 				int ybins = this.mainFrameService.getHistogramMap().get(new Coordinate(i, j)).getYAxis().getNBins();
 				for (int k = 0; k < ybins; k++) {
@@ -103,19 +102,19 @@ public class DataProcess {
 
 				}
 
-				Encoder<StatusChangeDB> multiDataEncoder = Encoders.bean(StatusChangeDB.class);
-				Dataset<Row> df = spSession.createDataset(emptyDataPoints, multiDataEncoder).toDF().select("loclayer",
-						"superlayer", "sector", "locwire");
-				Dataset<StatusChangeDB> df2 = spSession.createDataset(emptyDataPoints, multiDataEncoder);
+				Dataset<Row> df = spSession.createDataset(emptyDataPoints, SparkManager.statusChangeDBEncoder()).toDF()
+						.select("loclayer", "superlayer", "sector", "locwire");
+				Dataset<StatusChangeDB> df2 = spSession.createDataset(emptyDataPoints,
+						SparkManager.statusChangeDBEncoder());
 				this.mainFrameService.getDataSetMap().put(new Coordinate(i, j), df2);
 				emptyDataPoints.clear();
 			}
 		}
 	}
 
-	public static int getRunNumber(HipoDataSource reader) {
+	public int getRunNumber() {
 
-		return reader.gotoEvent(0).getBank("RUN::config").getInt("run", 0);
+		return this.reader.gotoEvent(1).getBank("RUN::config").getInt("run", 0);
 	}
 
 	public void setNEvents() {

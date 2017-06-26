@@ -22,7 +22,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -86,8 +88,8 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		checkBoxGroup();
 		JPanel checkBoxPanel = new JPanel();
 		checkBoxPanel.setLayout(new GridLayout(0, 2));
-		checkBoxPanel.add(cb1);
-		checkBoxPanel.add(cb2);
+		checkBoxPanel.add(this.cb1);
+		checkBoxPanel.add(this.cb2);
 
 		return checkBoxPanel;
 
@@ -95,9 +97,9 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	private ButtonGroup checkBoxGroup() {
 		ButtonGroup checkBoxGroup = new ButtonGroup();
-		checkBoxGroup.add(cb1);
-		checkBoxGroup.add(cb2);
-
+		checkBoxGroup.add(this.cb1);
+		checkBoxGroup.add(this.cb2);
+		this.cb1.setSelected(true);
 		return checkBoxGroup;
 
 	}
@@ -107,33 +109,37 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 		String brokenOrfixed = null;
 		if (cb1.isSelected()) {
-			System.out.println("it will be broken");
 			brokenOrfixed = "broken";
 		}
 		if (cb2.isSelected()) {
-			System.out.println("it will be fixed");
 			brokenOrfixed = "fixed";
-
 		}
 
 		if (event.getSource() == this.applyButton) {
 			String str = null;
-
-			TreeSet<StatusChangeDB> queryList = this.mainFrameService.getMYSQLQuery();
-
 			str = (String) this.faultComboBox.getSelectedItem();
-			for (StatusChangeDB statusChangeDB : queryList) {
-				statusChangeDB.setProblem_type(str);
-				statusChangeDB.setStatus_change_type(brokenOrfixed);
+
+			if (cb1.isSelected() && str.isEmpty()) {
+				JFrame errorFrame = new JFrame("");
+				JOptionPane.showMessageDialog(errorFrame, "In a box? With a Fox?",
+						"Please choose a an Fault with a Broken component", JOptionPane.ERROR_MESSAGE);
+			} else {
+
+				TreeSet<StatusChangeDB> queryList = this.mainFrameService.getMYSQLQuery();
+
+				for (StatusChangeDB statusChangeDB : queryList) {
+					statusChangeDB.setProblem_type(str);
+					statusChangeDB.setStatus_change_type(brokenOrfixed);
+					statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
+				}
+
+				this.mainFrameService.addToCompleteSQLList(queryList);
+				this.mainFrame.getDataPanel().removeItems(queryList);
+
+				this.mainFrameService.clearTempSQLList();
+				this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+				this.faultComboBox.setSelectedIndex(0);
 			}
-			System.out.println("here 0 " + queryList.size());
-
-			this.mainFrameService.addToCompleteSQLList(queryList);
-			this.mainFrame.getDataPanel().removeItems(queryList);
-
-			this.mainFrameService.clearTempSQLList();
-			this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
-
 		}
 
 		// }

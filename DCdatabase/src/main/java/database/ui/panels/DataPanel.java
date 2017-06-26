@@ -45,7 +45,6 @@ public class DataPanel extends JPanel {
 
 	public DataPanel() {
 		initializeVariables();
-
 		initializeTableAlignment();
 		initializeHeaderAlignment();
 		mouseListener();
@@ -74,6 +73,8 @@ public class DataPanel extends JPanel {
 		setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
 		setLayout(new BorderLayout());
 		add(new JScrollPane(aTable), BorderLayout.CENTER);
+		// TableConstraints.setJTableColumnsWidth(this.aTable, 200, 70, 10, 10,
+		// 10);
 	}
 
 	private void initializeVariables() {

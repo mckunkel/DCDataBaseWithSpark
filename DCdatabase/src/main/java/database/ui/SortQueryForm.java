@@ -109,6 +109,8 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 					int sectorString = Integer.parseInt(this.sortPanel.getSectorList().getSelectedItem().toString());
 					int superLayerString = Integer
 							.parseInt(this.sortPanel.getSuperLayerList().getSelectedItem().toString());
+					this.mainFrameService.setSelectedSector(sectorString);
+					this.mainFrameService.setSelectedSuperlayer(superLayerString);
 					updateQuery(sectorString, superLayerString);
 
 				}

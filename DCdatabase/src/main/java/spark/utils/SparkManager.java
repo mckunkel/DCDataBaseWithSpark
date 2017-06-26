@@ -6,9 +6,12 @@ import java.util.Map;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoder;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import database.objects.StatusChangeDB;
 import database.utils.StringConstants;
 
 public enum SparkManager {
@@ -62,7 +65,7 @@ public enum SparkManager {
 	public static Map<String, String> jdbcOptions() {
 		Map<String, String> jdbcOptions = new HashMap<String, String>();
 		jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test");
-		// jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
+		jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 		jdbcOptions.put("dbtable", "status_change");
 		jdbcOptions.put("user", "root");
 		jdbcOptions.put("password", "");
@@ -78,8 +81,12 @@ public enum SparkManager {
 
 	public static Dataset<Row> mySqlDataset() {
 		SparkSession spSession = getSession();
+		spSession.sql("set spark.sql.caseSensitive=false");
+		// Dataset<Row> demoDf =
+		// spSession.read().format("jdbc").options(jdbcOptions()).load();
 
-		Dataset<Row> demoDf = spSession.read().format("jdbc").options(jdbcOptions()).load();
+		Dataset<Row> demoDf = spSession.read().format("jdbc").options(jdbcOptions()).option("inferSchema", true)
+				.option("header", true).option("comment", "#").load();
 
 		return demoDf;
 	}
@@ -95,7 +102,15 @@ public enum SparkManager {
 		}
 	}
 
+	public static Encoder<StatusChangeDB> statusChangeDBEncoder() {
+		return Encoders.bean(StatusChangeDB.class);
+	}
+
 	public void shutdown() {
 		SparkManager.sparkSession.stop();
+	}
+
+	public static void restart() {
+		SparkSession.clearActiveSession();
 	}
 }

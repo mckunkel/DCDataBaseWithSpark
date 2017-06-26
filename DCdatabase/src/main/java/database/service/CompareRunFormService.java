@@ -9,7 +9,9 @@ public interface CompareRunFormService {
 
 	public List<String> getAllRuns();
 
-	public Dataset<Row> compareRun(String str);
+	// public Dataset<Row> compareRun(String str);
+
+	public void compareRun(String str);
 
 	public Dataset<Row> getAllRunsDataset();
 

@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import database.objects.StatusChangeDB;
 import database.ui.SQLTableModel;
@@ -41,12 +42,15 @@ public class SQLPanel extends JPanel {
 		constructLayout();
 		initializeTableAlignment();
 		initializeHeaderAlignment();
+		// setJTableColumnsWidth(this.aTable, 480, 10, 5, 7, 5, 3, 20, 20, 1);
 	}
 
 	private void initializeTableAlignment() {
-
 		DefaultTableCellRenderer tableCellRenderer = new DefaultTableCellRenderer();
 		tableCellRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		// int gapWidth = 10;
+		// int gapHeight = 5;
+		// this.aTable.setIntercellSpacing(new Dimension(gapWidth, gapHeight));
 
 		this.aTable.getColumnModel().getColumn(0).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(1).setCellRenderer(tableCellRenderer);
@@ -54,7 +58,21 @@ public class SQLPanel extends JPanel {
 		this.aTable.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(5).setCellRenderer(tableCellRenderer);
+		this.aTable.getColumnModel().getColumn(6).setCellRenderer(tableCellRenderer);
 
+	}
+
+	private void setJTableColumnsWidth(JTable table, int tablePreferredWidth, double... percentages) {
+		double total = 0;
+		System.out.println("preferred width = " + tablePreferredWidth);
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			total += percentages[i];
+		}
+
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);
+			column.setPreferredWidth((int) (tablePreferredWidth * (percentages[i] / total)));
+		}
 	}
 
 	private void initializeHeaderAlignment() {

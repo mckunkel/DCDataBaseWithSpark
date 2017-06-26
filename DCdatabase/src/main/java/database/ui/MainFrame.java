@@ -34,9 +34,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import database.process.DataProcess;
 import database.service.MainFrameService;
 import database.ui.panels.CCDBSendPanel;
@@ -84,9 +81,6 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		super(StringConstants.APP_NAME);
-		Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
-		Logger.getLogger("org").setLevel(Level.OFF);
-		Logger.getLogger("akka").setLevel(Level.OFF);
 		setJMenuBar(createFrameMenu());
 
 		initializeVariables();
@@ -159,7 +153,7 @@ public class MainFrame extends JFrame {
 		this.sortQueryForm = new SortQueryForm(this);
 		this.compareRunForm = new CompareQueryForm(this);
 		this.faultPanel = new FaultPanel(this);
-		this.dbSendPanel = new DBSendPanel();
+		this.dbSendPanel = new DBSendPanel(this);
 		this.ccdbSendPanel = new CCDBSendPanel();
 
 	}
@@ -219,6 +213,9 @@ public class MainFrame extends JFrame {
 		JMenuItem sortList = new JMenuItem(StringConstants.SORT_FORM_TITLE);
 		jMenu.add(sortList);
 
+		JMenuItem compareList = new JMenuItem(StringConstants.COMPARE_FORM_COMPARE);
+		jMenu.add(compareList);
+
 		runList.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -230,6 +227,14 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				sortQueryForm.resetList();
 				sortQueryForm.setVisible(true);
+			}
+		});
+
+		compareList.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				compareRunForm.loadData();
+				compareRunForm.setVisible(true);
 			}
 		});
 		return jMenu;
@@ -274,6 +279,7 @@ public class MainFrame extends JFrame {
 		sortList.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				compareRunForm.loadData();
 				compareRunForm.setVisible(true);
 			}
 		});

@@ -12,8 +12,19 @@
 */
 package database.service;
 
-public interface InsertMYSqlQuery {
+public enum InsertMYSqlServiceManager {
+	INSTANCE;
+	private static InsertMYSqlQuery insertMYSqlQuery = null;
 
-	public void prepareMYSQLQuery();
+	private static void getService() {
+		insertMYSqlQuery = new InsertMYSqlQueryImpl();
+	}
+
+	public static InsertMYSqlQuery getSession() {
+		if (insertMYSqlQuery == null) {
+			getService();
+		}
+		return insertMYSqlQuery;
+	}
 
 }

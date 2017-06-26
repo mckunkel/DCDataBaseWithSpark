@@ -166,11 +166,11 @@ public class RunForm extends JDialog implements ActionListener {
 
 	private void processCommands() {
 		this.mainFrame.getDataProcess().processFile();
+		this.mainFrameService.setSelectedSector(Integer.parseInt(this.sortPanel.getSelectedSector()));
+		this.mainFrameService.setSelectedSuperlayer(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()));
+		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getBySectorAndSuperLayer(
+				this.mainFrameService.getSelectedSector(), this.mainFrameService.getSelectedSuperlayer()));
 
-		this.mainFrame.getDataPanel()
-				.setTableModel(this.mainFrameService.getBySectorAndSuperLayer(
-						Integer.parseInt(this.sortPanel.getSelectedSector()),
-						Integer.parseInt(this.sortPanel.getSelectedSuperLayer())));
 		this.mainFrame.getHistogramPanel().updateCanvas(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()),
 				Integer.parseInt(this.sortPanel.getSelectedSector()));
 	}

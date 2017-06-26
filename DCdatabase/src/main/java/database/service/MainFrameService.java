@@ -11,7 +11,21 @@ import database.utils.Coordinate;
 
 public interface MainFrameService {
 
+	public void setRunNumber(int runNumber);
+
+	public int getRunNumber();
+
+	public void setSelectedSector(int sectorNumber);
+
+	public void setSelectedSuperlayer(int superLayerNumber);
+
+	public int getSelectedSector();
+
+	public int getSelectedSuperlayer();
+
 	public Dataset<StatusChangeDB> getBySectorAndSuperLayer(int sector, int superLayer);
+
+	public Dataset<StatusChangeDB> getComparedBySectorAndSuperLayer(int sector, int superLayer);
 
 	public Map<Coordinate, H2F> getHistogramMap();
 
@@ -19,7 +33,11 @@ public interface MainFrameService {
 
 	public Dataset<StatusChangeDB> getDatasetByMap(int superLayer, int sector);
 
+	public Dataset<StatusChangeDB> getComparedDatasetByMap(int superLayer, int sector);
+
 	public Map<Coordinate, Dataset<StatusChangeDB>> getDataSetMap();
+
+	public Map<Coordinate, Dataset<StatusChangeDB>> getComparedDataSetMap();
 
 	public void prepareMYSQLQuery(TreeSet<StatusChangeDB> queryList);
 

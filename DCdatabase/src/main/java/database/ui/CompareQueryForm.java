@@ -26,12 +26,16 @@ import org.apache.spark.sql.Row;
 
 import database.service.CompareRunFormService;
 import database.service.CompareRunFormServiceImpl;
+import database.service.MainFrameService;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class CompareQueryForm extends JDialog implements ActionListener {// implements
 	// ActionListener
+	private MainFrame mainFrame = null;
+	private MainFrameService mainFrameService = null;
 
 	private JButton cancelButton;
 	private JButton compareButton;
@@ -42,8 +46,10 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 	private CompareRunFormService compareRunFormService;
 	private boolean isReady = false;
 
-	public CompareQueryForm(JFrame parentFrame) {
+	public CompareQueryForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.COMPARE_FORM_TITLE, false);
+		this.mainFrame = parentFrame;
+		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		initializeVariables();
 		loadData();
@@ -65,7 +71,7 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 		List<String> runsD = runsDataset.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
 		;
 
-		for (String str : runsD) {
+		for (String str : runs) {
 			this.compareRunComboBox.addItem(str);
 		}
 	}
@@ -103,31 +109,13 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 
 		runInfoPanel.setLayout(new GridBagLayout());
 
-		GridBagConstraints gc = new GridBagConstraints();
-
-		gc.gridy = 0;
-
 		Insets rightPadding = new Insets(0, 0, 0, 15);
 		Insets noPadding = new Insets(0, 0, 0, 0);
 
-		// ///// First row /////////////////////////////
-
-		gc.weightx = 1;
-		gc.weighty = 1;
-		gc.fill = GridBagConstraints.NONE;
-
-		gc.gridx = 0;
-		gc.anchor = GridBagConstraints.EAST;
-		gc.insets = rightPadding;
-		// runInfoPanel.add(runLabel, gc);
 		PanelConstraints.addComponent(runInfoPanel, runLabel, 0, 0, 1, 1, 1, 1, GridBagConstraints.EAST,
-				GridBagConstraints.BOTH, rightPadding, 1, 1);
-		gc.gridx++;
-		gc.anchor = GridBagConstraints.WEST;
-		gc.insets = noPadding;
-		// runInfoPanel.add(compareRunComboBox, gc);
-		PanelConstraints.addComponent(runInfoPanel, compareRunComboBox, 1, 0, 1, 1, 1, 1, GridBagConstraints.EAST,
-				GridBagConstraints.BOTH, noPadding, 1, 1);
+				GridBagConstraints.NONE, rightPadding, 0, 0);
+		PanelConstraints.addComponent(runInfoPanel, compareRunComboBox, 1, 0, 1, 1, 1, 1, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, noPadding, 0, 0);
 		// ////////// Buttons Panel ///////////////
 
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -151,6 +139,10 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 
 			if (isReady) {
 				String str = (String) this.compareRunComboBox.getSelectedItem();
+				this.compareRunFormService.compareRun(str);
+				this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getComparedBySectorAndSuperLayer(
+						this.mainFrameService.getSelectedSector(), this.mainFrameService.getSelectedSuperlayer()));
+				this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
 
 			} else {
 				JFrame errorFrame = new JFrame("");

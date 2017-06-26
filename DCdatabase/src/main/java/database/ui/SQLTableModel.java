@@ -24,7 +24,8 @@ import database.utils.NumberConstants;
 public class SQLTableModel extends AbstractTableModel {
 
 	private List<StatusChangeDB> wireList;
-	private String[] colNames = { "Sector", "SuperLayer", "Layer", "Wire", "Problem Type", "Status Change" };
+	private String[] colNames = { "Run Number", "Sector", "SuperLayer", "Layer", "Wire", "Problem Type",
+			"Status Change" };
 
 	public SQLTableModel() {
 		this.wireList = new ArrayList<StatusChangeDB>();
@@ -35,7 +36,7 @@ public class SQLTableModel extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return NumberConstants.NUM_OF_COLUMNS + 2;
+		return NumberConstants.NUM_OF_COLUMNS + 3;
 	}
 
 	public String getColumnName(int column) {
@@ -48,16 +49,18 @@ public class SQLTableModel extends AbstractTableModel {
 		StatusChangeDB dataPoint = this.wireList.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return dataPoint.getSector();
+			return dataPoint.getRunno();
 		case 1:
-			return dataPoint.getSuperlayer();
+			return dataPoint.getSector();
 		case 2:
-			return dataPoint.getLoclayer();
+			return dataPoint.getSuperlayer();
 		case 3:
-			return dataPoint.getLocwire();
+			return dataPoint.getLoclayer();
 		case 4:
-			return dataPoint.getProblem_type();
+			return dataPoint.getLocwire();
 		case 5:
+			return dataPoint.getProblem_type();
+		case 6:
 			return dataPoint.getStatus_change_type();
 		default:
 			return null;
