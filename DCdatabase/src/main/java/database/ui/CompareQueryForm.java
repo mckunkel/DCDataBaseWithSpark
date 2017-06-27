@@ -20,10 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.Row;
-
 import database.service.CompareRunFormService;
 import database.service.CompareRunFormServiceImpl;
 import database.service.MainFrameService;
@@ -65,12 +61,7 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 	public void loadData() {
 
 		this.compareRunComboBox.removeAllItems();
-
 		List<String> runs = this.compareRunFormService.getAllRuns();
-		Dataset<Row> runsDataset = this.compareRunFormService.getAllRunsDataset();
-		List<String> runsD = runsDataset.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
-		;
-
 		for (String str : runs) {
 			this.compareRunComboBox.addItem(str);
 		}

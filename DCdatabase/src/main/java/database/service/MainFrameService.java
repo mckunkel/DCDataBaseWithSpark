@@ -59,6 +59,12 @@ public interface MainFrameService {
 
 	public void setnEventsInFile(int nEventsInFile);
 
+	public boolean sentToDB();
+
+	public void setSentTodb(boolean sentTodb);
+
+	public void prepareAddBackList(TreeSet<StatusChangeDB> queryList);
+
 	public void shutdown();
 
 }

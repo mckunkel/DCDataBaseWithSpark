@@ -35,21 +35,24 @@ public class DataProcess {
 	private HipoDataSource reader = null;
 
 	public DataProcess() {
-		this.reader = new HipoDataSource();
-		init();
+
 	}
 
 	public void openFile(String str) {
-		System.out.println("will open " + str);
+		this.reader = new HipoDataSource();
 		this.reader.open(str);
-		this.mainFrameService.setRunNumber(getRunNumber());
-		setNEvents();
+		init();
+
 	}
 
 	private void init() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
+		this.mainFrameService.setRunNumber(getRunNumber());
 		this.spSession = SparkManager.getSession();
 		this.emptyDataPoints = new ArrayList<StatusChangeDB>();
+
+		setNEvents();
+
 	}
 
 	public void processFile() {
@@ -113,7 +116,6 @@ public class DataProcess {
 	}
 
 	public int getRunNumber() {
-
 		return this.reader.gotoEvent(1).getBank("RUN::config").getInt("run", 0);
 	}
 

@@ -108,10 +108,7 @@ public class DataPanel extends JPanel {
 	// private final int[] selection = null;
 
 	private void mouseListener() {
-		// List<StatusChangeDB> queryList = new ArrayList<>();
 		TreeSet<StatusChangeDB> queryList = new TreeSet<>();
-		TreeSet<Integer> intList = new TreeSet<>();
-
 		this.aTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
@@ -121,7 +118,6 @@ public class DataPanel extends JPanel {
 					// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					int[] selection = target.getSelectedRows();
 					for (int i : selection) {
-						intList.add(i);
 						StatusChangeDB statusChangeDB = new StatusChangeDB();
 						statusChangeDB.setSector(target.getValueAt(i, 0).toString());
 						statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
@@ -134,7 +130,6 @@ public class DataPanel extends JPanel {
 		});
 
 		this.mainFrameService.prepareMYSQLQuery(queryList);
-		this.mainFrameService.setListIndices(intList);
 
 	}
 }

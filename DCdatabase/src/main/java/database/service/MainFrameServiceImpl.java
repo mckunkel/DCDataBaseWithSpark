@@ -25,6 +25,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private int runNumber;
 	private int sectorNumber;
 	private int superLayerNumber;
+	private boolean sentTodb;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -123,9 +124,6 @@ public class MainFrameServiceImpl implements MainFrameService {
 	// for inserting into MYSQL
 	public void prepareMYSQLQuery(TreeSet<StatusChangeDB> queryList) {
 		this.queryList = queryList;
-		for (StatusChangeDB statusChangeDB : queryList) {
-			System.out.println(statusChangeDB);
-		}
 	}
 
 	public TreeSet<StatusChangeDB> getMYSQLQuery() {
@@ -162,6 +160,21 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	public void setnEventsInFile(int nEventsInFile) {
 		this.nEventsInFile = nEventsInFile;
+	}
+
+	public void setSentTodb(boolean sentTodb) {
+		this.sentTodb = sentTodb;
+	}
+
+	public boolean sentToDB() {
+		return this.sentTodb;
+	}
+
+	public void prepareAddBackList(TreeSet<StatusChangeDB> queryList) {
+		// this.queryList = queryList;
+		for (StatusChangeDB statusChangeDB : queryList) {
+			System.out.println(statusChangeDB);
+		}
 	}
 
 	public void shutdown() {

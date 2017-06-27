@@ -13,6 +13,8 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -24,11 +26,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import database.objects.StatusChangeDB;
+import database.service.MainFrameService;
 import database.ui.SQLTableModel;
+import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
 
 public class SQLPanel extends JPanel {
+	private MainFrameService mainFrameService = null;
 
 	private JTable aTable;
 	private SQLTableModel tableModel;
@@ -88,6 +93,8 @@ public class SQLPanel extends JPanel {
 	}
 
 	private void initializeVariables() {
+		this.mainFrameService = MainFrameServiceManager.getSession();
+
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.SQL_FORM_LABEL);
 		this.tableModel = new SQLTableModel();
@@ -101,4 +108,34 @@ public class SQLPanel extends JPanel {
 	public void updateTable() {
 		this.tableModel.updateTable();
 	}
+
+	private void mouseListener() {
+		TreeSet<StatusChangeDB> queryList = new TreeSet<>();
+		TreeSet<Integer> intList = new TreeSet<>();
+
+		this.aTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+				if (e.getClickCount() == 1) {
+					final JTable target = (JTable) e.getSource();
+					// target.setRowSelectionAllowed(true);
+					// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					int[] selection = target.getSelectedRows();
+					for (int i : selection) {
+						intList.add(i);
+						StatusChangeDB statusChangeDB = new StatusChangeDB();
+						statusChangeDB.setSector(target.getValueAt(i, 0).toString());
+						statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
+						statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
+						statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
+						queryList.add(statusChangeDB);
+					}
+				}
+			}
+		});
+
+		this.mainFrameService.prepareAddBackList(queryList);
+
+	}
+
 }

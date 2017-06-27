@@ -165,6 +165,10 @@ public class RunForm extends JDialog implements ActionListener {
 	}
 
 	private void processCommands() {
+		this.mainFrameService.setSentTodb(false);
+		this.mainFrameService.getCompleteSQLList().clear();
+		this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+
 		this.mainFrame.getDataProcess().processFile();
 		this.mainFrameService.setSelectedSector(Integer.parseInt(this.sortPanel.getSelectedSector()));
 		this.mainFrameService.setSelectedSuperlayer(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()));

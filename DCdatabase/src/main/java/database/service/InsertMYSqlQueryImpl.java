@@ -21,6 +21,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 
 import database.objects.StatusChangeDB;
+import database.utils.DCConversions;
 import database.utils.MainFrameServiceManager;
 import spark.utils.SparkManager;
 
@@ -39,6 +40,7 @@ public class InsertMYSqlQueryImpl implements InsertMYSqlQuery {
 		for (StatusChangeDB statusChangeDB : this.mainFrameService.getCompleteSQLList()) {
 			statusChangeDB.setStatchangeid(0);
 			statusChangeDB.setDateofentry(timestamp);
+			statusChangeDB.setRegion(DCConversions.getRegion(statusChangeDB.getSuperlayer()));
 
 		}
 

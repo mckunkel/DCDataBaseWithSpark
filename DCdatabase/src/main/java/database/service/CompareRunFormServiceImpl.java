@@ -29,11 +29,6 @@ public class CompareRunFormServiceImpl implements CompareRunFormService {
 		return this.dbQuery.getAllRuns();
 	}
 
-	// public Dataset<Row> compareRun(String str) {
-	// compareRunII(str);
-	// return this.dbQuery.compareRun(str);
-	// }
-
 	public void compareRun(String str) {
 		compareSets(str);
 	}
@@ -54,19 +49,23 @@ public class CompareRunFormServiceImpl implements CompareRunFormService {
 
 	private void compareSets(String str) {
 		Dataset<StatusChangeDB> dbQuery = this.dbQuery.compareRunII(str);
+		TreeSet<StatusChangeDB> listToSql = new TreeSet<>();
 
 		for (int i = 1; i < 7; i++) {// superLayer
 			for (int j = 1; j < 7; j++) { // sector
 				List<StatusChangeDB> dataList = new ArrayList<StatusChangeDB>();
 				List<StatusChangeDB> sqlList = new ArrayList<StatusChangeDB>();
 
-				dataList.addAll(this.mainFrameService.getDatasetByMap(i, j).collectAsList());
+				if (this.mainFrameService.sentToDB()) {
+					dataList.addAll(this.mainFrameService.getComparedDatasetByMap(i, j).collectAsList());
 
+				} else {
+					dataList.addAll(this.mainFrameService.getDatasetByMap(i, j).collectAsList());
+				}
 				sqlList.addAll(
 						dbQuery.filter(col("superLayer").equalTo(i)).filter(col("sector").equalTo(j)).collectAsList());
 
 				TreeSet<StatusChangeDB> listToRemove = new TreeSet<>();
-				TreeSet<StatusChangeDB> listToSql = new TreeSet<>();
 
 				for (StatusChangeDB ro : sqlList) {
 					for (StatusChangeDB statusChangeDB : dataList) {
@@ -82,8 +81,9 @@ public class CompareRunFormServiceImpl implements CompareRunFormService {
 					}
 				}
 				dataList.removeAll(listToRemove);
-				this.mainFrameService.addToCompleteSQLList(listToSql);
-
+				if (Integer.parseInt(str) != this.mainFrameService.getRunNumber()) {
+					this.mainFrameService.addToCompleteSQLList(listToSql);
+				}
 				this.mainFrameService.getComparedDataSetMap().put(new Coordinate(i - 1, j - 1),
 						SparkManager.getSession().createDataset(dataList, SparkManager.statusChangeDBEncoder()));
 			}

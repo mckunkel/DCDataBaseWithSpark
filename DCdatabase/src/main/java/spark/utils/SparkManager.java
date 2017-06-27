@@ -69,6 +69,7 @@ public enum SparkManager {
 		jdbcOptions.put("dbtable", "status_change");
 		jdbcOptions.put("user", "root");
 		jdbcOptions.put("password", "");
+		// jdbcOptions.put("jdbcCompliantTruncation", "false");
 
 		return jdbcOptions;
 	}
@@ -76,7 +77,9 @@ public enum SparkManager {
 	public static String jdbcAppendOptions() {
 
 		return SparkManager.jdbcOptions().get("url") + "?user=" + SparkManager.jdbcOptions().get("user") + "&password="
-				+ SparkManager.jdbcOptions().get("password");
+				+ SparkManager.jdbcOptions().get("password");// +
+																// "&jdbcCompliantTruncation="
+		// + SparkManager.jdbcOptions().get("jdbcCompliantTruncation");
 	}
 
 	public static Dataset<Row> mySqlDataset() {

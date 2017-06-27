@@ -79,6 +79,7 @@ public class DBSendPanel extends JPanel implements ActionListener {
 			this.insertMYSqlQuery.prepareMYSQLQuery();
 			this.mainFrameService.getCompleteSQLList().clear();
 			this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+			this.mainFrameService.setSentTodb(true);
 			SparkManager.restart();
 		} else if (event.getSource() == this.removeButton) {
 
