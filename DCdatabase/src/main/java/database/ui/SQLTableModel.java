@@ -78,6 +78,28 @@ public class SQLTableModel extends AbstractTableModel {
 		this.wireList = wireList;
 	}
 
+	public void removeRow(TreeSet<StatusChangeDB> statusChangeDBs) {
+		ArrayList<StatusChangeDB> listToRemove = new ArrayList<>();
+
+		for (StatusChangeDB ro : statusChangeDBs) {
+			for (StatusChangeDB statusChangeDB : this.wireList) {
+				if (statusChangeDB.getSector().equals(ro.getSector())
+						&& statusChangeDB.getSuperlayer().equals(ro.getSuperlayer())
+						&& statusChangeDB.getLoclayer().equals(ro.getLoclayer())
+						&& statusChangeDB.getLocwire().equals(ro.getLocwire())) {
+					listToRemove.add(statusChangeDB);
+					// System.out.println(statusChangeDB.getSector() + " " +
+					// statusChangeDB.getSuperlayer() + " "
+					// + statusChangeDB.getLoclayer() + " " +
+					// statusChangeDB.getLocwire());
+
+				}
+			}
+		}
+		this.wireList.removeAll(listToRemove);
+		updateTable();
+	}
+
 	public void updateTable() {
 		fireTableDataChanged();
 	}

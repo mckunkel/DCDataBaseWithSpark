@@ -68,8 +68,11 @@ public class TableModel extends AbstractTableModel {
 	}
 
 	public void setWireList(List<StatusChangeDB> wireList) {
+		// with tree set it should be only unique values
+		TreeSet<StatusChangeDB> testSet = new TreeSet<>();
+		testSet.addAll(wireList);
 		this.wireList.clear();
-		this.wireList.addAll(wireList);
+		this.wireList.addAll(testSet);
 		// printTable(this.wireList);
 
 	}
@@ -116,6 +119,17 @@ public class TableModel extends AbstractTableModel {
 		}
 		this.wireList.removeAll(listToRemove);
 		updateTable();
+	}
+
+	public void addRow(TreeSet<StatusChangeDB> statusChangeDBs) {
+		// with test set, value should be unique
+		TreeSet<StatusChangeDB> testSet = new TreeSet<>();
+		testSet.addAll(this.wireList);
+		testSet.addAll(statusChangeDBs);
+		this.wireList.clear();
+		this.wireList.addAll(testSet);
+		updateTable();
+
 	}
 
 	private void printTable(List<StatusChangeDB> wireList) {

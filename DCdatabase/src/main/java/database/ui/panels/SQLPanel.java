@@ -47,6 +47,7 @@ public class SQLPanel extends JPanel {
 		constructLayout();
 		initializeTableAlignment();
 		initializeHeaderAlignment();
+		mouseListener();
 		// setJTableColumnsWidth(this.aTable, 480, 10, 5, 7, 5, 3, 20, 20, 1);
 	}
 
@@ -109,9 +110,13 @@ public class SQLPanel extends JPanel {
 		this.tableModel.updateTable();
 	}
 
+	public void removeItems(TreeSet<StatusChangeDB> statusChangeDBs) {
+		this.tableModel.removeRow(statusChangeDBs);
+
+	}
+
 	private void mouseListener() {
 		TreeSet<StatusChangeDB> queryList = new TreeSet<>();
-		TreeSet<Integer> intList = new TreeSet<>();
 
 		this.aTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -122,12 +127,11 @@ public class SQLPanel extends JPanel {
 					// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					int[] selection = target.getSelectedRows();
 					for (int i : selection) {
-						intList.add(i);
 						StatusChangeDB statusChangeDB = new StatusChangeDB();
-						statusChangeDB.setSector(target.getValueAt(i, 0).toString());
-						statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
-						statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
-						statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
+						statusChangeDB.setSector(target.getValueAt(i, 1).toString());
+						statusChangeDB.setSuperlayer(target.getValueAt(i, 2).toString());
+						statusChangeDB.setLoclayer(target.getValueAt(i, 3).toString());
+						statusChangeDB.setLocwire(target.getValueAt(i, 4).toString());
 						queryList.add(statusChangeDB);
 					}
 				}

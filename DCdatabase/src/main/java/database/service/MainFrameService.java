@@ -65,6 +65,12 @@ public interface MainFrameService {
 
 	public void prepareAddBackList(TreeSet<StatusChangeDB> queryList);
 
+	public void removeRowFromMYSQLQuery(TreeSet<StatusChangeDB> statusChangeDBs);
+
+	public TreeSet<StatusChangeDB> getAddBackList();
+
+	public void clearAddBackList();
+
 	public void shutdown();
 
 }

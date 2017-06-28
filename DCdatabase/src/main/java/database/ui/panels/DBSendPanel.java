@@ -15,6 +15,7 @@ package database.ui.panels;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -22,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import database.objects.StatusChangeDB;
 import database.service.InsertMYSqlQuery;
 import database.service.InsertMYSqlServiceManager;
 import database.service.MainFrameService;
@@ -84,6 +86,20 @@ public class DBSendPanel extends JPanel implements ActionListener {
 		} else if (event.getSource() == this.removeButton) {
 
 			System.out.println("This will remove from teh list");
+			TreeSet<StatusChangeDB> queryList = this.mainFrameService.getAddBackList();
+			// for (StatusChangeDB statusChangeDB : queryList) {
+			// System.out.println(statusChangeDB.getSector() + " " +
+			// statusChangeDB.getSuperlayer() + " "
+			// + statusChangeDB.getLoclayer() + " " +
+			// statusChangeDB.getLocwire());
+			// }
+			this.mainFrame.getSqlPanel().removeItems(queryList);
+
+			// this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+			this.mainFrame.getDataPanel().addItems(queryList);
+			this.mainFrameService.removeRowFromMYSQLQuery(queryList);
+			this.mainFrameService.clearAddBackList();
+
 		}
 
 	}

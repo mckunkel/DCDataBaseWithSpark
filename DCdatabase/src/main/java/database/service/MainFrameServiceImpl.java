@@ -1,5 +1,6 @@
 package database.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -19,6 +20,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private Map<Coordinate, Dataset<StatusChangeDB>> dataComparedSetByCoordinate = null;
 
 	private TreeSet<StatusChangeDB> queryList = null;
+	private TreeSet<StatusChangeDB> addBackList = null;
+
 	private TreeSet<StatusChangeDB> completeQueryList = null;
 	private TreeSet<Integer> intList = null;
 	private int nEventsInFile;
@@ -34,6 +37,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.dataComparedSetByCoordinate = new HashMap<Coordinate, Dataset<StatusChangeDB>>();
 
 		this.queryList = new TreeSet<>();
+		this.addBackList = new TreeSet<>();
 		this.completeQueryList = new TreeSet<>();
 		this.intList = new TreeSet<>();
 		createHistograms();
@@ -171,10 +175,34 @@ public class MainFrameServiceImpl implements MainFrameService {
 	}
 
 	public void prepareAddBackList(TreeSet<StatusChangeDB> queryList) {
-		// this.queryList = queryList;
-		for (StatusChangeDB statusChangeDB : queryList) {
-			System.out.println(statusChangeDB);
+		this.addBackList = queryList;
+	}
+
+	public TreeSet<StatusChangeDB> getAddBackList() {
+		return this.addBackList;
+	}
+
+	public void removeRowFromMYSQLQuery(TreeSet<StatusChangeDB> statusChangeDBs) {
+		ArrayList<StatusChangeDB> listToRemove = new ArrayList<>();
+		System.out.println("removeRow was called in MainFrameServiceImpl");
+		for (StatusChangeDB ro : statusChangeDBs) {
+			for (StatusChangeDB statusChangeDB : this.completeQueryList) {
+				if (statusChangeDB.getSector().equals(ro.getSector())
+						&& statusChangeDB.getSuperlayer().equals(ro.getSuperlayer())
+						&& statusChangeDB.getLoclayer().equals(ro.getLoclayer())
+						&& statusChangeDB.getLocwire().equals(ro.getLocwire())) {
+					listToRemove.add(statusChangeDB);
+					System.out.println(statusChangeDB.getSector() + " " + statusChangeDB.getSuperlayer() + " "
+							+ statusChangeDB.getLoclayer() + " " + statusChangeDB.getLocwire());
+				}
+			}
 		}
+		this.completeQueryList.removeAll(listToRemove);
+	}
+
+	public void clearAddBackList() {
+		this.addBackList.clear();
+
 	}
 
 	public void shutdown() {

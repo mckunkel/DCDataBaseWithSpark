@@ -102,6 +102,10 @@ public class DataPanel extends JPanel {
 		this.tableModel.removeRow(statusChangeDBs);
 	}
 
+	public void addItems(TreeSet<StatusChangeDB> statusChangeDBs) {
+		this.tableModel.addRow(statusChangeDBs);
+	}
+
 	public void compareWithSQLPanel(Dataset<StatusChangeDB> wireSet) {
 		this.tableModel.compareWithSQLPanel(wireSet, this.mainFrameService.getCompleteSQLList());
 	}
