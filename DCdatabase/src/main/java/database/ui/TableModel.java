@@ -70,6 +70,7 @@ public class TableModel extends AbstractTableModel {
 	public void setWireList(List<StatusChangeDB> wireList) {
 		this.wireList.clear();
 		this.wireList.addAll(wireList);
+		// printTable(this.wireList);
 
 	}
 

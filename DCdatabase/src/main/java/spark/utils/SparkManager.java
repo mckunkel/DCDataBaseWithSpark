@@ -64,22 +64,19 @@ public enum SparkManager {
 
 	public static Map<String, String> jdbcOptions() {
 		Map<String, String> jdbcOptions = new HashMap<String, String>();
-		jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test");
+		jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test?jdbcCompliantTruncation=false");
 		jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 		jdbcOptions.put("dbtable", "status_change");
 		jdbcOptions.put("user", "root");
 		jdbcOptions.put("password", "");
-		// jdbcOptions.put("jdbcCompliantTruncation", "false");
-
 		return jdbcOptions;
 	}
 
 	public static String jdbcAppendOptions() {
 
-		return SparkManager.jdbcOptions().get("url") + "?user=" + SparkManager.jdbcOptions().get("user") + "&password="
-				+ SparkManager.jdbcOptions().get("password");// +
-																// "&jdbcCompliantTruncation="
-		// + SparkManager.jdbcOptions().get("jdbcCompliantTruncation");
+		return SparkManager.jdbcOptions().get("url") + "&user=" + SparkManager.jdbcOptions().get("user") + "&password="
+				+ SparkManager.jdbcOptions().get("password");
+
 	}
 
 	public static Dataset<Row> mySqlDataset() {

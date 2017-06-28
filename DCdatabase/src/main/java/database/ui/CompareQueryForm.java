@@ -65,6 +65,10 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 		for (String str : runs) {
 			this.compareRunComboBox.addItem(str);
 		}
+		// I am removing the 1st element because these are test elements
+		// for copying the object StatusChangeDB to add the queries properly
+		// Spark encoder does not like the enum :(
+		this.compareRunComboBox.removeItemAt(0);
 	}
 
 	public void setReady() {

@@ -24,6 +24,7 @@ public class StatusChangeDB implements Comparable<StatusChangeDB> {
 	private Timestamp dateofentry;
 	private int runno;
 	private String status_change_type;
+	// private Status_change_type status_change_type;
 	private String problem_type;
 	private String region;
 	private String sector;
@@ -76,8 +77,19 @@ public class StatusChangeDB implements Comparable<StatusChangeDB> {
 	}
 
 	public void setStatus_change_type(String status_change_type) {
+
 		this.status_change_type = status_change_type;
+
 	}
+
+	// public Status_change_type getStatus_change_type() {
+	// return status_change_type;
+	// }
+	//
+	// public void setStatus_change_type(Status_change_type status_change_type)
+	// {
+	// this.status_change_type = status_change_type.toString();
+	// }
 
 	public String getProblem_type() {
 		return problem_type;

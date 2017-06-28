@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import database.objects.StatusChangeDB;
+import database.objects.Status_change_type;
 import database.service.CompareRunFormService;
 import database.service.CompareRunFormServiceImpl;
 import database.service.MainFrameService;
@@ -107,14 +108,20 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 	@Override
 	public void actionPerformed(ActionEvent event) {
 
-		String brokenOrfixed = null;
+		// String brokenOrfixed = null;
+		// if (cb1.isSelected()) {
+		// brokenOrfixed = "broken";
+		// }
+		// if (cb2.isSelected()) {
+		// brokenOrfixed = "fixed";
+		// }
+		Status_change_type brokenOrfixed = null;
 		if (cb1.isSelected()) {
-			brokenOrfixed = "broken";
+			brokenOrfixed = Status_change_type.broken;
 		}
 		if (cb2.isSelected()) {
-			brokenOrfixed = "fixed";
+			brokenOrfixed = Status_change_type.fixed;
 		}
-
 		if (event.getSource() == this.applyButton) {
 			String str = null;
 			str = (String) this.faultComboBox.getSelectedItem();
@@ -129,7 +136,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 				for (StatusChangeDB statusChangeDB : queryList) {
 					statusChangeDB.setProblem_type(str);
-					statusChangeDB.setStatus_change_type(brokenOrfixed);
+					statusChangeDB.setStatus_change_type(brokenOrfixed.toString());
 					statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
 				}
 

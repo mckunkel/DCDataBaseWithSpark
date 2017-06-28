@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
@@ -58,7 +57,7 @@ public class DataProcess {
 	public void processFile() {
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < 400) {// && counter < 40
+		while (reader.hasEvent() && counter < 4000) {// && counter < 400
 			if (counter % 500 == 0) {
 				System.out.println("done " + counter + " events");
 			}
@@ -104,12 +103,11 @@ public class DataProcess {
 					}
 
 				}
-
-				Dataset<Row> df = spSession.createDataset(emptyDataPoints, SparkManager.statusChangeDBEncoder()).toDF()
-						.select("loclayer", "superlayer", "sector", "locwire");
-				Dataset<StatusChangeDB> df2 = spSession.createDataset(emptyDataPoints,
+				Dataset<StatusChangeDB> df = spSession.createDataset(emptyDataPoints,
 						SparkManager.statusChangeDBEncoder());
-				this.mainFrameService.getDataSetMap().put(new Coordinate(i, j), df2);
+				// df.select("sector", "superlayer", "loclayer",
+				// "locwire").show();//
+				this.mainFrameService.getDataSetMap().put(new Coordinate(i, j), df);
 				emptyDataPoints.clear();
 			}
 		}
