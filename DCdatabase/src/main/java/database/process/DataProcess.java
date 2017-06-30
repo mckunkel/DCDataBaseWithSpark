@@ -33,6 +33,8 @@ public class DataProcess {
 	private List<StatusChangeDB> emptyDataPoints = null;
 	private HipoDataSource reader = null;
 
+	private int nEvents = 0;
+
 	public DataProcess() {
 
 	}
@@ -50,15 +52,24 @@ public class DataProcess {
 		this.spSession = SparkManager.getSession();
 		this.emptyDataPoints = new ArrayList<StatusChangeDB>();
 
-		setNEvents();
+		setMainFrameServiceNEvents();
 
+	}
+
+	private void checkNEvents() {
+		if (nEvents == 0) {
+			nEvents = reader.getSize();
+		}
+		System.out.println("Will process + " + nEvents + " events");
 	}
 
 	public void processFile() {
 
+		checkNEvents();
+
 		int counter = 0;
-		while (reader.hasEvent() && counter < 4000) {// && counter < 400
-			if (counter % 500 == 0) {
+		while (reader.hasEvent() && counter < nEvents) {// && counter < 400
+			if (counter % 10000 == 0) {
 				System.out.println("done " + counter + " events");
 			}
 			DataEvent event = reader.getNextEvent();
@@ -117,7 +128,11 @@ public class DataProcess {
 		return this.reader.gotoEvent(1).getBank("RUN::config").getInt("run", 0);
 	}
 
-	public void setNEvents() {
+	public void setNEvents(int nEvents) {
+		this.nEvents = nEvents;
+	}
+
+	private void setMainFrameServiceNEvents() {
 		this.mainFrameService.setnEventsInFile(reader.getSize());
 
 	}
