@@ -42,4 +42,9 @@ public class Coordinate {
 			return false;
 		return true;
 	}
+
+	public Integer[] getSize() {
+		return size;
+	}
+
 }

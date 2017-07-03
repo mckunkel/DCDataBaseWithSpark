@@ -12,6 +12,7 @@
 */
 package testpackages;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Level;
@@ -29,7 +32,9 @@ import org.jlab.groot.graphics.EmbeddedCanvas;
 
 import database.process.DataProcess;
 import database.service.MainFrameService;
+import database.utils.Coordinate;
 import database.utils.MainFrameServiceManager;
+import spark.utils.decision.HVPinDecision;
 
 public class BadBadMisterWire {
 
@@ -419,60 +424,71 @@ public class BadBadMisterWire {
 		int sector = 2;
 		badBadMisterWire.getMaps(superLayer, sector);
 
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+
+		JTabbedPane tabbedPane = new JTabbedPane();
+
+		EmbeddedCanvas can1 = new EmbeddedCanvas();
+		can1.divide(1, 6);
+
 		H2F testH2F = badBadMisterWire.getHist(superLayer, sector);
 		// byPin
 		System.out.println("#### PIN ######");
-		badBadMisterWire.sumByPin(testH2F);
+		// badBadMisterWire.sumByPin(testH2F);
+		Map<Coordinate, Map<Integer, Pair<Integer, Integer>>> compMap = new HashMap<>();
+		Map<Integer, Pair<Integer, Integer>> badHVPin = HVPinDecision.BadHVPin(testH2F);
+		List<MischievousPin> mischievousPinList = new ArrayList<>();
+		for (Map.Entry<Integer, Pair<Integer, Integer>> entry : badHVPin.entrySet()) {
+			Integer key = entry.getKey();
+			Integer leftValue = entry.getValue().getLeft();
+			Integer rightValue = entry.getValue().getRight();
 
-		// badBadMisterWire.getlayerCountMapForPin();
-		//
-		// // OK lets try this circular logic you drew
-		// // but first lets rename the bundles alphabetically
-		// // i.e. bundle 1 = A ; 2 = B ; 3 = C ; 4 = D ; 5 = E ; 6 = F ; 7 = G
-		// ; 8
-		// // = H
-		// // now the circular logic is as
-		// // A = B = H/4 ; B = C = A ; C = D = B
-		// // D = E/2 = C ; E = F = 2D ; F = G = E
-		// // G = H/2 = F ; H =2G = 4A
-		// System.out.println("For A:");
-		// System.out.println(layerList.get(1).getCountsInWireBundle() + " " +
-		// layerList.get(2).getCountsInWireBundle()
-		// + " " + layerList.get(8).getCountsInWireBundle() / 4);
-		// System.out.println(layerList.get(1).getCountsInWireBundle() /
-		// layerList.get(1).getCountsInWireBundle() + " "
-		// + layerList.get(2).getCountsInWireBundle() /
-		// layerList.get(1).getCountsInWireBundle() + " "
-		// + layerList.get(8).getCountsInWireBundle() / (4 *
-		// layerList.get(1).getCountsInWireBundle()));
-		// EmbeddedCanvas can2 = new EmbeddedCanvas();
-		//
-		// System.out.println("For B:");
-		// System.out.println(layerList.get(2).getCountsInWireBundle() + " " +
-		// layerList.get(3).getCountsInWireBundle()
-		// + " " + layerList.get(1).getCountsInWireBundle());
-		// System.out.println(layerList.get(2).getCountsInWireBundle() /
-		// layerList.get(2).getCountsInWireBundle() + " "
-		// + layerList.get(3).getCountsInWireBundle() /
-		// layerList.get(2).getCountsInWireBundle() + " "
-		// + layerList.get(1).getCountsInWireBundle() /
-		// (layerList.get(2).getCountsInWireBundle()));
-		//
-		// System.out.println("For C:");
-		// System.out.println(layerList.get(3).getCountsInWireBundle() + " " +
-		// layerList.get(4).getCountsInWireBundle()
-		// + " " + layerList.get(2).getCountsInWireBundle());
-		// System.out.println(layerList.get(3).getCountsInWireBundle() /
-		// layerList.get(3).getCountsInWireBundle() + " "
-		// + layerList.get(4).getCountsInWireBundle() /
-		// layerList.get(3).getCountsInWireBundle() + " "
-		// + layerList.get(2).getCountsInWireBundle() /
-		// (layerList.get(3).getCountsInWireBundle()));
-		//
-		// can2.draw(newH2F);
-		// JFrame frame2 = new JFrame("");
-		// frame2.add(can2);
-		// frame2.setVisible(true);
+			System.out.println("I am in BadBadMisterWire. I have located a bad pin at layer " + key
+					+ " with wires from " + leftValue + " to " + rightValue);
+
+		}
+		for (int i = 0; i < 6; i++) {
+			can1.cd(i);
+
+			for (int j = 1; j < 2; j++) {
+				H2F aH2F = badBadMisterWire.getHist(i + 1, j + 1);
+				MischievousPin mischievousPin = new MischievousPin();
+				mischievousPin.setSector(j + 1);
+				mischievousPin.setSuperLayer(i + 1);
+				mischievousPin.setMischievousPin(HVPinDecision.BadHVPin(aH2F));
+				mischievousPinList.add(mischievousPin);
+				can1.draw(aH2F);
+				EmbeddedCanvas can2 = new EmbeddedCanvas();
+				can2.draw(aH2F);
+
+				tabbedPane.add("Superlayer" + (i + 1) + " Sector " + (j + 1), can2);
+
+			}
+		}
+
+		for (MischievousPin mischievousPin : mischievousPinList) {
+
+			System.out.println("I am in BadBadMisterWire. I have located a bad pin at sector "
+					+ mischievousPin.getSector() + " and superlayer " + mischievousPin.getSuperLayer());
+
+			for (Map.Entry<Integer, Pair<Integer, Integer>> entry : mischievousPin.getMischievousPin().entrySet()) {
+				Integer key = entry.getKey();
+				Integer leftValue = 1;// entry.getValue().getLeft();
+				Integer rightValue = 2;// entry.getValue().getRight();
+				System.out.println(" with wires from " + leftValue + " to " + rightValue + " at layer " + key);
+			}
+
+		}
+
+		JFrame frame2 = new JFrame("");
+		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Dimension screensize = null;
+		screensize = Toolkit.getDefaultToolkit().getScreenSize();
+		frame2.setSize((int) (screensize.getHeight() * .75 * 1.618), (int) (screensize.getHeight() * .75));
+		mainPanel.add(tabbedPane);
+		frame2.add(mainPanel);
+		frame2.setVisible(true);
 
 	}
 
@@ -556,4 +572,39 @@ public class BadBadMisterWire {
 
 	}
 
+	static class MischievousPin {
+
+		private Map<Integer, Pair<Integer, Integer>> mischievousPin;
+		private int sector;
+		private int superLayer;
+
+		public MischievousPin() {
+			this.mischievousPin = new HashMap<>();
+		}
+
+		public Map<Integer, Pair<Integer, Integer>> getMischievousPin() {
+			return mischievousPin;
+		}
+
+		public void setMischievousPin(Map<Integer, Pair<Integer, Integer>> mischievousPin) {
+			this.mischievousPin = mischievousPin;
+		}
+
+		public int getSector() {
+			return sector;
+		}
+
+		public void setSector(int sector) {
+			this.sector = sector;
+		}
+
+		public int getSuperLayer() {
+			return superLayer;
+		}
+
+		public void setSuperLayer(int superLayer) {
+			this.superLayer = superLayer;
+		}
+
+	}
 }
