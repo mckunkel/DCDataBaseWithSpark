@@ -24,18 +24,29 @@ import database.objects.NaughtyContainer;
 
 public class HVPinDecision {
 
-	private static List<Pair<Integer, Integer>> hvPinSegmentation = new ArrayList<Pair<Integer, Integer>>();
+	private static List<Pair<Integer, Integer>> hvPinSegmentation = null;
 
-	private static Map<Integer, NaughtyContainer> badMap = new HashMap<Integer, NaughtyContainer>();
-	private static List<NaughtyContainer> naughtyList = new ArrayList<NaughtyContainer>();
-	private static Map<Integer, Double> layerCountMapForPin = new HashMap<>();
-	private static Map<Integer, Double> rmsLayerCountMapForPin = new HashMap<>();
+	private static Map<Integer, NaughtyContainer> badMap = null;
+	private static List<NaughtyContainer> naughtyList = null;
+	private static Map<Integer, Double> layerCountMapForPin = null;
+	private static Map<Integer, Double> rmsLayerCountMapForPin = null;
 
-	private static Map<Integer, Pair<Integer, Integer>> returnMap = new HashMap<>();
+	private static Map<Integer, Pair<Integer, Integer>> returnMap = null;
+	private static Map<Pair<Integer, String>, Pair<Integer, Integer>> returnPairMap = null;
 
-	public static Map<Integer, Pair<Integer, Integer>> BadHVPin(H2F aH2F) {
+	public static Map<Pair<Integer, String>, Pair<Integer, Integer>> BadHVPin(H2F aH2F) {
+		hvPinSegmentation = new ArrayList<Pair<Integer, Integer>>();
+		badMap = new HashMap<Integer, NaughtyContainer>();
+		naughtyList = new ArrayList<NaughtyContainer>();
+		layerCountMapForPin = new HashMap<>();
+		rmsLayerCountMapForPin = new HashMap<>();
+		returnMap = new HashMap<Integer, Pair<Integer, Integer>>();
+		returnPairMap = new HashMap<Pair<Integer, String>, Pair<Integer, Integer>>();
+		returnMap.clear();
 		sumByPin(aH2F);
-		return returnMap;
+		// hotWire(aH2F);
+
+		return returnPairMap;
 	}
 
 	// public static void BadHVPin(H2F aH2F) {
@@ -86,7 +97,6 @@ public class HVPinDecision {
 			}
 		}
 		setLayerCountMapForPins();
-
 	}
 
 	private static void setLayerCountMapForPins() {
@@ -114,9 +124,112 @@ public class HVPinDecision {
 
 	}
 
+	private static void hotWire(H2F aH2f) {
+		setuphvPinSegmentation();
+		H2F aNewH2F = new H2F("something", aH2f.getXAxis().getNBins(), aH2f.getXAxis().min(), aH2f.getXAxis().max(),
+				aH2f.getYAxis().getNBins(), aH2f.getYAxis().min(), aH2f.getYAxis().max());
+		int bundle = 0;
+		boolean recalculateRMS = false;
+		for (Pair<Integer, Integer> pair : hvPinSegmentation) {// wire
+			// bundles
+			bundle++;
+
+			for (int j = 0; j < 6; j++) {// layers
+				double sum = 0;
+				double average = 0;
+				int wiresInBundle = 0;
+
+				for (int i = pair.getLeft() - 1; i < pair.getRight(); i++) {
+					// System.out.println(rmsLayerCountMapForPin.get(bundle) + "
+					// in hotwire");
+					if (aH2f.getBinContent(i, j) != 0) {
+						wiresInBundle++;
+					}
+					sum = sum + Math.pow(aH2f.getBinContent(i, j), 2);
+
+					// if (bundle == 12 && j == 0) {
+					// System.out.println(aH2f.getBinContent(i, j) + " at " + (i
+					// + 1));
+					// }
+				}
+				average = Math.sqrt(sum / wiresInBundle);
+				// System.out.println("RMS is " + average + " of the sum " + sum
+				// + " in bundle " + switchBundle(bundle)
+				// + " at layer " + (j + 1));
+
+				for (int i = pair.getLeft() - 1; i < pair.getRight(); i++) {
+					double neighborRMS = 0;
+					int neighborCounts = 0;
+					if (aH2f.getBinContent(i, j) != 0) {
+						neighborCounts++;
+						neighborRMS = Math.pow(aH2f.getBinContent(i, j), 2);
+						if (i != 0 && i != 111) {
+							if (aH2f.getBinContent(i - 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + +Math.pow(aH2f.getBinContent(i - 1, j), 2);
+
+							}
+							if (aH2f.getBinContent(i + 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + +Math.pow(aH2f.getBinContent(i + 1, j), 2);
+							}
+						}
+						if (i == 0) {
+							if (aH2f.getBinContent(i + 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + Math.pow(aH2f.getBinContent(i + 1, j), 2);
+							}
+						}
+						if (i == 111) {
+							if (aH2f.getBinContent(i - 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + Math.pow(aH2f.getBinContent(i - 1, j), 2);
+							}
+						}
+						neighborRMS = Math.sqrt(neighborRMS / neighborCounts);
+					}
+					boolean rmsDecision = false;
+					boolean neighborDecision = false;
+					if (aH2f.getBinContent(i, j) > 1.6 * average) {
+						System.out.println("RMS is " + average + " of the sum " + sum + " possible hotwire at "
+								+ (i + 1) + " in bundle " + switchBundle(bundle) + " at layer " + (j + 1)
+								+ " with wire count " + aH2f.getBinContent(i, j) + " with neighborRMS = " + neighborRMS
+								+ " RMS Decision");
+						rmsDecision = true;
+
+					}
+					if (aH2f.getBinContent(i, j) > 1.6 * neighborRMS) {
+						System.out.println("RMS is " + average + " of the sum " + sum + " possible hotwire at "
+								+ (i + 1) + " in bundle " + switchBundle(bundle) + " at layer " + (j + 1)
+								+ " with wire count " + aH2f.getBinContent(i, j) + " with neighborRMS = " + neighborRMS
+								+ " Neighbor Decision");
+						neighborDecision = true;
+
+					}
+					if (neighborDecision || rmsDecision) {
+						aNewH2F.setBinContent(i, j, average);
+						recalculateRMS = true;
+					} else {
+						aNewH2F.setBinContent(i, j, aH2f.getBinContent(i, j));
+
+					}
+				}
+
+			}
+		}
+		if (recalculateRMS) {
+			System.out.println("RECAL");
+			hotWire(aNewH2F);
+		} else {
+
+			// sumByPin(aNewH2F);
+		}
+	}
+
 	private static void findBadPinsBadMapAndRMS(Map<Integer, NaughtyContainer> badMap, Map<Integer, Double> rmsMap) {
 		Map<Integer, NaughtyContainer> badLayerBundle = new HashMap<>();// bundle,
-		// Map<Integer, Pair<Integer, Integer>> returnMap = new HashMap<>();
+		// System.out.println("size of badmap is " + badMap.size());
+
 		for (NaughtyContainer value : badMap.values()) {
 			// System.out.println("bundle = " + value.getWireBundle() + " code
 			// of " + value.getWireBundleCode()
@@ -130,29 +243,54 @@ public class HVPinDecision {
 			double cutValue = 0.5;
 			// NaughtyContainer
 			if (Ri < cutValue || Ri > (1. / cutValue)) {
-				// System.out.println("bundle = " + value.getWireBundle() + "
-				// code of " + value.getWireBundleCode()
-				// + " counts in bundle = " + value.getCountsInWireBundle() + "
-				// layer = " + value.getLayer()
-				// + " rms value " + rmsMap.get(value.getWireBundle()) + " will
-				// be eliminated. ratio is "
-				// + value.getCountsInWireBundle() /
+				// System.out.println("CUTTING !!!!!!!! bundle = " +
+				// value.getWireBundle() + " code of "
+				// + value.getWireBundleCode() + " counts in bundle = " +
+				// value.getCountsInWireBundle()
+				// + " layer = " + value.getLayer() + " rms value " +
+				// rmsMap.get(value.getWireBundle())
+				// + " ratio is " + value.getCountsInWireBundle() /
 				// rmsMap.get(value.getWireBundle()));
 				badLayerBundle.put(value.getWireBundle(), value);
 				returnMap.put(value.getLayer(), bundleToPair(value.getWireBundle()));
+				returnPairMap.put(Pair.of(value.getLayer(), value.getWireBundleCode()),
+						bundleToPair(value.getWireBundle()));
+				// System.out.println(value.getLayer() + " " +
+				// bundleToPair(value.getWireBundle()) + " "
+				// + returnMap.get(value.getLayer()).getLeft() + " "
+				// + returnMap.get(value.getLayer()).getRight());
+
 			}
 		}
+		// printReturnMap();
+
 		if (badLayerBundle.size() > 0) {
 			recalculateRMS(badMap, badLayerBundle);
 		}
 		// else {
-		// System.out.println("No more bad pins with this ratio cut");
+		// // System.out.println("No more bad pins with this ratio cut");
+		// // printReturnMap();
 		// }
+	}
+
+	private static void printReturnMap() {
+		for (Map.Entry<Pair<Integer, String>, Pair<Integer, Integer>> entry : returnPairMap.entrySet()) {
+			Pair<Integer, String> key = entry.getKey();
+
+			Integer leftValue = entry.getValue().getLeft();
+			Integer rightValue = entry.getValue().getRight();
+			System.out.println("#################################");
+
+			System.out.println("I am in HVPinDecision. I have located a bad pin at layer " + key.getLeft()
+					+ " with wires from " + leftValue + " to " + rightValue);
+			System.out.println("#################################");
+
+		}
 	}
 
 	private static void recalculateRMS(Map<Integer, NaughtyContainer> badMap,
 			Map<Integer, NaughtyContainer> badLayerBundle) {
-		// System.out.println("In another round of selection");
+		System.out.println("In another round of selection");
 		List<NaughtyContainer> tempList = new ArrayList<>();
 		Map<Integer, NaughtyContainer> layerList = new HashMap<>();
 		Map<Integer, NaughtyContainer> badMapAgain = new HashMap<>();

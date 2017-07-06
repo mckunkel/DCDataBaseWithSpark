@@ -19,21 +19,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.NotNullPredicate;
+import org.apache.commons.collections.functors.NullPredicate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.jlab.groot.data.GraphErrors;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
 import database.process.DataProcess;
 import database.service.MainFrameService;
-import database.utils.Coordinate;
 import database.utils.MainFrameServiceManager;
+import spark.utils.decision.HVChannelDecision;
 import spark.utils.decision.HVPinDecision;
 
 public class BadBadMisterWire {
@@ -154,7 +159,7 @@ public class BadBadMisterWire {
 		dataprocess.processFile();
 	}
 
-	public String switchBundle(int placer) {
+	private static String switchBundle(int placer) {
 		switch (placer) {
 		case 1:
 			return "A";
@@ -180,6 +185,29 @@ public class BadBadMisterWire {
 			return "K";
 		case 12:
 			return "L";
+		default:
+			return null;
+		}
+	}
+
+	private static Pair<Integer, Integer> switchChannelBundle(int placer) {
+		switch (placer) {
+		case 1:
+			return Pair.of(1, 8);
+		case 2:
+			return Pair.of(9, 16);
+		case 3:
+			return Pair.of(17, 24);
+		case 4:
+			return Pair.of(25, 32);
+		case 5:
+			return Pair.of(33, 48);
+		case 6:
+			return Pair.of(49, 64);
+		case 7:
+			return Pair.of(65, 80);
+		case 8:
+			return Pair.of(81, 112);
 		default:
 			return null;
 		}
@@ -413,14 +441,162 @@ public class BadBadMisterWire {
 		return this.naughtyList;
 	}
 
+	public static <K, V> boolean hasAllNullValues(Map<K, V> map) {
+		return !CollectionUtils.exists(map.values(), NotNullPredicate.INSTANCE);
+	}
+
+	public static <K, V> boolean hasAllNullValuesMap(Map<K, V> map) {
+		int size = map.size();
+		return CollectionUtils.countMatches(map.values(), NullPredicate.INSTANCE) == size;
+	}
+
+	private static List<H2F> aTempContainer = new ArrayList<H2F>();
+	// private static H2F aNewH2F = null;
+
+	private static H2F hotWire(H2F aH2f, int value) {
+		List<Pair<Integer, Integer>> hvPinSegmentation = new ArrayList<Pair<Integer, Integer>>();
+		hvPinSegmentation.add(Pair.of(1, 8));
+		hvPinSegmentation.add(Pair.of(9, 16));
+		hvPinSegmentation.add(Pair.of(17, 24));
+		hvPinSegmentation.add(Pair.of(25, 32));
+		hvPinSegmentation.add(Pair.of(33, 40));
+		hvPinSegmentation.add(Pair.of(41, 48));
+		hvPinSegmentation.add(Pair.of(49, 56));
+		hvPinSegmentation.add(Pair.of(57, 64));
+		hvPinSegmentation.add(Pair.of(65, 72));
+		hvPinSegmentation.add(Pair.of(73, 80));
+		hvPinSegmentation.add(Pair.of(81, 96));
+		hvPinSegmentation.add(Pair.of(97, 112));
+
+		H2F aNewH2F = new H2F("something" + value, aH2f.getXAxis().getNBins(), aH2f.getXAxis().min(),
+				aH2f.getXAxis().max(), aH2f.getYAxis().getNBins(), aH2f.getYAxis().min(), aH2f.getYAxis().max());
+		int bundle = 0;
+		boolean recalculateRMS = false;
+		for (Pair<Integer, Integer> pair : hvPinSegmentation) {// wire
+			// bundles
+			bundle++;
+
+			for (int j = 0; j < 6; j++) {// layers
+				double sum = 0;
+				double average = 0;
+				double rms = 0;
+				double partialRMS = 0;
+
+				int wiresInBundle = 0;
+
+				for (int i = pair.getLeft() - 1; i < pair.getRight(); i++) {
+					// System.out.println(rmsLayerCountMapForPin.get(bundle) + "
+					// in hotwire");
+					if (aH2f.getBinContent(i, j) != 0) {
+						wiresInBundle++;
+					}
+					partialRMS = partialRMS + Math.pow(aH2f.getBinContent(i, j), 2);
+					average = average + aH2f.getBinContent(i, j);
+					// if ((bundle == 9 || bundle == 8) && (j == 0 || j == 1)) {
+					// System.out.println(aH2f.getBinContent(i, j) + " at wire "
+					// + (i + 1));
+					// }
+				}
+				rms = Math.sqrt(partialRMS / wiresInBundle);
+				sum = average;
+				average = average / wiresInBundle;
+				// System.out.println("RMS is " + average + " of the sum " + sum
+				// + " in bundle " + switchBundle(bundle)
+				// + " at layer " + (j + 1));
+
+				for (int i = pair.getLeft() - 1; i < pair.getRight(); i++) {
+					double neighborRMS = 0;
+					int neighborCounts = 0;
+					if (aH2f.getBinContent(i, j) != 0) {
+						neighborCounts++;
+						neighborRMS = Math.pow(aH2f.getBinContent(i, j), 2);
+						if (i != 0 && i != 111) {
+							if (aH2f.getBinContent(i - 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + +Math.pow(aH2f.getBinContent(i - 1, j), 2);
+
+							}
+							if (aH2f.getBinContent(i + 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + +Math.pow(aH2f.getBinContent(i + 1, j), 2);
+							}
+						}
+						if (i == 0) {
+							if (aH2f.getBinContent(i + 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + Math.pow(aH2f.getBinContent(i + 1, j), 2);
+							}
+						}
+						if (i == 111) {
+							if (aH2f.getBinContent(i - 1, j) != 0) {
+								neighborCounts++;
+								neighborRMS = neighborRMS + Math.pow(aH2f.getBinContent(i - 1, j), 2);
+							}
+						}
+						neighborRMS = Math.sqrt(neighborRMS / neighborCounts);
+					}
+					boolean rmsDecision = false;
+					boolean neighborDecision = false;
+					boolean aDecision = false;
+					if (aH2f.getBinContent(i, j) > 1.6 * rms) {
+						// System.out.println("RMS is " + rms + " of the sum " +
+						// sum + " possible hotwire at " + (i + 1)
+						// + " in bundle " + switchBundle(bundle) + " at layer "
+						// + (j + 1) + " with wire count "
+						// + aH2f.getBinContent(i, j) + " with neighborRMS = " +
+						// neighborRMS + " RMS Decision");
+						rmsDecision = true;
+
+					}
+					if (aH2f.getBinContent(i, j) > 1.6 * neighborRMS) {
+						// System.out.println("RMS is " + rms + " of the sum " +
+						// sum + " possible hotwire at " + (i + 1)
+						// + " in bundle " + switchBundle(bundle) + " at layer "
+						// + (j + 1) + " with wire count "
+						// + aH2f.getBinContent(i, j) + " with neighborRMS = " +
+						// neighborRMS
+						// + " Neighbor Decision");
+						neighborDecision = true;
+
+					}
+					if (aH2f.getBinContent(i, j) > 1.6 * average) {
+						System.out.println("Average is " + average + " of the sum " + sum + " possible hotwire at "
+								+ (i + 1) + " in bundle " + switchBundle(bundle) + " at layer " + (j + 1)
+								+ " with wire count " + aH2f.getBinContent(i, j) + " with neighborRMS = " + neighborRMS
+								+ " Average Decision");
+						aDecision = true;
+
+					}
+					if (aDecision) {
+						double testValue = (neighborRMS + rms) / 2.0;
+						aNewH2F.setBinContent(i, j, average);
+						recalculateRMS = true;
+					} else {
+						aNewH2F.setBinContent(i, j, aH2f.getBinContent(i, j));
+
+					}
+				}
+
+			}
+		}
+		aTempContainer.add(aNewH2F);
+
+		if (recalculateRMS && value < 3) {
+			System.out.println("RECAL  " + value);
+			value++;
+			hotWire(aNewH2F, value);
+		}
+		return aNewH2F;
+	}
+
 	public static void main(String[] args) {
 		Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
 		Logger.getLogger("org").setLevel(Level.OFF);
 		Logger.getLogger("akka").setLevel(Level.OFF);
 		BadBadMisterWire badBadMisterWire = new BadBadMisterWire();
-		badBadMisterWire.setNEvents(10000);
+		badBadMisterWire.setNEvents(100000);
 		badBadMisterWire.run();
-		int superLayer = 1;
+		int superLayer = 3;
 		int sector = 2;
 		badBadMisterWire.getMaps(superLayer, sector);
 
@@ -429,57 +605,85 @@ public class BadBadMisterWire {
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 
-		EmbeddedCanvas can1 = new EmbeddedCanvas();
-		can1.divide(1, 6);
-
 		H2F testH2F = badBadMisterWire.getHist(superLayer, sector);
 		// byPin
 		System.out.println("#### PIN ######");
-		// badBadMisterWire.sumByPin(testH2F);
-		Map<Coordinate, Map<Integer, Pair<Integer, Integer>>> compMap = new HashMap<>();
-		Map<Integer, Pair<Integer, Integer>> badHVPin = HVPinDecision.BadHVPin(testH2F);
-		List<MischievousPin> mischievousPinList = new ArrayList<>();
-		for (Map.Entry<Integer, Pair<Integer, Integer>> entry : badHVPin.entrySet()) {
-			Integer key = entry.getKey();
-			Integer leftValue = entry.getValue().getLeft();
-			Integer rightValue = entry.getValue().getRight();
 
-			System.out.println("I am in BadBadMisterWire. I have located a bad pin at layer " + key
-					+ " with wires from " + leftValue + " to " + rightValue);
-
-		}
 		for (int i = 0; i < 6; i++) {
-			can1.cd(i);
-
 			for (int j = 1; j < 2; j++) {
 				H2F aH2F = badBadMisterWire.getHist(i + 1, j + 1);
-				MischievousPin mischievousPin = new MischievousPin();
-				mischievousPin.setSector(j + 1);
-				mischievousPin.setSuperLayer(i + 1);
-				mischievousPin.setMischievousPin(HVPinDecision.BadHVPin(aH2F));
-				mischievousPinList.add(mischievousPin);
-				can1.draw(aH2F);
+				// MischievousPin mischievousPin = new MischievousPin();
+				// mischievousPin.setSector(j + 1);
+				// mischievousPin.setSuperLayer(i + 1);
+				// mischievousPin.setMischievousPin(HVPinDecision.BadHVPin(aH2F));
+				// mischievousPinList.add(mischievousPin);
+				// can1.draw(aH2F);
 				EmbeddedCanvas can2 = new EmbeddedCanvas();
 				can2.draw(aH2F);
 
-				tabbedPane.add("Superlayer" + (i + 1) + " Sector " + (j + 1), can2);
+				tabbedPane.add("Superlayer " + (i + 1) + " Sector " + (j + 1), can2);
+				System.out.println("Superlayer " + (i + 1) + " Sector " + (j + 1));
+				// H2F hotFixH2FAgain = hotWire(aH2F, 0);
+
+				Map<Pair<Integer, String>, Pair<Integer, Integer>> badHVPin2 = HVPinDecision.BadHVPin(aH2F);
+				System.out.println(hasAllNullValues(badHVPin2) + " " + hasAllNullValuesMap(badHVPin2));
+				for (Map.Entry<Pair<Integer, String>, Pair<Integer, Integer>> entry : badHVPin2.entrySet()) {
+					Pair<Integer, String> key = entry.getKey();
+
+					Integer leftValue = entry.getValue().getLeft();
+					Integer rightValue = entry.getValue().getRight();
+
+					System.out.println("I have located a bad pin at layer " + key.getLeft() + " with wires from "
+							+ leftValue + " to " + rightValue);
+
+				}
+				System.out.println("#################################");
 
 			}
 		}
 
-		for (MischievousPin mischievousPin : mischievousPinList) {
+		System.out.println("#### CHANNEL ######");
+		Random rn = new Random();
+		int bundleMin = 1;
+		int bundleMax = 8;
+		int sectorMin = 1;
+		int sectorMax = 6;
+		int superLayerMin = 1;
+		int superLayerMax = 6;
+		int rndmBundle = 6;// rn.nextInt(bundleMax - bundleMin + 1) + bundleMin;
+		int rndmSector = rn.nextInt(sectorMax - sectorMin + 1) + sectorMin;
+		int rndmSuperLayer = rn.nextInt(superLayerMax - superLayerMin + 1) + superLayerMin;
+		Pair<Integer, Integer> rndmPair = switchChannelBundle(rndmBundle);
 
-			System.out.println("I am in BadBadMisterWire. I have located a bad pin at sector "
-					+ mischievousPin.getSector() + " and superlayer " + mischievousPin.getSuperLayer());
+		System.out.println(rndmBundle);
+		H2F channelMap = badBadMisterWire.getHist(1, 2);
+		H2F aNewH2F = new H2F("something", channelMap.getXAxis().getNBins(), channelMap.getXAxis().min(),
+				channelMap.getXAxis().max(), channelMap.getYAxis().getNBins(), channelMap.getYAxis().min(),
+				channelMap.getYAxis().max());
+		for (int j = 0; j < 6; j++) {// layers
 
-			for (Map.Entry<Integer, Pair<Integer, Integer>> entry : mischievousPin.getMischievousPin().entrySet()) {
-				Integer key = entry.getKey();
-				Integer leftValue = 1;// entry.getValue().getLeft();
-				Integer rightValue = 2;// entry.getValue().getRight();
-				System.out.println(" with wires from " + leftValue + " to " + rightValue + " at layer " + key);
+			for (int i = 0; i < 112; i++) {
+				if ((i + 1) <= rndmPair.getRight() && (i + 1) >= rndmPair.getLeft()) {
+					aNewH2F.setBinContent(i, j, rn.nextInt(1000 - 80 + 1) + 80);
+				} else
+					aNewH2F.setBinContent(i, j, channelMap.getBinContent(i, j));
 			}
-
 		}
+		Map<Integer, Pair<Integer, Integer>> badHVChannel = HVChannelDecision.BadHVChannel(aNewH2F);
+		EmbeddedCanvas channelCanvas = new EmbeddedCanvas();
+		channelCanvas.draw(aNewH2F);
+		tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2, channelCanvas);
+
+		GraphErrors graph = new GraphErrors("AGraph", HVChannelDecision.getXValues(), HVChannelDecision.getYValues());
+		graph.setMarkerColor(1); // color from 0-9 for given palette
+		graph.setMarkerSize(15); // size in points on the screen
+		graph.setMarkerStyle(1); // Style can be 1 or 2
+		graph.setLineColor(1); // Style can be 1 or 2
+
+		EmbeddedCanvas graphCanvas = new EmbeddedCanvas();
+		graphCanvas.draw(graph);
+		tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2, graphCanvas);
+		graphCanvas.draw(HVChannelDecision.getFunc(), "same");
 
 		JFrame frame2 = new JFrame("");
 		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
