@@ -31,27 +31,23 @@ import org.apache.commons.collections.functors.NullPredicate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.jlab.groot.data.GraphErrors;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
 import database.process.DataProcessForTest;
-import spark.utils.decision.HVChannelDecision;
+import database.service.MainFrameService;
 import spark.utils.decision.HVPinDecision;
 
 public class BadBadMisterWire {
 
-<<<<<<< HEAD
 	//
 	// import org.jlab.groot.data.GraphErrors;
 	// import org.jlab.groot.data.H2F;
 	// import org.jlab.groot.graphics.EmbeddedCanvas;
 
 	private MainFrameService mainFrameService = null;
-	private DataProcess dataprocess = new DataProcess();
-=======
+
 	private DataProcessForTest dataprocess = new DataProcessForTest();
->>>>>>> ae36b949f8bce9e8ebbc0fc6e97b290c15f97a6d
 	private EmbeddedCanvas can1 = null;
 	JFrame frame = null;
 
@@ -68,10 +64,10 @@ public class BadBadMisterWire {
 	Map<Integer, Double> rmsLayerCountMapForChannel = null;
 
 	public BadBadMisterWire() {
-		// this.dataprocess.openFile("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/test762.hipo");//
+		this.dataprocess.openFile("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/test762.hipo");//
 		// out_clas12_000762_a00000.hipo
-		this.dataprocess.openFile(
-				"/Volumes/Mac_Storage/Work_Codes/GIT_HUB/DCDataBaseWithSpark/DCdatabase/needs/out_clas12_000762_a00000.hipo");
+		// this.dataprocess.openFile(
+		// "/Volumes/Mac_Storage/Work_Codes/GIT_HUB/DCDataBaseWithSpark/DCdatabase/needs/out_clas12_000762_a00000.hipo");
 		can1 = new EmbeddedCanvas();
 		can1.initTimer(200);
 		frame = new JFrame("BadBadMisterWire");
@@ -678,24 +674,28 @@ public class BadBadMisterWire {
 					aNewH2F.setBinContent(i, j, channelMap.getBinContent(i, j));
 			}
 		}
-		Map<Integer, Pair<Integer, Integer>> badHVChannel = HVChannelDecision.BadHVChannel(aNewH2F);
+		// Map<Integer, Pair<Integer, Integer>> badHVChannel =
+		// HVChannelDecision.BadHVChannel(aNewH2F);
 		EmbeddedCanvas channelCanvas = new EmbeddedCanvas();
 		channelCanvas.setSize(500, 500);
 		channelCanvas.draw(aNewH2F);
 
 		channelCanvas.save("data/atest.png");
 
-		tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2, channelCanvas);
-		GraphErrors graph = new GraphErrors("AGraph", HVChannelDecision.getXValues(), HVChannelDecision.getYValues());
-		graph.setMarkerColor(1); // color from 0-9 for given palette
-		graph.setMarkerSize(15); // size in points on the screen
-		graph.setMarkerStyle(1); // Style can be 1 or 2
-		graph.setLineColor(1); // Style can be 1 or 2
-
-		EmbeddedCanvas graphCanvas = new EmbeddedCanvas();
-		graphCanvas.draw(graph);
-		tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2, graphCanvas);
-		graphCanvas.draw(HVChannelDecision.getFunc(), "same");
+		// tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2,
+		// channelCanvas);
+		// GraphErrors graph = new GraphErrors("AGraph",
+		// HVChannelDecision.getXValues(), HVChannelDecision.getYValues());
+		// graph.setMarkerColor(1); // color from 0-9 for given palette
+		// graph.setMarkerSize(15); // size in points on the screen
+		// graph.setMarkerStyle(1); // Style can be 1 or 2
+		// graph.setLineColor(1); // Style can be 1 or 2
+		//
+		// EmbeddedCanvas graphCanvas = new EmbeddedCanvas();
+		// graphCanvas.draw(graph);
+		// tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2,
+		// graphCanvas);
+		// graphCanvas.draw(HVChannelDecision.getFunc(), "same");
 
 		JFrame frame2 = new JFrame("");
 		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
