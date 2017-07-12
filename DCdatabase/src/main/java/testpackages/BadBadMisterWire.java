@@ -41,7 +41,17 @@ import spark.utils.decision.HVPinDecision;
 
 public class BadBadMisterWire {
 
+<<<<<<< HEAD
+	//
+	// import org.jlab.groot.data.GraphErrors;
+	// import org.jlab.groot.data.H2F;
+	// import org.jlab.groot.graphics.EmbeddedCanvas;
+
+	private MainFrameService mainFrameService = null;
+	private DataProcess dataprocess = new DataProcess();
+=======
 	private DataProcessForTest dataprocess = new DataProcessForTest();
+>>>>>>> ae36b949f8bce9e8ebbc0fc6e97b290c15f97a6d
 	private EmbeddedCanvas can1 = null;
 	JFrame frame = null;
 
@@ -670,9 +680,12 @@ public class BadBadMisterWire {
 		}
 		Map<Integer, Pair<Integer, Integer>> badHVChannel = HVChannelDecision.BadHVChannel(aNewH2F);
 		EmbeddedCanvas channelCanvas = new EmbeddedCanvas();
+		channelCanvas.setSize(500, 500);
 		channelCanvas.draw(aNewH2F);
-		tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2, channelCanvas);
 
+		channelCanvas.save("data/atest.png");
+
+		tabbedPane.add("Rndm SL " + rndmSuperLayer + " Rndm Sector " + 2, channelCanvas);
 		GraphErrors graph = new GraphErrors("AGraph", HVChannelDecision.getXValues(), HVChannelDecision.getYValues());
 		graph.setMarkerColor(1); // color from 0-9 for given palette
 		graph.setMarkerSize(15); // size in points on the screen
