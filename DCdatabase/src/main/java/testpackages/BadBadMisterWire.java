@@ -35,16 +35,13 @@ import org.jlab.groot.data.GraphErrors;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
-import database.process.DataProcess;
-import database.service.MainFrameService;
-import database.utils.MainFrameServiceManager;
+import database.process.DataProcessForTest;
 import spark.utils.decision.HVChannelDecision;
 import spark.utils.decision.HVPinDecision;
 
 public class BadBadMisterWire {
 
-	private MainFrameService mainFrameService = null;
-	private DataProcess dataprocess = new DataProcess();
+	private DataProcessForTest dataprocess = new DataProcessForTest();
 	private EmbeddedCanvas can1 = null;
 	JFrame frame = null;
 
@@ -61,8 +58,10 @@ public class BadBadMisterWire {
 	Map<Integer, Double> rmsLayerCountMapForChannel = null;
 
 	public BadBadMisterWire() {
-		this.mainFrameService = MainFrameServiceManager.getSession();
-		this.dataprocess.openFile("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/test762.hipo");// out_clas12_000762_a00000.hipo
+		// this.dataprocess.openFile("/Users/michaelkunkel/WORK/CLAS/CLAS12/CLAS12Data/pass4/test762.hipo");//
+		// out_clas12_000762_a00000.hipo
+		this.dataprocess.openFile(
+				"/Volumes/Mac_Storage/Work_Codes/GIT_HUB/DCDataBaseWithSpark/DCdatabase/needs/out_clas12_000762_a00000.hipo");
 		can1 = new EmbeddedCanvas();
 		can1.initTimer(200);
 		frame = new JFrame("BadBadMisterWire");
@@ -145,14 +144,14 @@ public class BadBadMisterWire {
 	}
 
 	public void getMaps(int i, int j) {
-		can1.draw(this.mainFrameService.getHistogramByMap(i, j));
+		can1.draw(this.dataprocess.getHistogramByMap(i, j));
 		frame.add(can1);
 		frame.setVisible(true);
 		// return this.can1;
 	}
 
 	public H2F getHist(int i, int j) {
-		return this.mainFrameService.getHistogramByMap(i, j);
+		return this.dataprocess.getHistogramByMap(i, j);
 	}
 
 	public void run() {
@@ -664,7 +663,7 @@ public class BadBadMisterWire {
 
 			for (int i = 0; i < 112; i++) {
 				if ((i + 1) <= rndmPair.getRight() && (i + 1) >= rndmPair.getLeft()) {
-					aNewH2F.setBinContent(i, j, rn.nextInt(1000 - 80 + 1) + 80);
+					aNewH2F.setBinContent(i, j, rn.nextInt(100 - 8 + 1) + 8);
 				} else
 					aNewH2F.setBinContent(i, j, channelMap.getBinContent(i, j));
 			}
