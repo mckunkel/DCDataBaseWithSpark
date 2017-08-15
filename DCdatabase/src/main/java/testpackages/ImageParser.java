@@ -1,15 +1,3 @@
-/*  +__^_________,_________,_____,________^-.-------------------,
- *  | |||||||||   `--------'     |          |                   O
- *  `+-------------USMC----------^----------|___________________|
- *    `\_,---------,---------,--------------'
- *      / X MK X /'|       /'
- *     / X MK X /  `\    /'
- *    / X MK X /`-------'
- *   / X MK X /
- *  / X MK X /
- * (________(                @author m.c.kunkel
- *  `------'
-*/
 package testpackages;
 
 /** * sample program to read images belonging to a sample Class e.g. Male/Female . Then writing the images to Vector format into a text file. These text files will be used by Apache Spark for Linear SVM analysis */

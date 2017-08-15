@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -88,6 +89,14 @@ public final class GrayPicture implements ActionListener {
 				Color gray = Luminance.toGray(color);
 				image.setRGB(i, j, gray.getRGB());
 			}
+		}
+		Raster raster = image.getData();
+		int wRaster = raster.getWidth(), hRaster = raster.getHeight();
+		for (int x = 0; x < wRaster; x++) {
+			for (int y = 0; y < hRaster; y++) {
+				System.out.println(raster.getSample(x, y, 0) + " ");
+			}
+			System.out.println(" ");
 		}
 	}
 
