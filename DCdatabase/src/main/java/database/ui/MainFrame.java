@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,7 +68,6 @@ public class MainFrame extends JFrame {
 	private FaultPanel faultPanel;
 	private DBSendPanel dbSendPanel;
 	private CCDBSendPanel ccdbSendPanel;
-	ImageIcon icon = new ImageIcon("java-swing-tutorial.JPG");
 
 	private JMenuBar menuBar = null;
 	private JMenu jMenu = null;
@@ -104,16 +102,6 @@ public class MainFrame extends JFrame {
 
 	public HistogramPanel getHistogramPanel() {
 		return histogramPanel;
-	}
-
-	private void constructAppWindow() {
-
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		pack();
-		setSize(NumberConstants.APP_WINDOW_SIZE_WIDTH, NumberConstants.APP_WINDOW_SIZE_HEIGHT);
-		setVisible(true);
-		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 
 	private JMenuBar createFrameMenu() {
@@ -354,4 +342,13 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	private void constructAppWindow() {
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		pack();
+		setSize(NumberConstants.APP_WINDOW_SIZE_WIDTH, NumberConstants.APP_WINDOW_SIZE_HEIGHT);
+		setVisible(true);
+		// setExtendedState(JFrame.MAXIMIZED_BOTH);
+	}
 }

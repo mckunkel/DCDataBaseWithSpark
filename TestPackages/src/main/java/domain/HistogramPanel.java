@@ -10,10 +10,9 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.ui.panels;
+package domain;
 
 import java.awt.BorderLayout;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -22,31 +21,22 @@ import javax.swing.border.Border;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
-import database.service.MainFrameService;
-import database.utils.Coordinate;
-import database.utils.MainFrameServiceManager;
-import database.utils.MouseOverrideCanvasListener;
-import database.utils.NumberConstants;
-import database.utils.StringConstants;
-
-public class HistogramPanel extends JPanel implements UpdatePanel {
-	private MainFrameService mainFrameService = null;
-	private final MouseOverrideCanvasListener listener;
+public class HistogramPanel extends JPanel {
 
 	private EmbeddedCanvas canvas = null;
-	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
 
-	int updateTime = NumberConstants.CANVAS_UPDATE;
-
-	final int space = NumberConstants.BORDER_SPACING;
+	final int space = 15;
 	Border spaceBorder = null;
 	Border titleBorder = null;
 
 	public HistogramPanel() {
-		listener = new MouseOverrideCanvasListener();
-
 		initializeVariables();
 		constructLayout();
+	}
+
+	private void initializeVariables() {
+		this.canvas = new EmbeddedCanvas();
+		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 	}
 
 	private void constructLayout() {
@@ -63,29 +53,17 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 		canvas.setAxisFontSize(50);
 		canvas.setAxisLabelSize(10);
 
+		H2F aH2f = new H2F("test", 10, 0, 10, 10, 0, 10);
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 10; y++) {
+				aH2f.setBinContent(x, y, x * y + 1);
+			}
+		}
+		canvas.draw(aH2f);
 		aTestPanel.add(canvas, BorderLayout.CENTER);
 
 		add(aTestPanel, BorderLayout.CENTER);
 
 	}
 
-	private void initializeVariables() {
-		this.mainFrameService = MainFrameServiceManager.getSession();
-
-		this.canvas = new EmbeddedCanvas();
-		this.canvas.initTimer(updateTime);
-		this.canvas.addMouseListener(listener);
-		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.HISTOGRAM_FORM_LABEL);
-	}
-
-	public void updateCanvas(int superLayer, int sector) {
-		this.canvas.draw(this.mainFrameService.getHistogramByMap(superLayer, sector));
-		this.canvas.update();
-	}
-
-	@Override
-	public void updatePanel(int superLayer, int sector) {
-		this.updateCanvas(superLayer, sector);
-	}
 }
