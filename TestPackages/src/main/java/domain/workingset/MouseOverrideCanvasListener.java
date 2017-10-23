@@ -12,21 +12,29 @@
 */
 package domain.workingset;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Map;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.data.IDataSet;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
+import domain.utils.ChannelBundles;
 import domain.utils.FuseBundles;
 import domain.utils.PinBundles;
 import domain.utils.SignalConnectors;
 
-public class MouseOverrideCanvasListener implements MouseListener, MouseMotionListener {
+public class MouseOverrideCanvasListener implements ActionListener, MouseListener, MouseMotionListener {
 	private EmbeddedCanvas canvas;
 	private H2F mouseH2F;
 	private IDataSet ds;
@@ -43,21 +51,40 @@ public class MouseOverrideCanvasListener implements MouseListener, MouseMotionLi
 	private int yBins;
 	private MainFrameService mainFrameService = null;
 
+	private int currentBundle = -1000;
+	private boolean isRemoved;
+	private int popupPad = 0;
+	private JPopupMenu popup = null;
+
 	public MouseOverrideCanvasListener() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
-
+		isRemoved = false;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("I was clicked");
-		double xposNew = e.getX() - xMin;
-		double yposNew = yRange - e.getY();
-		findBin(xposNew, yposNew);
+		if (e.getButton() == 1) {
+			System.out.println("I was clicked");
+			double xposNew = e.getX() - xMin;
+			double yposNew = yRange - e.getY();
+			findBin(xposNew, yposNew);
+		}
+		if (e.getButton() == 1 && e.getClickCount() == 2) {
+			System.out.println("I was doubled clicked");
+		}
+		if (SwingUtilities.isRightMouseButton(e)) {
+			popupPad = canvas.getPadByXY(e.getX(), e.getY());
+			// System.out.println("POP-UP coordinates = " + e.getX() + " " +
+			// e.getY() + " pad = " + popupPad);
+			createPopupMenu();
+			popup.show(canvas, e.getX(), e.getY());
+		}
+
 	}
 
 	@Override
@@ -68,6 +95,7 @@ public class MouseOverrideCanvasListener implements MouseListener, MouseMotionLi
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		canvas = (EmbeddedCanvas) e.getComponent();
+
 		ds = canvas.getPad(0).getDatasetPlotters().get(0).getDataSet();
 		xBins = ds.getDataSize(0);
 		yBins = ds.getDataSize(1);
@@ -87,6 +115,11 @@ public class MouseOverrideCanvasListener implements MouseListener, MouseMotionLi
 		int yMaxy = 7;
 
 		mouseH2F = new H2F("", xBins, xMinx, xMaxx, yBins, yMiny, yMaxy);
+		double xpos = e.getX() - xMin;
+		double ypos = yRange - e.getY();
+		Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
+
+		setBundle(aPair.getLeft(), aPair.getRight());
 	}
 
 	@Override
@@ -138,27 +171,56 @@ public class MouseOverrideCanvasListener implements MouseListener, MouseMotionLi
 		double ypos = yRange - e.getY();
 
 		Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
-		int xBin = aPair.getLeft();
-		int yBin = aPair.getRight();
-		if (inBounds(xpos, ypos)) {
-			drawDefinedFault(this.mainFrameService.getFault(), xBin, yBin);
+
+		setBundle(aPair.getLeft(), aPair.getRight());
+
+		if (inBounds(xpos, ypos) && bundleChange()) {// && bundleChange()
+			System.out.println("xBin = " + aPair.getLeft() + " yBin = " + aPair.getRight());
+
+			drawDefinedFault(aPair.getLeft(), aPair.getRight());
 		}
 
 	}
 
-	private void drawDefinedFault(int faultType, int xBin, int yBin) {
+	private void setBundle(int xBin, int yBin) {
+		int faultType = this.mainFrameService.getFault();
 		switch (faultType) {
 		case 0:
-			drawOverLayedChannelHist(PinBundles.findWireRange(xBin), yBin);
+			this.currentBundle = ChannelBundles.getBundle(ChannelBundles.findWireRange(xBin));
+			break;
+		case 1:
+			this.currentBundle = PinBundles.getBundle(PinBundles.findWireRange(xBin)) * yBin;
+			break;
+		case 2:
+			this.currentBundle = FuseBundles.getBundle(xBin, yBin);
+			break;
+		case 3:
+			this.currentBundle = SignalConnectors.getBundle(xBin, yBin);
+			break;
+		case 4:
+			this.currentBundle = xBin * yBin;
+			break;
+		case 5:
+			this.currentBundle = xBin * yBin;
+		default:
+			break;
+		}
+	}
+
+	private void drawDefinedFault(int xBin, int yBin) {
+		int faultType = this.mainFrameService.getFault();
+		switch (faultType) {
+		case 0:
+			drawOverLayedChannelHist(ChannelBundles.findWireRange(xBin), yBin);
 			break;
 		case 1:
 			drawOverLayedPinHist(PinBundles.findWireRange(xBin), yBin);
 			break;
 		case 2:
-			drawOverLayedFuseHist(FuseBundles.getBundle(xBin, yBin));
+			drawOverLayedFuseHist(FuseBundles.findWireRange(xBin, yBin));
 			break;
 		case 3:
-			drawOverLayedSignalHist(SignalConnectors.getBundle(xBin, yBin));
+			drawOverLayedSignalHist(SignalConnectors.findWireRange(xBin, yBin));
 			break;
 		case 4:
 			drawOverLayedHist(xBin, yBin);
@@ -178,6 +240,17 @@ public class MouseOverrideCanvasListener implements MouseListener, MouseMotionLi
 		}
 		return retValue;
 
+	}
+
+	private boolean bundleChange() {
+		boolean retValue = false;
+		if (this.mainFrameService.getBundle() == this.currentBundle) {
+			retValue = false;
+		} else {
+			this.mainFrameService.setBundle(this.currentBundle);
+			retValue = true;
+		}
+		return retValue;
 	}
 
 	private void drawOverLayedHist(int xBin, int yBin) {
@@ -274,6 +347,32 @@ public class MouseOverrideCanvasListener implements MouseListener, MouseMotionLi
 
 		canvas.draw(mouseH2F, "same");
 		canvas.update();
+	}
+
+	private void createPopupMenu() {
+		this.popup = new JPopupMenu();
+
+		JMenuItem itemSave = new JMenuItem("Save");
+		JMenuItem itemSaveAs = new JMenuItem("Save As...");
+
+		itemSave.addActionListener(this);
+		itemSaveAs.addActionListener(this);
+
+		this.popup.add(itemSave);
+		this.popup.add(new JSeparator());
+		this.popup.add(itemSaveAs);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("Save")) {
+			System.out.println("Still have to implement \"Save\" action");
+		}
+		if (e.getActionCommand().equals("Save As...")) {
+			System.out.println("Still have to implement \"Save As...\" action");
+
+		}
 	}
 
 }

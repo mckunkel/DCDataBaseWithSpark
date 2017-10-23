@@ -6,4 +6,8 @@ public interface MainFrameService {
 
 	public void setFault(int fault);
 
+	public int getBundle();
+
+	public void setBundle(int bundle);
+
 }

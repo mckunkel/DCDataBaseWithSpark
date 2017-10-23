@@ -33,71 +33,6 @@ public class PinBundles {
 		hvPinSegmentation.add(Pair.of(73, 80));
 		hvPinSegmentation.add(Pair.of(81, 96));
 		hvPinSegmentation.add(Pair.of(97, 112));
-
-	}
-
-	public static String switchBundle(int placer) {
-		setuphvPinSegmentation();
-		switch (placer) {
-		case 1:
-			return "A";
-		case 2:
-			return "B";
-		case 3:
-			return "C";
-		case 4:
-			return "D";
-		case 5:
-			return "E";
-		case 6:
-			return "F";
-		case 7:
-			return "G";
-		case 8:
-			return "H";
-		case 9:
-			return "I";
-		case 10:
-			return "J";
-		case 11:
-			return "K";
-		case 12:
-			return "L";
-		default:
-			return null;
-		}
-	}
-
-	public static Pair<Integer, Integer> bundleToPair(int bundle) {
-		setuphvPinSegmentation();
-		switch (bundle) {
-		case 1:
-			return hvPinSegmentation.get(0);
-		case 2:
-			return hvPinSegmentation.get(1);
-		case 3:
-			return hvPinSegmentation.get(2);
-		case 4:
-			return hvPinSegmentation.get(3);
-		case 5:
-			return hvPinSegmentation.get(4);
-		case 6:
-			return hvPinSegmentation.get(5);
-		case 7:
-			return hvPinSegmentation.get(6);
-		case 8:
-			return hvPinSegmentation.get(7);
-		case 9:
-			return hvPinSegmentation.get(8);
-		case 10:
-			return hvPinSegmentation.get(9);
-		case 11:
-			return hvPinSegmentation.get(10);
-		case 12:
-			return hvPinSegmentation.get(11);
-		default:
-			return null;
-		}
 	}
 
 	private static int findPlacer(Pair<Integer, Integer> pair) {
@@ -113,52 +48,23 @@ public class PinBundles {
 
 	}
 
-	public static String findBundle(int wire) {
-		setuphvPinSegmentation();
-		int placer = 0;
-		// Pair<Integer, Integer> pairs = hvPinSegmentation.stream().filter(x ->
-		// x.getLeft() >= wire)
-		// .filter(x -> x.getRight() <= wire).findAny().orElse(null);
-		//
-		// System.out.println(pairs.getLeft() + " " + pairs.getRight() + "
-		// Lambda return this");
+	public static Pair<Integer, Integer> findWireRange(int wire) {
+		Pair<Integer, Integer> retValuePair = Pair.of(0, 0);
 		for (Pair<Integer, Integer> pair : hvPinSegmentation) {
 			// placer++;
 			if ((wire + 1) <= pair.getRight() && (wire + 1) >= pair.getLeft()) {
-				placer = findPlacer(pair);
-				System.out.println(pair.getLeft() + "  " + pair.getRight() + " function return this");
-
+				retValuePair = pair;
 			}
 		}
-
-		switch (placer) {
-		case 1:
-			return "A";
-		case 2:
-			return "B";
-		case 3:
-			return "C";
-		case 4:
-			return "D";
-		case 5:
-			return "E";
-		case 6:
-			return "F";
-		case 7:
-			return "G";
-		case 8:
-			return "H";
-		case 9:
-			return "I";
-		case 10:
-			return "J";
-		case 11:
-			return "K";
-		case 12:
-			return "L";
-		default:
-			return null;
-		}
+		return retValuePair;
 	}
 
+	public static int getBundle(Pair<Integer, Integer> aPair) {
+		return findPlacer(aPair);
+	}
+
+	public static void setupBundles() {
+		setuphvPinSegmentation();
+
+	}
 }

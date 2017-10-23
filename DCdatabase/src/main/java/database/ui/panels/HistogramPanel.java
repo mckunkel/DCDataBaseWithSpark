@@ -13,6 +13,7 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseListener;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -73,8 +74,10 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		this.canvas = new EmbeddedCanvas();
+		removeListeners();
 		this.canvas.initTimer(updateTime);
-		this.canvas.addMouseListener(listener);
+		canvas.addMouseListener(listener);
+		canvas.addMouseMotionListener(listener);
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.HISTOGRAM_FORM_LABEL);
 	}
@@ -82,6 +85,17 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 	public void updateCanvas(int superLayer, int sector) {
 		this.canvas.draw(this.mainFrameService.getHistogramByMap(superLayer, sector));
 		this.canvas.update();
+	}
+
+	private void removeListeners() {
+		MouseListener[] mouseListener = canvas.getMouseListeners();
+		for (int i = 0; i < mouseListener.length; i++) {
+			MouseListener mouseListener2 = mouseListener[i];
+			if (mouseListener2 instanceof MouseListener) {
+				canvas.removeMouseListener(mouseListener2);
+			}
+		}
+
 	}
 
 	@Override

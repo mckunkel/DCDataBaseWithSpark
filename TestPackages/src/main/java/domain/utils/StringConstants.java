@@ -83,5 +83,6 @@ public class StringConstants {
 	public static final String CCDBSEND_FORM_REMOVE = "Remove from Local List";
 	public static final String CCDBSEND_FORM_SEND = "Send to CCDB";
 	public static final String CCDBSEND_FORM_LIST = "Local List";
+	public static final String FORM_NAME = "UserName";
 
 }

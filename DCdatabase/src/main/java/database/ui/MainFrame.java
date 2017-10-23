@@ -42,9 +42,13 @@ import database.ui.panels.FaultPanel;
 import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
 import database.ui.panels.StatusPanel;
+import database.utils.ChannelBundles;
+import database.utils.FuseBundles;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.PanelConstraints;
+import database.utils.PinBundles;
+import database.utils.SignalConnectors;
 import database.utils.StringConstants;
 
 public class MainFrame extends JFrame {
@@ -143,6 +147,11 @@ public class MainFrame extends JFrame {
 		this.faultPanel = new FaultPanel(this);
 		this.dbSendPanel = new DBSendPanel(this);
 		this.ccdbSendPanel = new CCDBSendPanel();
+
+		PinBundles.setupBundles();
+		SignalConnectors.setupBundles();
+		FuseBundles.setupBundles();
+		ChannelBundles.setupBundles();
 
 	}
 
@@ -287,7 +296,7 @@ public class MainFrame extends JFrame {
 		JPanel dataControlsPanel = new JPanel(new GridBagLayout());
 		PanelConstraints.addComponent(dataControlsPanel, dataPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH, 0, 425);
-		PanelConstraints.addComponent(dataControlsPanel, faultPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		PanelConstraints.addComponent(dataControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.REMAINDER, 0, 0);
 
 		return dataControlsPanel;
@@ -297,7 +306,7 @@ public class MainFrame extends JFrame {
 		JPanel sqlControlsPanel = new JPanel(new GridBagLayout());
 		PanelConstraints.addComponent(sqlControlsPanel, sqlPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH, 0, 425);
-		PanelConstraints.addComponent(sqlControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		PanelConstraints.addComponent(sqlControlsPanel, ccdbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.RELATIVE, 0, 0);
 
 		return sqlControlsPanel;
@@ -307,11 +316,12 @@ public class MainFrame extends JFrame {
 		JPanel histgramControlsPanel = new JPanel();
 		histgramControlsPanel.setLayout(new GridBagLayout());
 		PanelConstraints.addComponent(histgramControlsPanel, histogramPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH, 0, 435);
+				GridBagConstraints.BOTH, 600, 505);
 
 		// add controls to histogram panel
-		PanelConstraints.addComponent(histgramControlsPanel, ccdbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		PanelConstraints.addComponent(histgramControlsPanel, faultPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.RELATIVE, 0, 0);
+		// faultPanel
 		return histgramControlsPanel;
 
 	}

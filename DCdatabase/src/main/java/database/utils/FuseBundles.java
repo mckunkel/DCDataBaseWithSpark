@@ -1,4 +1,4 @@
-package domain.utils;
+package database.utils;
 
 import java.util.HashMap;
 import java.util.Map;

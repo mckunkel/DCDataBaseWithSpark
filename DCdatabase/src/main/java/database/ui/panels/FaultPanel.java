@@ -12,43 +12,53 @@
 */
 package database.ui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-import database.objects.StatusChangeDB;
 import database.objects.Status_change_type;
-import database.service.CompareRunFormService;
-import database.service.CompareRunFormServiceImpl;
 import database.service.MainFrameService;
 import database.ui.MainFrame;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
+import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class FaultPanel extends JPanel implements ActionListener {// implements
-	private MainFrameService mainFrameService = null;
 	private MainFrame mainFrame = null;
+	private MainFrameService mainFrameService = null;
 
 	final int space = NumberConstants.BORDER_SPACING;
 	private Border spaceBorder = null;
 	private Border titleBorder = null;
-	private JComboBox<String> faultComboBox = null;
-	private CompareRunFormService compareRunFormService;
-	private JButton applyButton = null;
+	private JLabel nameLabel;
 
+	private JTextField textField = null;
+	private List<JRadioButton> jRadioButton = null;
+	private List<JButton> jButtons = null;
+
+	private ButtonGroup buttons = null;
 	private JCheckBox cb1 = null;
 	private JCheckBox cb2 = null;
 
@@ -60,16 +70,21 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	private void initializeVariables() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
-		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-		this.compareRunFormService = new CompareRunFormServiceImpl();
-		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.FAULT_FORM_LABEL);
-		this.faultComboBox = new JComboBox(StringConstants.PROBLEM_TYPES);
 
-		this.applyButton = new JButton(StringConstants.FAULT_FORM_APPLY);
+		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
+		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.FAULT_FORM_LABEL);
+
+		this.jRadioButton = new ArrayList<>();
+		this.jButtons = new ArrayList<>();
+
+		this.buttons = new ButtonGroup();
 
 		this.cb1 = new JCheckBox("broken");
 		this.cb2 = new JCheckBox("fixed");
-		this.applyButton.addActionListener(this);
+		this.nameLabel = new JLabel(StringConstants.FORM_NAME);
+
+		this.textField = new JTextField(NumberConstants.WINDOW_FIELD_LENGTH);
+
 		this.cb1.addActionListener(this);
 		this.cb2.addActionListener(this);
 
@@ -77,11 +92,68 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	private void initialLayout() {
 		setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-		setLayout(new GridLayout(0, 2));
-		add(new JLabel("Fault:"));
-		add(faultComboBox);
-		add(checkBoxPanel());
-		add(applyButton);
+		setLayout(new BorderLayout());
+
+		add(makeSubmitPanel(), BorderLayout.PAGE_START);
+
+		add(makeSpacerPanel(), BorderLayout.CENTER);
+
+		add(makeButtonGroup(), BorderLayout.PAGE_END);
+
+	}
+
+	private JPanel makeButtonGroup() {
+		JPanel jPanel1 = new JPanel();
+		jPanel1.setLayout(
+				new GridLayout(StringConstants.PROBLEM_TYPES.length / 2, StringConstants.PROBLEM_TYPES.length / 2));
+		JPanel jPanel = new JPanel();
+		jPanel.setLayout(new FlowLayout());
+
+		for (int i = 1; i < StringConstants.PROBLEM_TYPES.length; i++) {
+			JRadioButton button = new JRadioButton(StringConstants.PROBLEM_TYPES[i]);
+
+			JButton aButton = new JButton("?");
+			aButton.setBounds(10, 10, 30, 25);
+			aButton.setBorder(new RoundedBorder(3)); // 10 is the radius
+			aButton.setForeground(Color.BLUE);
+			aButton.addActionListener(this);
+
+			button.addActionListener(this);
+			jPanel.add(button);
+			jPanel.add(aButton);
+
+			jPanel1.add(button);
+			// jPanel1.add(jPanel);
+			buttons.add(button);
+			jRadioButton.add(button);
+			jButtons.add(aButton);
+
+		}
+		return jPanel1;
+	}
+
+	private JPanel makeSpacerPanel() {
+		JPanel aJPanel = new JPanel();
+		aJPanel.setLayout(new BorderLayout());
+		aJPanel.add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
+		return aJPanel;
+	}
+
+	private JPanel makeSubmitPanel() {
+		JPanel submitPanel = new JPanel();
+		submitPanel.setLayout(new GridLayout(2, 1));
+		JPanel namePanel = new JPanel();
+
+		namePanel.setLayout(new GridBagLayout());
+
+		PanelConstraints.addComponent(namePanel, nameLabel, 0, 0, 1, 1, GridBagConstraints.LINE_START,
+				GridBagConstraints.BOTH, 0, 0);
+		PanelConstraints.addComponent(namePanel, textField, 1, 0, 1, 1, GridBagConstraints.LINE_START,
+				GridBagConstraints.BOTH, 0, 0);
+
+		submitPanel.add(checkBoxPanel());
+		submitPanel.add(namePanel);
+		return submitPanel;
 
 	}
 
@@ -107,14 +179,6 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-
-		// String brokenOrfixed = null;
-		// if (cb1.isSelected()) {
-		// brokenOrfixed = "broken";
-		// }
-		// if (cb2.isSelected()) {
-		// brokenOrfixed = "fixed";
-		// }
 		Status_change_type brokenOrfixed = null;
 		if (cb1.isSelected()) {
 			brokenOrfixed = Status_change_type.broken;
@@ -122,50 +186,82 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		if (cb2.isSelected()) {
 			brokenOrfixed = Status_change_type.fixed;
 		}
-		if (event.getSource() == this.applyButton) {
-			String str = null;
-			str = (String) this.faultComboBox.getSelectedItem();
+		if (event.getSource() == this.jRadioButton.get(0))
+			this.mainFrameService.setFault(0);
+		if (event.getSource() == this.jRadioButton.get(1))
+			this.mainFrameService.setFault(1);
+		if (event.getSource() == this.jRadioButton.get(2))
+			this.mainFrameService.setFault(2);
+		if (event.getSource() == this.jRadioButton.get(3))
+			this.mainFrameService.setFault(3);
+		if (event.getSource() == this.jRadioButton.get(4))
+			this.mainFrameService.setFault(4);
+		if (event.getSource() == this.jRadioButton.get(5))
+			this.mainFrameService.setFault(5);
 
-			if (cb1.isSelected() && str.isEmpty()) {
-				JFrame errorFrame = new JFrame("");
-				JOptionPane.showMessageDialog(errorFrame, "In a box? With a Fox?",
-						"Please choose a an Fault with a Broken component", JOptionPane.ERROR_MESSAGE);
-			} else {
+		if (event.getSource() == this.jButtons.get(0))
+			System.out.println("Will print meaages for 0");
+		if (event.getSource() == this.jButtons.get(1))
+			System.out.println("Will print meaages for 1");
+		if (event.getSource() == this.jButtons.get(2))
+			System.out.println("Will print meaages for 2");
+		if (event.getSource() == this.jButtons.get(3))
+			System.out.println("Will print meaages for 3");
+		if (event.getSource() == this.jButtons.get(4))
+			System.out.println("Will print meaages for 4");
+		if (event.getSource() == this.jButtons.get(5))
+			System.out.println("Will print meaages for 5");
 
-				TreeSet<StatusChangeDB> queryList = this.mainFrameService.getMYSQLQuery();
+		// if (event.getSource() == this.applyButton) {
+		// String str = null;
+		// str = (String) this.faultComboBox.getSelectedItem();
+		//
+		// if (cb1.isSelected() && str.isEmpty()) {
+		// JFrame errorFrame = new JFrame("");
+		// JOptionPane.showMessageDialog(errorFrame, "In a box? With a Fox?",
+		// "Please choose a an Fault with a Broken component",
+		// JOptionPane.ERROR_MESSAGE);
+		// } else {
+		//
+		// TreeSet<StatusChangeDB> queryList =
+		// this.mainFrameService.getMYSQLQuery();
+		//
+		// for (StatusChangeDB statusChangeDB : queryList) {
+		// statusChangeDB.setProblem_type(str);
+		// statusChangeDB.setStatus_change_type(brokenOrfixed.toString());
+		// statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
+		// }
+		//
+		// this.mainFrameService.addToCompleteSQLList(queryList);
+		// this.mainFrame.getDataPanel().removeItems(queryList);
+		//
+		// this.mainFrameService.clearTempSQLList();
+		// this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+		// this.faultComboBox.setSelectedIndex(0);
+		// }
+		// }
+	}
 
-				for (StatusChangeDB statusChangeDB : queryList) {
-					statusChangeDB.setProblem_type(str);
-					statusChangeDB.setStatus_change_type(brokenOrfixed.toString());
-					statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
-				}
+	private static class RoundedBorder implements Border {
 
-				this.mainFrameService.addToCompleteSQLList(queryList);
-				this.mainFrame.getDataPanel().removeItems(queryList);
+		private int radius;
 
-				this.mainFrameService.clearTempSQLList();
-				this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
-				this.faultComboBox.setSelectedIndex(0);
-			}
+		RoundedBorder(int radius) {
+			this.radius = radius;
 		}
 
-		// }
-		// synchronized (str)
-		//
-		// {
-		//
-		// // wait for input from field
-		// while (str.isEmpty())
-		// try {
-		// str.wait();
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// // String nextInt = str.remove(0);
-		// System.out.println(str);
-		// // ....
-		// }
+		public boolean isBorderOpaque() {
+			return true;
+		}
+
+		@Override
+		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+			g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+		}
+
+		@Override
+		public Insets getBorderInsets(Component c) {
+			return new Insets(this.radius + 1, this.radius + 1, this.radius + 2, this.radius);
+		}
 	}
 }

@@ -12,11 +12,13 @@
 */
 package domain.workingset;
 
+import java.awt.event.MouseListener;
 import java.util.Random;
 
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.graphics.EmbeddedCanvas;
 
+import domain.utils.ChannelBundles;
 import domain.utils.FuseBundles;
 import domain.utils.PinBundles;
 import domain.utils.SignalConnectors;
@@ -48,15 +50,30 @@ public class MouseOverrideCanvas {
 		PinBundles.setupBundles();
 		SignalConnectors.setupBundles();
 		FuseBundles.setupBundles();
+		ChannelBundles.setupBundles();
 
 		this.canvas = new EmbeddedCanvas();
+		removeListeners();
 		canvas.addMouseListener(listener);
 		canvas.addMouseMotionListener(listener);
+	}
+
+	private void removeListeners() {
+		MouseListener[] mouseListener = canvas.getMouseListeners();
+		for (int i = 0; i < mouseListener.length; i++) {
+			MouseListener mouseListener2 = mouseListener[i];
+			if (mouseListener2 instanceof MouseListener) {
+				canvas.removeMouseListener(mouseListener2);
+			}
+		}
+
 	}
 
 	private H2F makeH2F() {
 		Random r = new Random();
 		H2F aH2f = new H2F("test", xBins, xMin, xMax, yBins, yMin, yMax);
+		aH2f.setTitleX("Wire");
+		aH2f.setTitleY("Layer");
 		for (int x = 0; x < aH2f.getXAxis().getNBins(); x++) {
 			for (int y = 0; y < aH2f.getYAxis().getNBins(); y++) {
 				double randomValue = 1.0 + (25.0 - 1.0) * r.nextDouble();

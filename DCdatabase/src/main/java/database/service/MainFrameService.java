@@ -73,4 +73,12 @@ public interface MainFrameService {
 
 	public void shutdown();
 
+	public int getFault();
+
+	public void setFault(int fault);
+
+	public int getBundle();
+
+	public void setBundle(int bundle);
+
 }

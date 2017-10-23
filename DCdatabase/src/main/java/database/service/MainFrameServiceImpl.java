@@ -13,6 +13,8 @@ import database.utils.Coordinate;
 import spark.utils.MainFrameQuery;
 
 public class MainFrameServiceImpl implements MainFrameService {
+	private int fault = -1000;
+	private int bundle = -1000;
 
 	private MainFrameQuery mainFrameQuery;
 	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
@@ -203,6 +205,26 @@ public class MainFrameServiceImpl implements MainFrameService {
 	public void clearAddBackList() {
 		this.addBackList.clear();
 
+	}
+
+	@Override
+	public int getFault() {
+		return fault;
+	}
+
+	@Override
+	public void setFault(int fault) {
+		this.fault = fault;
+	}
+
+	@Override
+	public int getBundle() {
+		return bundle;
+	}
+
+	@Override
+	public void setBundle(int bundle) {
+		this.bundle = bundle;
 	}
 
 	public void shutdown() {
