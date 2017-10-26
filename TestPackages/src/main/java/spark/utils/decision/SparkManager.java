@@ -1,4 +1,4 @@
-package spark.utils;
+package spark.utils.decision;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,20 +24,36 @@ public enum SparkManager {
 	private static String sparkMaster = StringConstants.SPARK_MASTER;
 	private static String tempDir = StringConstants.TEMP_DIR;
 
+	// private static JavaSparkContext spContext = null;
 	private static SparkSession sparkSession = null;
 
 	private static void getConnection() {
 
 		if (sparkSession == null) {
-
+			// Setup Spark configuration
+			// SparkConf conf = new
+			// SparkConf().setAppName(appName).setMaster(sparkMaster);
 			sparkSession = SparkSession.builder().appName(appName).master(sparkMaster)
 					.config("spark.sql.warehouse.dir", tempDir).getOrCreate();
+			// Make sure you download the winutils binaries into this directory
+			// from
+			// https://github.com/srccodes/hadoop-common-2.2.0-bin/archive/master.zip
+			System.setProperty("hadoop.home.dir", ".");
 
-			// System.setProperty("hadoop.home.dir", ".");
+			// Create Spark Context from configuration
+			// spContext = new JavaSparkContext(sparkSession);
 
 		}
 
 	}
+
+	// public static JavaSparkContext getContext() {
+	//
+	// if (spContext == null) {
+	// getConnection();
+	// }
+	// return spContext;
+	// }
 
 	public static SparkSession getSession() {
 		if (sparkSession == null) {

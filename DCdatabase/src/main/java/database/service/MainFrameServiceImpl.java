@@ -13,8 +13,6 @@ import database.utils.Coordinate;
 import spark.utils.MainFrameQuery;
 
 public class MainFrameServiceImpl implements MainFrameService {
-	private int fault = -1000;
-	private int bundle = -1000;
 
 	private MainFrameQuery mainFrameQuery;
 	private Map<Coordinate, H2F> occupanciesByCoordinate = null;
@@ -31,6 +29,10 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private int sectorNumber;
 	private int superLayerNumber;
 	private boolean sentTodb;
+
+	private int fault = -1000;
+	private int bundle = -1000;
+	private String userName = null;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -225,6 +227,14 @@ public class MainFrameServiceImpl implements MainFrameService {
 	@Override
 	public void setBundle(int bundle) {
 		this.bundle = bundle;
+	}
+
+	public String getUserName() {
+		return this.userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public void shutdown() {

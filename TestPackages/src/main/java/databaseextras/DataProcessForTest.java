@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.process;
+package databaseextras;
 
 import java.util.HashMap;
 import java.util.Map;

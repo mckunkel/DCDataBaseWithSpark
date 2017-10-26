@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.objects;
+package databaseextras;
 
 import java.io.Serializable;
 import java.util.ArrayList;

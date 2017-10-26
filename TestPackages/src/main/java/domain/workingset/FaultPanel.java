@@ -1,3 +1,4 @@
+
 /*  +__^_________,_________,_____,________^-.-------------------,
  *  | |||||||||   `--------'     |          |                   O
  *  `+-------------USMC----------^----------|___________________|
@@ -50,11 +51,11 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 	private Border spaceBorder = null;
 	private Border titleBorder = null;
 	private JLabel nameLabel;
-
-	private JTextField textField = null;
+	private JTextField nameField = null;
 	private List<JRadioButton> jRadioButton = null;
 	private List<JButton> jButtons = null;
 
+	private JButton setNameButton = null;
 	private ButtonGroup buttons = null;
 	private JCheckBox cb1 = null;
 	private JCheckBox cb2 = null;
@@ -80,7 +81,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		this.cb2 = new JCheckBox("fixed");
 		this.nameLabel = new JLabel(StringConstants.FORM_NAME);
 
-		this.textField = new JTextField(NumberConstants.WINDOW_FIELD_LENGTH);
+		this.nameField = new JTextField(NumberConstants.WINDOW_FIELD_LENGTH);
 
 		this.cb1.addActionListener(this);
 		this.cb2.addActionListener(this);
@@ -143,9 +144,23 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 		namePanel.setLayout(new GridBagLayout());
 
-		PanelConstraints.addComponent(namePanel, nameLabel, 0, 0, 1, 1, GridBagConstraints.LINE_START,
+		PanelConstraints.addComponent(namePanel, nameLabel, 0, 0, 1, 1, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, 0, 0);
-		PanelConstraints.addComponent(namePanel, textField, 1, 0, 1, 1, GridBagConstraints.LINE_START,
+		PanelConstraints.addComponent(namePanel, nameField, 1, 0, 1, 1, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, 50, 0);
+		this.setNameButton = new JButton("Set");
+		this.setNameButton.setBounds(10, 10, 30, 25);
+		this.setNameButton.setBorder(new RoundedBorder(3)); // 10 is the radius
+		this.setNameButton.setForeground(Color.BLUE);
+		this.setNameButton.addActionListener(e -> {
+			if (this.nameField.getText().equals("")) {
+				System.out.println("Name not set correctly");
+			} else {
+				this.mainFrameService.setUserName(this.nameField.getText());
+			}
+		});
+
+		PanelConstraints.addComponent(namePanel, setNameButton, 2, 0, 1, 1, GridBagConstraints.LINE_END,
 				GridBagConstraints.BOTH, 0, 0);
 
 		submitPanel.add(checkBoxPanel());

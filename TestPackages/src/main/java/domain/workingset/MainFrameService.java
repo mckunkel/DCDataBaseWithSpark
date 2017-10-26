@@ -10,4 +10,7 @@ public interface MainFrameService {
 
 	public void setBundle(int bundle);
 
+	public String getUserName();
+
+	public void setUserName(String userName);
 }

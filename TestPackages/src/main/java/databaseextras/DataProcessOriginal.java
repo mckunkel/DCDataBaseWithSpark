@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.process;
+package databaseextras;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -36,7 +36,6 @@ import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
 import org.jlab.io.hipo.HipoDataSource;
 
-import database.objects.TBHits;
 import database.utils.Coordinate;
 import database.utils.EmptyDataPoint;
 import spark.utils.SparkManager;

@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.objects;
+package databaseextras;
 
 public class TBHits {
 

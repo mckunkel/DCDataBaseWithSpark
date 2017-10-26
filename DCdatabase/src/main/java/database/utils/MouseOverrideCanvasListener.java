@@ -52,6 +52,7 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 	private boolean isRemoved;
 	private int popupPad = 0;
 	private JPopupMenu popup = null;
+	private boolean noData;
 
 	public MouseOverrideCanvasListener() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
@@ -94,6 +95,12 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 		canvas = (EmbeddedCanvas) e.getComponent();
 
 		ds = canvas.getPad(0).getDatasetPlotters().get(0).getDataSet();
+		if (ds.equals(null)) {
+			noData = true;
+		} else {
+			noData = false;
+
+		}
 		xBins = ds.getDataSize(0);
 		yBins = ds.getDataSize(1);
 
@@ -117,6 +124,7 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 		Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
 
 		setBundle(aPair.getLeft(), aPair.getRight());
+
 	}
 
 	@Override
@@ -164,16 +172,17 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 	@Override
 	public void mouseMoved(MouseEvent e) {
 
-		double xpos = e.getX() - xMin;
-		double ypos = yRange - e.getY();
+		if (!noData) {
+			double xpos = e.getX() - xMin;
+			double ypos = yRange - e.getY();
 
-		Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
+			Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
 
-		setBundle(aPair.getLeft(), aPair.getRight());
+			setBundle(aPair.getLeft(), aPair.getRight());
 
-		if (inBounds(xpos, ypos) && bundleChange()) {// && bundleChange()
-			System.out.println("xBin = " + aPair.getLeft() + " yBin = " + aPair.getRight());
-			drawDefinedFault(aPair.getLeft(), aPair.getRight());
+			if (inBounds(xpos, ypos) && bundleChange()) {// && bundleChange()
+				drawDefinedFault(aPair.getLeft(), aPair.getRight());
+			}
 		}
 
 	}
