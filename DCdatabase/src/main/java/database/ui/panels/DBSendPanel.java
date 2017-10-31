@@ -77,12 +77,13 @@ public class DBSendPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == this.sendButton) {
-			System.out.println("Will send the query with selected faults and wires from teh sql panel");
+			System.out.println("Will send the query with selected faults and wires from the sql panel");
 			this.insertMYSqlQuery.prepareMYSQLQuery();
 			this.mainFrameService.getCompleteSQLList().clear();
 			this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
 			this.mainFrameService.setSentTodb(true);
 			SparkManager.restart();
+
 		} else if (event.getSource() == this.removeButton) {
 
 			System.out.println("This will remove from teh list");

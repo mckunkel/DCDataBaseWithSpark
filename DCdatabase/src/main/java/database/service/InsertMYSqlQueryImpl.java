@@ -12,6 +12,8 @@
 */
 package database.service;
 
+import static org.apache.spark.sql.functions.col;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,16 +44,24 @@ public class InsertMYSqlQueryImpl implements InsertMYSqlQuery {
 		// the enum properly. So we
 		// will copy a generic StatusChangeDB from the MYSQL database with the
 		// appropriate call for Status_change_type
-		// this is beta for only the "broken" wires
-		// need to do the ""fixed" wires at some point
+
 		List<StatusChangeDB> aList = new ArrayList<>();
 		Dataset<StatusChangeDB> dbQuery = this.dbQuery.compareRunII("0");
 
 		Timestamp timestamp = java.sql.Timestamp.from(java.time.Instant.now());
 		System.out.println(timestamp);
 		for (StatusChangeDB statusChangeDB : this.mainFrameService.getCompleteSQLList()) {
-			StatusChangeDB aChangeDBTest = dbQuery.first();
+			StatusChangeDB aChangeDBTest = null;
+			if (statusChangeDB.getStatus_change_type().equals("broken")) {
+				aChangeDBTest = dbQuery.filter(col("status_change_type").equalTo("broke")).first();
+			} else if (statusChangeDB.getStatus_change_type().equals("fixed")) {
+				aChangeDBTest = dbQuery.filter(col("status_change_type").equalTo("fixed")).first();
+			} else {
+				System.err.println(
+						"There is no default for this status_change_type of " + statusChangeDB.getStatus_change_type());
+			}
 			aChangeDBTest.setStatchangeid(0);
+			// StatusChangeDB aChangeDBTest = new StatusChangeDB();
 			aChangeDBTest.setDateofentry(timestamp);
 			aChangeDBTest.setRegion(DCConversions.getRegion(statusChangeDB.getSuperlayer()));
 

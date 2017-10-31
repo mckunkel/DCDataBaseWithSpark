@@ -8,7 +8,17 @@ import java.util.TreeSet;
 import org.apache.spark.sql.Dataset;
 import org.jlab.groot.data.H2F;
 
+import database.faults.ChannelLogic;
+import database.faults.DeadWireLogic;
+import database.faults.FaultLogic;
+import database.faults.FuseLogic;
+import database.faults.HotWireLogic;
+import database.faults.PinLogic;
+import database.faults.SignalLogic;
 import database.objects.StatusChangeDB;
+import database.objects.Status_change_type;
+import database.ui.panels.DataPanel;
+import database.ui.panels.SQLPanel;
 import database.utils.Coordinate;
 import spark.utils.MainFrameQuery;
 
@@ -21,7 +31,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	private TreeSet<StatusChangeDB> queryList = null;
 	private TreeSet<StatusChangeDB> addBackList = null;
-
+	private Status_change_type status_change_type = null;
 	private TreeSet<StatusChangeDB> completeQueryList = null;
 	private TreeSet<Integer> intList = null;
 	private int nEventsInFile;
@@ -30,9 +40,15 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private int superLayerNumber;
 	private boolean sentTodb;
 
-	private int fault = -1000;
+	private int fault = 0;
 	private int bundle = -1000;
 	private String userName = null;
+	private boolean mouseReady;
+
+	private FaultLogic faultLogic = null;
+	// testing passing panels ///I think this is the wrong idea
+	private DataPanel dataPanel;
+	private SQLPanel sqlPanel;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -44,6 +60,9 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.addBackList = new TreeSet<>();
 		this.completeQueryList = new TreeSet<>();
 		this.intList = new TreeSet<>();
+
+		this.mouseReady = false;
+
 		createHistograms();
 		createDatasets();
 	}
@@ -210,13 +229,40 @@ public class MainFrameServiceImpl implements MainFrameService {
 	}
 
 	@Override
-	public int getFault() {
-		return fault;
+	public FaultLogic getFault() {
+		return this.faultLogic;
+	}
+
+	@Override
+	public int getFaultNum() {
+		return this.fault;
 	}
 
 	@Override
 	public void setFault(int fault) {
 		this.fault = fault;
+		switch (fault) {
+		case 0:
+			this.faultLogic = new ChannelLogic();
+			break;
+		case 1:
+			this.faultLogic = new PinLogic();
+			break;
+		case 2:
+			this.faultLogic = new FuseLogic();
+			break;
+		case 3:
+			this.faultLogic = new SignalLogic();
+			break;
+		case 4:
+			this.faultLogic = new DeadWireLogic();
+			break;
+		case 5:
+			this.faultLogic = new HotWireLogic();
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -241,4 +287,36 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.mainFrameQuery.shutdown();
 	}
 
+	public void setMouseReady() {
+		this.mouseReady = true;
+	}
+
+	public boolean getMouseReady() {
+		return this.mouseReady;
+	}
+
+	@Override
+	public void setBrokenOrFixed(Status_change_type brokenOrFixed) {
+		this.status_change_type = brokenOrFixed;
+	}
+
+	public Status_change_type getBrokenOrFixed() {
+		return this.status_change_type;
+	}
+
+	public void setDataPanel(DataPanel dataPanel) {
+		this.dataPanel = dataPanel;
+	}
+
+	public DataPanel getDataPanel() {
+		return this.dataPanel;
+	}
+
+	public void setSQLPanel(SQLPanel sqlPanel) {
+		this.sqlPanel = sqlPanel;
+	}
+
+	public SQLPanel getSQLPanel() {
+		return this.sqlPanel;
+	}
 }

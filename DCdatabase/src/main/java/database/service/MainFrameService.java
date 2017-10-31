@@ -6,7 +6,11 @@ import java.util.TreeSet;
 import org.apache.spark.sql.Dataset;
 import org.jlab.groot.data.H2F;
 
+import database.faults.FaultLogic;
 import database.objects.StatusChangeDB;
+import database.objects.Status_change_type;
+import database.ui.panels.DataPanel;
+import database.ui.panels.SQLPanel;
 import database.utils.Coordinate;
 
 public interface MainFrameService {
@@ -73,7 +77,9 @@ public interface MainFrameService {
 
 	public void shutdown();
 
-	public int getFault();
+	public FaultLogic getFault();
+
+	public int getFaultNum();
 
 	public void setFault(int fault);
 
@@ -84,5 +90,21 @@ public interface MainFrameService {
 	public String getUserName();
 
 	public void setUserName(String userName);
+
+	public void setMouseReady();
+
+	public boolean getMouseReady();
+
+	public void setBrokenOrFixed(Status_change_type brokenOrFixed);
+
+	public Status_change_type getBrokenOrFixed();
+
+	public void setDataPanel(DataPanel dataPanel);
+
+	public DataPanel getDataPanel();
+
+	public void setSQLPanel(SQLPanel sqlPanel);
+
+	public SQLPanel getSQLPanel();
 
 }

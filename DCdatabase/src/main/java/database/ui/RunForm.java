@@ -149,10 +149,10 @@ public class RunForm extends JDialog implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == this.okButton) {
-			boolean checkFile = checkValidFile();
-			if (checkFile) {
+			if (checkValidFile()) {
 				String str = (String) this.fileComboBox.getSelectedItem();
 				this.mainFrame.getDataProcess().openFile(dirLocation + str);
+				this.mainFrameService.setMouseReady();
 
 			} else {
 				System.out.println("Problem");

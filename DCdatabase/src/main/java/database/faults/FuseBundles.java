@@ -1,4 +1,4 @@
-package database.utils;
+package database.faults;
 
 import java.util.HashMap;
 import java.util.Map;

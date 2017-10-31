@@ -118,6 +118,12 @@ public enum SparkManager {
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "clasuser");
 			jdbcOptions.put("password", "");
+		} else if (str.contains("Mike-Kunkels")) {
+			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test?jdbcCompliantTruncation=false");
+			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
+			jdbcOptions.put("dbtable", "status_change");
+			jdbcOptions.put("user", "clasuser");
+			jdbcOptions.put("password", "");
 		} else {
 			System.err.println("On an unknown server. Please use on ifarm1402 or ifarm1401");
 			System.exit(-1);

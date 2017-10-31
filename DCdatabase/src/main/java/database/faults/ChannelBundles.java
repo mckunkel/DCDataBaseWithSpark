@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.utils;
+package database.faults;
 
 import java.util.ArrayList;
 import java.util.List;

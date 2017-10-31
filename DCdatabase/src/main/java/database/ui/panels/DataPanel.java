@@ -13,14 +13,13 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -29,6 +28,7 @@ import org.apache.spark.sql.Dataset;
 import database.objects.StatusChangeDB;
 import database.service.MainFrameService;
 import database.ui.TableModel;
+import database.utils.DataPanelMouseListener;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.StringConstants;
@@ -47,7 +47,7 @@ public class DataPanel extends JPanel {
 		initializeVariables();
 		initializeTableAlignment();
 		initializeHeaderAlignment();
-		mouseListener();
+		// mouseListener();
 		constructLayout();
 	}
 
@@ -84,6 +84,8 @@ public class DataPanel extends JPanel {
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.DATA_FORM_LABEL);
 		this.tableModel = new TableModel();
 		this.aTable = new JTable(tableModel);
+		this.aTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.aTable.addMouseListener(new DataPanelMouseListener());
 	}
 
 	public void setTableModel(Dataset<StatusChangeDB> wireSet) {
@@ -109,31 +111,31 @@ public class DataPanel extends JPanel {
 	public void compareWithSQLPanel(Dataset<StatusChangeDB> wireSet) {
 		this.tableModel.compareWithSQLPanel(wireSet, this.mainFrameService.getCompleteSQLList());
 	}
-	// private final int[] selection = null;
 
-	private void mouseListener() {
-		TreeSet<StatusChangeDB> queryList = new TreeSet<>();
-		this.aTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					final JTable target = (JTable) e.getSource();
-					// target.setRowSelectionAllowed(true);
-					// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					int[] selection = target.getSelectedRows();
-					for (int i : selection) {
-						StatusChangeDB statusChangeDB = new StatusChangeDB();
-						statusChangeDB.setSector(target.getValueAt(i, 0).toString());
-						statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
-						statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
-						statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
-						queryList.add(statusChangeDB);
-					}
-				}
-			}
-		});
-
-		this.mainFrameService.prepareMYSQLQuery(queryList);
-
-	}
+	// private void mouseListener() {
+	// TreeSet<StatusChangeDB> queryList = new TreeSet<>();
+	// this.aTable.addMouseListener(new MouseAdapter() {
+	// @Override
+	// public void mouseClicked(final MouseEvent e) {
+	// if (e.getClickCount() == 1) {
+	// final JTable target = (JTable) e.getSource();
+	// // target.setRowSelectionAllowed(true);
+	// //
+	// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	// int[] selection = target.getSelectedRows();
+	// for (int i : selection) {
+	// StatusChangeDB statusChangeDB = new StatusChangeDB();
+	// statusChangeDB.setSector(target.getValueAt(i, 0).toString());
+	// statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
+	// statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
+	// statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
+	// queryList.add(statusChangeDB);
+	// }
+	// }
+	// }
+	// });
+	//
+	// this.mainFrameService.prepareMYSQLQuery(queryList);
+	//
+	// }
 }

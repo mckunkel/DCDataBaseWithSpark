@@ -129,6 +129,8 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 			jButtons.add(aButton);
 
 		}
+		this.jRadioButton.get(0).setSelected(true);
+
 		return jPanel1;
 	}
 
@@ -193,12 +195,11 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		Status_change_type brokenOrfixed = null;
 		if (cb1.isSelected()) {
-			brokenOrfixed = Status_change_type.broken;
+			this.mainFrameService.setBrokenOrFixed(Status_change_type.broken);
 		}
 		if (cb2.isSelected()) {
-			brokenOrfixed = Status_change_type.fixed;
+			this.mainFrameService.setBrokenOrFixed(Status_change_type.broken);
 		}
 		if (event.getSource() == this.jRadioButton.get(0))
 			this.mainFrameService.setFault(0);
@@ -213,47 +214,6 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		if (event.getSource() == this.jRadioButton.get(5))
 			this.mainFrameService.setFault(5);
 
-		if (event.getSource() == this.jButtons.get(0))
-			System.out.println("Will print meaages for 0");
-		if (event.getSource() == this.jButtons.get(1))
-			System.out.println("Will print meaages for 1");
-		if (event.getSource() == this.jButtons.get(2))
-			System.out.println("Will print meaages for 2");
-		if (event.getSource() == this.jButtons.get(3))
-			System.out.println("Will print meaages for 3");
-		if (event.getSource() == this.jButtons.get(4))
-			System.out.println("Will print meaages for 4");
-		if (event.getSource() == this.jButtons.get(5))
-			System.out.println("Will print meaages for 5");
-
-		// if (event.getSource() == this.applyButton) {
-		// String str = null;
-		// str = (String) this.faultComboBox.getSelectedItem();
-		//
-		// if (cb1.isSelected() && str.isEmpty()) {
-		// JFrame errorFrame = new JFrame("");
-		// JOptionPane.showMessageDialog(errorFrame, "In a box? With a Fox?",
-		// "Please choose a an Fault with a Broken component",
-		// JOptionPane.ERROR_MESSAGE);
-		// } else {
-		//
-		// TreeSet<StatusChangeDB> queryList =
-		// this.mainFrameService.getMYSQLQuery();
-		//
-		// for (StatusChangeDB statusChangeDB : queryList) {
-		// statusChangeDB.setProblem_type(str);
-		// statusChangeDB.setStatus_change_type(brokenOrfixed.toString());
-		// statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
-		// }
-		//
-		// this.mainFrameService.addToCompleteSQLList(queryList);
-		// this.mainFrame.getDataPanel().removeItems(queryList);
-		//
-		// this.mainFrameService.clearTempSQLList();
-		// this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
-		// this.faultComboBox.setSelectedIndex(0);
-		// }
-		// }
 	}
 
 	private static class RoundedBorder implements Border {

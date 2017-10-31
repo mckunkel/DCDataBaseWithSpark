@@ -17,9 +17,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Map;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
@@ -47,16 +47,15 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 	private int xBins;
 	private int yBins;
 	private MainFrameService mainFrameService = null;
-
+	private Pair<Integer, Integer> aPair;
 	private int currentBundle = -1000;
-	private boolean isRemoved;
+
 	private int popupPad = 0;
 	private JPopupMenu popup = null;
-	private boolean noData;
 
 	public MouseOverrideCanvasListener() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
-		isRemoved = false;
+		this.mainFrameService.setFault(0); // default
 	}
 
 	@Override
@@ -72,8 +71,17 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 			double yposNew = yRange - e.getY();
 			findBin(xposNew, yposNew);
 		}
-		if (e.getButton() == 1 && e.getClickCount() == 2) {
-			System.out.println("I was doubled clicked");
+		if (e.getButton() == 1 && e.getClickCount() == 2 && this.mainFrameService.getMouseReady()) {
+
+			int reply = JOptionPane.showConfirmDialog(null, "Add Selected Fault to DB list?",
+					"User Selected Add to List", JOptionPane.YES_NO_OPTION);
+			if (reply == JOptionPane.YES_OPTION) {
+				this.mainFrameService.getFault().setFaultToDB();
+				JOptionPane.showMessageDialog(null,
+						"Entering values selected by user " + this.mainFrameService.getUserName());
+			} else {
+				JOptionPane.showMessageDialog(null, "electrons do not grow on trees");
+			}
 		}
 		if (SwingUtilities.isRightMouseButton(e)) {
 			popupPad = canvas.getPadByXY(e.getX(), e.getY());
@@ -92,38 +100,41 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		canvas = (EmbeddedCanvas) e.getComponent();
+		// System.out.println(canvas.getCanvasPads().size() + " canvas pads");
+		if (this.mainFrameService.getMouseReady()) {
 
-		ds = canvas.getPad(0).getDatasetPlotters().get(0).getDataSet();
-		if (ds.equals(null)) {
-			noData = true;
-		} else {
-			noData = false;
+			canvas = (EmbeddedCanvas) e.getComponent();
+
+			ds = canvas.getPad(0).getDatasetPlotters().get(0).getDataSet();
+
+			xBins = ds.getDataSize(0);
+			yBins = ds.getDataSize(1);
+
+			xMax = canvas.getPad().getAxisFrame().getAxisX().getDimension().getMax();
+			xMin = canvas.getPad().getAxisFrame().getAxisX().getDimension().getMin();
+			yMax = canvas.getPad().getAxisFrame().getAxisY().getDimension().getMax();
+			yMin = canvas.getPad().getAxisFrame().getAxisY().getDimension().getMin();
+			yRange = yMax + yMin;
+			xSpan = xMax - xMin;
+			ySpan = yMin - yMax;
+
+			double xMinx = this.mainFrameService.getHistogramByMap(this.mainFrameService.getSelectedSuperlayer(),
+					this.mainFrameService.getSelectedSector()).getXAxis().min();
+			// int xMaxx = 113;
+			double xMaxx = this.mainFrameService.getHistogramByMap(this.mainFrameService.getSelectedSuperlayer(),
+					this.mainFrameService.getSelectedSector()).getXAxis().max();
+			int yMiny = 1;
+			int yMaxy = 7;
+
+			mouseH2F = new H2F("", xBins, xMinx, xMaxx, yBins, yMiny, yMaxy);
+			double xpos = e.getX() - xMin;
+			double ypos = yRange - e.getY();
+			// Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
+			this.aPair = getBinFromMouse(xpos, ypos);
+
+			setBundle(aPair.getLeft(), aPair.getRight());
 
 		}
-		xBins = ds.getDataSize(0);
-		yBins = ds.getDataSize(1);
-
-		xMax = canvas.getPad().getAxisFrame().getAxisX().getDimension().getMax();
-		xMin = canvas.getPad().getAxisFrame().getAxisX().getDimension().getMin();
-		yMax = canvas.getPad().getAxisFrame().getAxisY().getDimension().getMax();
-		yMin = canvas.getPad().getAxisFrame().getAxisY().getDimension().getMin();
-		yRange = yMax + yMin;
-		xSpan = xMax - xMin;
-		ySpan = yMin - yMax;
-
-		int xMinx = 1;
-		int xMaxx = 113;
-
-		int yMiny = 1;
-		int yMaxy = 7;
-
-		mouseH2F = new H2F("", xBins, xMinx, xMaxx, yBins, yMiny, yMaxy);
-		double xpos = e.getX() - xMin;
-		double ypos = yRange - e.getY();
-		Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
-
-		setBundle(aPair.getLeft(), aPair.getRight());
 
 	}
 
@@ -172,70 +183,24 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 	@Override
 	public void mouseMoved(MouseEvent e) {
 
-		if (!noData) {
+		if (this.mainFrameService.getMouseReady()) {
 			double xpos = e.getX() - xMin;
 			double ypos = yRange - e.getY();
 
-			Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
+			// Pair<Integer, Integer> aPair = getBinFromMouse(xpos, ypos);
+			this.aPair = getBinFromMouse(xpos, ypos);
 
 			setBundle(aPair.getLeft(), aPair.getRight());
 
 			if (inBounds(xpos, ypos) && bundleChange()) {// && bundleChange()
-				drawDefinedFault(aPair.getLeft(), aPair.getRight());
+				this.mainFrameService.getFault().drawLogic(canvas, mouseH2F, aPair.getLeft(), aPair.getRight());
 			}
 		}
 
 	}
 
 	private void setBundle(int xBin, int yBin) {
-		int faultType = this.mainFrameService.getFault();
-		switch (faultType) {
-		case 0:
-			this.currentBundle = ChannelBundles.getBundle(ChannelBundles.findWireRange(xBin));
-			break;
-		case 1:
-			this.currentBundle = PinBundles.getBundle(PinBundles.findWireRange(xBin)) * yBin;
-			break;
-		case 2:
-			this.currentBundle = FuseBundles.getBundle(xBin, yBin);
-			break;
-		case 3:
-			this.currentBundle = SignalConnectors.getBundle(xBin, yBin);
-			break;
-		case 4:
-			this.currentBundle = xBin * yBin;
-			break;
-		case 5:
-			this.currentBundle = xBin * yBin;
-		default:
-			break;
-		}
-	}
-
-	private void drawDefinedFault(int xBin, int yBin) {
-		int faultType = this.mainFrameService.getFault();
-		switch (faultType) {
-		case 0:
-			drawOverLayedChannelHist(ChannelBundles.findWireRange(xBin), yBin);
-			break;
-		case 1:
-			drawOverLayedPinHist(PinBundles.findWireRange(xBin), yBin);
-			break;
-		case 2:
-			drawOverLayedFuseHist(FuseBundles.findWireRange(xBin, yBin));
-			break;
-		case 3:
-			drawOverLayedSignalHist(SignalConnectors.findWireRange(xBin, yBin));
-			break;
-		case 4:
-			drawOverLayedHist(xBin, yBin);
-			break;
-		case 5:
-			drawOverLayedHist(xBin, yBin);
-			break;
-		default:
-			break;
-		}
+		this.currentBundle = this.mainFrameService.getFault().setBundle(xBin, yBin);
 	}
 
 	private boolean inBounds(double xpos, double ypos) {
@@ -256,102 +221,6 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 			retValue = true;
 		}
 		return retValue;
-	}
-
-	private void drawOverLayedHist(int xBin, int yBin) {
-
-		for (int i = 0; i < xBins; i++) {
-			for (int j = 0; j < yBins; j++) {
-				// System.out.println(xBin + " " + yBin + " " + i + " " + j);
-				if (i == xBin - 1 && j == yBin - 1) {
-					mouseH2F.setBinContent(i, j, 0.0);
-				} else {
-					mouseH2F.setBinContent(i, j, ds.getData(i, j));
-				}
-
-			}
-
-		}
-
-		canvas.draw(mouseH2F, "same");
-		canvas.update();
-	}
-
-	private void drawOverLayedPinHist(Pair<Integer, Integer> xPair, int yBin) {
-
-		for (int i = 0; i < xBins; i++) {
-			for (int j = 0; j < yBins; j++) {
-				mouseH2F.setBinContent(i, j, ds.getData(i, j));
-			}
-
-		}
-		for (int i = xPair.getLeft(); i <= xPair.getRight(); i++) {
-			mouseH2F.setBinContent(i - 1, yBin - 1, 0.0);
-
-		}
-
-		canvas.draw(mouseH2F, "same");
-		canvas.update();
-	}
-
-	private void drawOverLayedChannelHist(Pair<Integer, Integer> xPair, int yBin) {
-
-		for (int i = 0; i < xBins; i++) {
-			for (int j = 0; j < yBins; j++) {
-				mouseH2F.setBinContent(i, j, ds.getData(i, j));
-			}
-
-		}
-		for (int i = xPair.getLeft(); i <= xPair.getRight(); i++) {
-			for (int j = 0; j < yBins; j++) {
-
-				mouseH2F.setBinContent(i - 1, j, 0.0);
-			}
-
-		}
-
-		canvas.draw(mouseH2F, "same");
-		canvas.update();
-	}
-
-	private void drawOverLayedSignalHist(Map<Integer, Pair<Integer, Integer>> aMap) {
-
-		for (int i = 0; i < xBins; i++) {
-			for (int j = 0; j < yBins; j++) {
-				mouseH2F.setBinContent(i, j, ds.getData(i, j));
-			}
-		}
-
-		for (int j = 0; j < yBins; j++) {
-			Pair<Integer, Integer> xPair = aMap.get(j + 1);
-			for (int i = xPair.getLeft(); i <= xPair.getRight(); i++) {
-				mouseH2F.setBinContent(i - 1, j, 0.0);
-			}
-
-		}
-
-		canvas.draw(mouseH2F, "same");
-		canvas.update();
-	}
-
-	private void drawOverLayedFuseHist(Map<Integer, Pair<Integer, Integer>> aMap) {
-
-		for (int i = 0; i < xBins; i++) {
-			for (int j = 0; j < yBins; j++) {
-				mouseH2F.setBinContent(i, j, ds.getData(i, j));
-			}
-		}
-
-		for (int j = 0; j < yBins; j++) {
-			Pair<Integer, Integer> xPair = aMap.get(j + 1);
-			for (int i = xPair.getLeft(); i <= xPair.getRight(); i++) {
-				mouseH2F.setBinContent(i - 1, j, 0.0);
-			}
-
-		}
-
-		canvas.draw(mouseH2F, "same");
-		canvas.update();
 	}
 
 	private void createPopupMenu() {
