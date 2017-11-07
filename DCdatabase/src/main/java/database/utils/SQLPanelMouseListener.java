@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 import database.objects.StatusChangeDB;
 import database.service.MainFrameService;
 
-public class DataPanelMouseListener implements MouseListener, MouseMotionListener {
+public class SQLPanelMouseListener implements MouseListener, MouseMotionListener {
 	private MainFrameService mainFrameService = MainFrameServiceManager.getSession();
 	private TreeSet<StatusChangeDB> queryList = new TreeSet<>();
 	private JTable target;
@@ -44,13 +44,12 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 			this.selection = target.getSelectedRows();
 		}
 		if (SwingUtilities.isRightMouseButton(e)) {
-
-			int reply = JOptionPane.showConfirmDialog(e.getComponent(), "Add Selected Fault to DB list?",
-					"User Selected Add to List", JOptionPane.YES_NO_OPTION);
+			int reply = JOptionPane.showConfirmDialog(e.getComponent(), "Remove Selected Fault from DB list?",
+					"User Selected Remove from List", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
 				sendProcedure();
 				JOptionPane.showMessageDialog(e.getComponent(),
-						"Entering values selected by user " + this.mainFrameService.getUserName());
+						"Deleting values selected by user " + this.mainFrameService.getUserName());
 			} else {
 				JOptionPane.showMessageDialog(e.getComponent(), "electrons do not grow on trees");
 			}
@@ -80,20 +79,16 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 	private void sendProcedure() {
 		for (int i : selection) {
 			StatusChangeDB statusChangeDB = new StatusChangeDB();
-			statusChangeDB.setSector(target.getValueAt(i, 0).toString());
-			statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
-			statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
-			statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
-			statusChangeDB.setProblem_type(StringConstants.PROBLEM_TYPES[this.mainFrameService.getFaultNum() + 1]);
-			statusChangeDB.setStatus_change_type(this.mainFrameService.getBrokenOrFixed().toString());
-			statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
+			statusChangeDB.setSector(target.getValueAt(i, 1).toString());
+			statusChangeDB.setSuperlayer(target.getValueAt(i, 2).toString());
+			statusChangeDB.setLoclayer(target.getValueAt(i, 3).toString());
+			statusChangeDB.setLocwire(target.getValueAt(i, 4).toString());
 			queryList.add(statusChangeDB);
 		}
-		this.mainFrameService.prepareMYSQLQuery(queryList);
-		this.mainFrameService.addToCompleteSQLList(queryList);
-		this.mainFrameService.getDataPanel().removeItems(queryList);
-		this.mainFrameService.clearTempSQLList();
-		this.mainFrameService.getSQLPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+		this.mainFrameService.prepareAddBackList(queryList);
+		this.mainFrameService.getSQLPanel().removeItems(queryList);
+		this.mainFrameService.getDataPanel().addItems(queryList);
+		this.mainFrameService.removeRowFromMYSQLQuery(queryList);
+		this.mainFrameService.clearAddBackList();
 	}
-
 }

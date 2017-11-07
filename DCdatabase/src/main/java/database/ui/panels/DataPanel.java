@@ -47,7 +47,6 @@ public class DataPanel extends JPanel {
 		initializeVariables();
 		initializeTableAlignment();
 		initializeHeaderAlignment();
-		// mouseListener();
 		constructLayout();
 	}
 

@@ -21,15 +21,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import database.objects.StatusChangeDB;
 import database.service.MainFrameService;
 import database.ui.SQLTableModel;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
+import database.utils.SQLPanelMouseListener;
 import database.utils.StringConstants;
 
 public class SQLPanel extends JPanel {
@@ -47,7 +48,7 @@ public class SQLPanel extends JPanel {
 		constructLayout();
 		initializeTableAlignment();
 		initializeHeaderAlignment();
-		mouseListener();
+		// mouseListener();
 		// setJTableColumnsWidth(this.aTable, 480, 10, 5, 7, 5, 3, 20, 20, 1);
 	}
 
@@ -66,19 +67,6 @@ public class SQLPanel extends JPanel {
 		this.aTable.getColumnModel().getColumn(5).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(6).setCellRenderer(tableCellRenderer);
 
-	}
-
-	private void setJTableColumnsWidth(JTable table, int tablePreferredWidth, double... percentages) {
-		double total = 0;
-		System.out.println("preferred width = " + tablePreferredWidth);
-		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			total += percentages[i];
-		}
-
-		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			TableColumn column = table.getColumnModel().getColumn(i);
-			column.setPreferredWidth((int) (tablePreferredWidth * (percentages[i] / total)));
-		}
 	}
 
 	private void initializeHeaderAlignment() {
@@ -100,6 +88,10 @@ public class SQLPanel extends JPanel {
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.SQL_FORM_LABEL);
 		this.tableModel = new SQLTableModel();
 		this.aTable = new JTable(tableModel);
+
+		this.aTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.aTable.addMouseListener(new SQLPanelMouseListener());
+
 	}
 
 	public void setTableModel(TreeSet<StatusChangeDB> wireList) {

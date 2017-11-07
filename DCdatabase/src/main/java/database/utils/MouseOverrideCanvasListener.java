@@ -66,21 +66,21 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == 1) {
-			System.out.println("I was clicked");
-			double xposNew = e.getX() - xMin;
-			double yposNew = yRange - e.getY();
-			findBin(xposNew, yposNew);
+			// System.out.println("I was clicked");
+			// double xposNew = e.getX() - xMin;
+			// double yposNew = yRange - e.getY();
+			// findBin(xposNew, yposNew);
 		}
 		if (e.getButton() == 1 && e.getClickCount() == 2 && this.mainFrameService.getMouseReady()) {
 
-			int reply = JOptionPane.showConfirmDialog(null, "Add Selected Fault to DB list?",
+			int reply = JOptionPane.showConfirmDialog(e.getComponent(), "Add Selected Fault to DB list?",
 					"User Selected Add to List", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
 				this.mainFrameService.getFault().setFaultToDB();
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(e.getComponent(),
 						"Entering values selected by user " + this.mainFrameService.getUserName());
 			} else {
-				JOptionPane.showMessageDialog(null, "electrons do not grow on trees");
+				JOptionPane.showMessageDialog(e.getComponent(), "electrons do not grow on trees");
 			}
 		}
 		if (SwingUtilities.isRightMouseButton(e)) {
@@ -142,14 +142,15 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 	public void mouseExited(MouseEvent e) {
 	}
 
-	private void findBin(double xpos, double ypos) {
-		if (inBounds(xpos, ypos)) {
-			Pair<Integer, Integer> bins = getBinFromMouse(xpos, ypos);
-			System.out.println(" xBin =  " + bins.getLeft() + " yBin = " + bins.getRight());
-		} else {
-			System.out.println("not in range. will do nothing");
-		}
-	}
+	// private void findBin(double xpos, double ypos) {
+	// if (inBounds(xpos, ypos)) {
+	// Pair<Integer, Integer> bins = getBinFromMouse(xpos, ypos);
+	// System.out.println(" xBin = " + bins.getLeft() + " yBin = " +
+	// bins.getRight());
+	// } else {
+	// System.out.println("not in range. will do nothing");
+	// }
+	// }
 
 	private Pair<Integer, Integer> getBinFromMouse(double xposNew, double yposNew) {
 		int xBin = -100;

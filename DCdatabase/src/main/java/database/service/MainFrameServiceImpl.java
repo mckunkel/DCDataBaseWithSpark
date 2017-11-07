@@ -207,7 +207,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	public void removeRowFromMYSQLQuery(TreeSet<StatusChangeDB> statusChangeDBs) {
 		ArrayList<StatusChangeDB> listToRemove = new ArrayList<>();
-		System.out.println("removeRow was called in MainFrameServiceImpl");
+		// System.out.println("removeRow was called in MainFrameServiceImpl");
 		for (StatusChangeDB ro : statusChangeDBs) {
 			for (StatusChangeDB statusChangeDB : this.completeQueryList) {
 				if (statusChangeDB.getSector().equals(ro.getSector())
@@ -215,8 +215,10 @@ public class MainFrameServiceImpl implements MainFrameService {
 						&& statusChangeDB.getLoclayer().equals(ro.getLoclayer())
 						&& statusChangeDB.getLocwire().equals(ro.getLocwire())) {
 					listToRemove.add(statusChangeDB);
-					System.out.println(statusChangeDB.getSector() + " " + statusChangeDB.getSuperlayer() + " "
-							+ statusChangeDB.getLoclayer() + " " + statusChangeDB.getLocwire());
+					// System.out.println(statusChangeDB.getSector() + " " +
+					// statusChangeDB.getSuperlayer() + " "
+					// + statusChangeDB.getLoclayer() + " " +
+					// statusChangeDB.getLocwire());
 				}
 			}
 		}

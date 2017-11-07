@@ -12,10 +12,10 @@
 */
 package database.ui.panels;
 
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,13 +23,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import database.objects.StatusChangeDB;
 import database.service.InsertMYSqlQuery;
 import database.service.InsertMYSqlServiceManager;
 import database.service.MainFrameService;
 import database.ui.MainFrame;
 import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
+import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 import spark.utils.SparkManager;
 
@@ -40,7 +40,7 @@ public class DBSendPanel extends JPanel implements ActionListener {
 	final int space = NumberConstants.BORDER_SPACING;
 	Border spaceBorder = null;
 	Border titleBorder = null;
-	JButton removeButton = null;
+	// JButton removeButton = null;
 	JButton sendButton = null;
 
 	public DBSendPanel(MainFrame parentFrame) {
@@ -56,22 +56,30 @@ public class DBSendPanel extends JPanel implements ActionListener {
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.DBSEND_FORM_LABEL);
 
-		this.removeButton = new JButton(StringConstants.DBSEND_FORM_REMOVE);
+		// this.removeButton = new JButton(StringConstants.DBSEND_FORM_REMOVE);
 		this.sendButton = new JButton(StringConstants.DBSEND_FORM_SEND);
 
-		this.removeButton.addActionListener(this);
+		// this.removeButton.addActionListener(this);
 		this.sendButton.addActionListener(this);
 
 	}
 
 	private void initialLayout() {
 		setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-		setLayout(new GridLayout(0, 2));
-		add(new JLabel(""));
-		add(new JLabel(""));
-		add(removeButton);
-		add(sendButton);
+		// setLayout(new GridLayout(0, 2));
+		// setLayout(new FlowLayout());
+		// add(new JLabel(""));
+		// add(new JLabel(""));
+		//
+		// add(new JLabel(""));
+		// // add(removeButton);
+		// add(sendButton);
 
+		setLayout(new GridBagLayout());
+		PanelConstraints.addComponent(this, new JLabel(""), 0, 0, 1, 1, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, 0, 0);
+		PanelConstraints.addComponent(this, sendButton, 0, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				200, 0);
 	}
 
 	@Override
@@ -84,24 +92,6 @@ public class DBSendPanel extends JPanel implements ActionListener {
 			this.mainFrameService.setSentTodb(true);
 			SparkManager.restart();
 
-		} else if (event.getSource() == this.removeButton) {
-
-			System.out.println("This will remove from teh list");
-			TreeSet<StatusChangeDB> queryList = this.mainFrameService.getAddBackList();
-			// for (StatusChangeDB statusChangeDB : queryList) {
-			// System.out.println(statusChangeDB.getSector() + " " +
-			// statusChangeDB.getSuperlayer() + " "
-			// + statusChangeDB.getLoclayer() + " " +
-			// statusChangeDB.getLocwire());
-			// }
-			this.mainFrame.getSqlPanel().removeItems(queryList);
-
-			// this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
-			this.mainFrame.getDataPanel().addItems(queryList);
-			this.mainFrameService.removeRowFromMYSQLQuery(queryList);
-			this.mainFrameService.clearAddBackList();
-
 		}
-
 	}
 }

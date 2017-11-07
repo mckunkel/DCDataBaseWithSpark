@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,6 +33,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.Border;
 
 import database.faults.ChannelBundles;
 import database.faults.FuseBundles;
@@ -39,6 +42,8 @@ import database.faults.PinBundles;
 import database.faults.SignalConnectors;
 import database.process.DataProcess;
 import database.service.MainFrameService;
+import database.ui.panels.BottomComparePanel;
+import database.ui.panels.BottomSortPanel;
 import database.ui.panels.CCDBSendPanel;
 import database.ui.panels.DBSendPanel;
 import database.ui.panels.DataPanel;
@@ -60,6 +65,8 @@ public class MainFrame extends JFrame {
 	private SQLPanel sqlPanel;
 	private DataPanel dataPanel;
 	private HistogramPanel histogramPanel;
+	private BottomSortPanel bottomSortPanel;
+	private BottomComparePanel bottomComparePanel;
 
 	private JLabel dataLabel;
 	private JLabel sqlLabel;
@@ -132,7 +139,8 @@ public class MainFrame extends JFrame {
 		this.sqlPanel = new SQLPanel();
 		this.dataPanel = new DataPanel();
 		this.histogramPanel = new HistogramPanel();
-
+		this.bottomSortPanel = new BottomSortPanel(this);
+		this.bottomComparePanel = new BottomComparePanel(this);
 		this.dataLabel = new JLabel(StringConstants.MAIN_FORM_DATA);
 		dataLabel.setFont(new Font(dataLabel.getFont().getName(), Font.PLAIN, 18));
 		this.sqlLabel = new JLabel(StringConstants.MAIN_FORM_SQL);
@@ -299,20 +307,36 @@ public class MainFrame extends JFrame {
 
 		JPanel dataControlsPanel = new JPanel(new GridBagLayout());
 		PanelConstraints.addComponent(dataControlsPanel, dataPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH, 0, 325);
-		PanelConstraints.addComponent(dataControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
-				GridBagConstraints.REMAINDER, 0, 0);
+				GridBagConstraints.BOTH, 200, 405);
+		// PanelConstraints.addComponent(dataControlsPanel, dbSendPanel, 0, 1,
+		// 1, 1, GridBagConstraints.PAGE_END,
+		// GridBagConstraints.REMAINDER, 0, 0);
+		Border spaceBorder = BorderFactory.createEmptyBorder(NumberConstants.BORDER_SPACING,
+				NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING);
+		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.SORTCOMPARE_FORM_SUBTITLE);
+		JTabbedPane aJTabbedPane = new JTabbedPane();
+		aJTabbedPane.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
 
+		aJTabbedPane.addTab("Sort", null, this.bottomSortPanel, "panel for sorting");
+		aJTabbedPane.addTab("Compare", null, this.bottomComparePanel, "panel for comparing");
+
+		// PanelConstraints.addComponent(dataControlsPanel,
+		// this.bottomSortPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+		// GridBagConstraints.REMAINDER, 0, 70);
+		PanelConstraints.addComponent(dataControlsPanel, aJTabbedPane, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+				GridBagConstraints.REMAINDER, 0, 30);
 		return dataControlsPanel;
 	}
 
 	private JPanel sqlControlsPanel() {
 		JPanel sqlControlsPanel = new JPanel(new GridBagLayout());
 		PanelConstraints.addComponent(sqlControlsPanel, sqlPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH, 0, 325);
-		PanelConstraints.addComponent(sqlControlsPanel, ccdbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+				GridBagConstraints.BOTH, 0, 300);
+		// PanelConstraints.addComponent(sqlControlsPanel, ccdbSendPanel, 0, 1,
+		// 1, 1, GridBagConstraints.PAGE_END,
+		// GridBagConstraints.REMAINDER, 0, 0);
+		PanelConstraints.addComponent(sqlControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.REMAINDER, 0, 0);
-
 		return sqlControlsPanel;
 	}
 
