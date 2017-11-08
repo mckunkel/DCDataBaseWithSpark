@@ -66,19 +66,7 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 
 	private void initialLayout() {
 
-		// Border spaceBorder =
-		// BorderFactory.createEmptyBorder(NumberConstants.BORDER_SPACING,
-		// NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING,
-		// NumberConstants.BORDER_SPACING);
-		// Border titleBorder =
-		// BorderFactory.createTitledBorder(StringConstants.SORT_FORM_SUBTITLE);
-		// setBorder(BorderFactory.createCompoundBorder(spaceBorder,
-		// titleBorder));
 		setLayout(new GridBagLayout());
-
-		Insets leftPadding = new Insets(0, 100, 0, 0);
-		Insets rightPadding = new Insets(0, 0, 0, 100);
-		//
 		// // ///// First row ////////////////////////////
 
 		PanelConstraints.addComponent(this, sectorLabel, 0, 0, 1, 0, GridBagConstraints.LINE_START,
@@ -93,7 +81,6 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
 		PanelConstraints.addComponent(this, sortButton, 1, 2, 1, 1, GridBagConstraints.LINE_END,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-		// sortButton
 
 	}
 

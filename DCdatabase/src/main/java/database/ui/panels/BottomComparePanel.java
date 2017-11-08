@@ -88,15 +88,6 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 	private void constructLayout() {
 		JPanel runInfoPanel = new JPanel();
 		JPanel buttonsPanel = new JPanel();
-		// ////////// Buttons Panel ///////////////
-		int space = 15;
-		// Border spaceBorder = BorderFactory.createEmptyBorder(space, space,
-		// space, space);
-		// Border titleBorder =
-		// BorderFactory.createTitledBorder(StringConstants.COMPARE_FORM_SUBTITLE);
-
-		// runInfoPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder,
-		// titleBorder));
 
 		runInfoPanel.setLayout(new GridBagLayout());
 
@@ -141,10 +132,6 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(errorFrame, "Do you like green eggs and ham?", "Please choose a file",
 						JOptionPane.ERROR_MESSAGE);
 			}
-
-			// this.compareRunFormService.compareRun(str);
-
-			this.setVisible(false);
 		}
 	}
 }
