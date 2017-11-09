@@ -50,6 +50,8 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 		initializeVariables();
 		constructLayout();
 		setWindow(parentFrame);
+		pack();
+
 		// parentFrame.dataProcess.getDataset();
 	}
 

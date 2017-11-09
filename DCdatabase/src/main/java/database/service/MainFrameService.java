@@ -107,4 +107,8 @@ public interface MainFrameService {
 
 	public SQLPanel getSQLPanel();
 
+	public void setUserPercent(double userPercent);
+
+	public double getUserPercent();
+
 }

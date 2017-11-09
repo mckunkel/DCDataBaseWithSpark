@@ -50,6 +50,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private DataPanel dataPanel;
 	private SQLPanel sqlPanel;
 
+	private double userPercent;
+
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
 		this.occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
@@ -320,5 +322,13 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	public SQLPanel getSQLPanel() {
 		return this.sqlPanel;
+	}
+
+	public void setUserPercent(double userPercent) {
+		this.userPercent = userPercent;
+	}
+
+	public double getUserPercent() {
+		return this.userPercent;
 	}
 }

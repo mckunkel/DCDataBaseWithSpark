@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
+import org.jlab.groot.data.H2F;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
 import org.jlab.io.hipo.HipoDataSource;
@@ -96,11 +97,15 @@ public class DataProcess {
 			for (int j = 0; j < 6; j++) { // sector
 				int xbins = this.mainFrameService.getHistogramMap().get(new Coordinate(i, j)).getXAxis().getNBins();
 				int ybins = this.mainFrameService.getHistogramMap().get(new Coordinate(i, j)).getYAxis().getNBins();
+				double normalization = getHistNormalization(
+						this.mainFrameService.getHistogramMap().get(new Coordinate(i, j)));
 				for (int k = 0; k < ybins; k++) {
 					for (int l = 0; l < xbins; l++) {
 						double content = this.mainFrameService.getHistogramMap().get(new Coordinate(i, j))
 								.getBinContent(l, k);
-						if (content == 0) {
+						// if (content == 0) {
+						if (content <= normalization * this.mainFrameService.getUserPercent() / 100.0) {
+
 							StatusChangeDB statusChangeDB = new StatusChangeDB();
 							statusChangeDB.setSector(String.valueOf(j + 1));
 							statusChangeDB.setSuperlayer(String.valueOf(i + 1));
@@ -122,6 +127,21 @@ public class DataProcess {
 				emptyDataPoints.clear();
 			}
 		}
+	}
+
+	private double getHistNormalization(H2F aH2f) {
+		int xbins = aH2f.getXAxis().getNBins();
+		int ybins = aH2f.getYAxis().getNBins();
+		double normalization = 0.0;
+		for (int k = 0; k < ybins; k++) {
+			for (int l = 0; l < xbins; l++) {
+				normalization += aH2f.getBinContent(l, k);
+			}
+		}
+
+		double val = normalization / (xbins * ybins);
+		double retValue = 1.0 / (val * Math.log(1.0 / val));
+		return val;
 	}
 
 	public int getRunNumber() {

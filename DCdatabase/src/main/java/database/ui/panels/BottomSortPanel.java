@@ -49,6 +49,7 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 
 		initializeVariables();
 		initialLayout();
+
 	}
 
 	private void initializeVariables() {

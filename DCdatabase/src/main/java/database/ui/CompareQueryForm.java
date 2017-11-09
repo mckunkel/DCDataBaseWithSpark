@@ -51,6 +51,8 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 		loadData();
 		constructLayout();
 		setWindow(parentFrame);
+		pack();
+
 	}
 
 	private void setWindow(JFrame parentFrame) {

@@ -85,5 +85,7 @@ public class StringConstants {
 	public static final String CCDBSEND_FORM_LIST = "Local List";
 	public static final String FORM_NAME = "UserName";
 	public static final String SORTCOMPARE_FORM_SUBTITLE = "Sort/Compare";
+	public static final String RUNPERCENT = "Percent Inefficiency";
+	public static final String COMPARE_FORM_LOADRUN = "Load";
 
 }

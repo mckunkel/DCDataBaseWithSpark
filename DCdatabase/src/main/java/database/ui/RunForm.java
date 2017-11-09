@@ -12,7 +12,6 @@
 */
 package database.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -30,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +47,8 @@ public class RunForm extends JDialog implements ActionListener {
 	private SortPanel sortPanel = null;
 
 	private JButton okButton;
+	private JTextField percentField;
+	private JLabel percentLabel;
 	private JComboBox<String> fileComboBox;
 	private JLabel fileLabel;
 
@@ -64,6 +66,8 @@ public class RunForm extends JDialog implements ActionListener {
 		initializeVariables();
 		constructLayout();
 		setWindow(parentFrame);
+		pack();
+
 	}
 
 	public void setFileList(ArrayList<String> fileList) {
@@ -99,6 +103,9 @@ public class RunForm extends JDialog implements ActionListener {
 
 		this.errorFrame = new JFrame("");
 
+		this.percentField = new JTextField(NumberConstants.PERCENT_FORM_WINDOW_FIELD_LENGTH);
+		this.percentLabel = new JLabel(StringConstants.RUNPERCENT);
+
 	}
 
 	public void loadData() {
@@ -132,36 +139,83 @@ public class RunForm extends JDialog implements ActionListener {
 				GridBagConstraints.BOTH, rightPadding, 0, 0);
 		PanelConstraints.addComponent(fileInfoPanel, sortPanel, 0, 1, 1, 1, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, noPadding, 0, 0);
+		PanelConstraints.addComponent(fileInfoPanel, getPercentagePanel(), 0, 2, 1, 1, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, 0, 0);
 		// ////////// Buttons Panel ///////////////
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		buttonsPanel.add(okButton);
-
 		Dimension btnSize = okButton.getPreferredSize();
 		okButton.setPreferredSize(btnSize);
+		buttonsPanel.add(okButton);
+
+		// make percentage panel
 
 		// Add sub panels to dialog
-		setLayout(new BorderLayout());
-		add(fileInfoPanel, BorderLayout.CENTER);
-		add(buttonsPanel, BorderLayout.SOUTH);
 
+		setLayout(new GridBagLayout());// BorderLayout
+		PanelConstraints.addComponent(this, fileInfoPanel, 1, 0, 1, 1, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, 0, 0);
+		// PanelConstraints.addComponent(this, getPercentagePanel(), 0, 1, 1, 1,
+		// GridBagConstraints.CENTER,
+		// GridBagConstraints.BOTH, 0, 0);
+		PanelConstraints.addComponent(this, buttonsPanel, 1, 1, 1, 1, GridBagConstraints.LAST_LINE_END,
+				GridBagConstraints.BOTH, 0, 0);
+		// add(fileInfoPanel, BorderLayout.CENTER);
+		// add(getPercentagePanel(), BorderLayout.SOUTH);
+		// add(buttonsPanel, BorderLayout.SOUTH);
+
+	}
+
+	private JPanel getPercentagePanel() {
+		JPanel fileInfoPanel = new JPanel();
+
+		fileInfoPanel.setLayout(new GridBagLayout());
+		Insets rightPadding = new Insets(0, 0, 0, 15);
+		Insets noPadding = new Insets(0, 0, 0, 0);
+
+		///// First row /////////////////////////////
+		PanelConstraints.addComponent(fileInfoPanel, percentLabel, 0, 0, 0, 0, GridBagConstraints.LINE_START,
+				GridBagConstraints.NONE, rightPadding, 0, 0);
+		PanelConstraints.addComponent(fileInfoPanel, percentField, 1, 0, 0, 0, GridBagConstraints.LINE_END,
+				GridBagConstraints.NONE, noPadding, 0, 0);
+
+		return fileInfoPanel;
 	}
 
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == this.okButton) {
 			if (checkValidFile()) {
+
+				System.out.println("you enetered " + getUserPercent(percentField.getText()));
+				this.mainFrameService.setUserPercent(getUserPercent(percentField.getText()));
 				String str = (String) this.fileComboBox.getSelectedItem();
 				this.mainFrame.getDataProcess().openFile(dirLocation + str);
 				this.mainFrameService.setMouseReady();
+				setVisible(false);
+
+				processCommands();
 
 			} else {
 				System.out.println("Problem");
 				JOptionPane.showMessageDialog(errorFrame, "Eggs are not supposed to be green.", "Please choose a file",
 						JOptionPane.ERROR_MESSAGE);
+				setVisible(false);
+
 			}
-			setVisible(false);
-			processCommands();
+			// setVisible(false);
+			// processCommands();
 		}
+	}
+
+	private double getUserPercent(String str) {
+		double retValue = 0.0;
+		try {
+			retValue = Double.parseDouble(str);
+		} catch (Exception e) {
+			retValue = 0.0;
+		}
+		return retValue;
+
 	}
 
 	private void processCommands() {

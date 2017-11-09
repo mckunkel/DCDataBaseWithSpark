@@ -43,6 +43,8 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 
 	private JButton cancelButton;
 	private JButton compareButton;
+	private JButton runButton;
+
 	private JLabel runLabel;
 
 	private JComboBox<String> compareRunComboBox;
@@ -79,9 +81,11 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 		this.cancelButton = new JButton(StringConstants.SORT_FORM_CANCEL);
 		this.compareButton = new JButton(StringConstants.COMPARE_FORM_COMPARE);
 		this.runLabel = new JLabel(StringConstants.COMPARE_FORM_RUN);
+		this.runButton = new JButton(StringConstants.COMPARE_FORM_LOADRUN);
 
 		this.cancelButton.addActionListener(this);
 		this.compareButton.addActionListener(this);
+		this.runButton.addActionListener(this);
 
 	}
 
@@ -94,7 +98,7 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 		Insets rightPadding = new Insets(0, 0, 0, 15);
 		Insets noPadding = new Insets(0, 0, 0, 0);
 
-		PanelConstraints.addComponent(runInfoPanel, runLabel, 0, 0, 1, 1, 1, 1, GridBagConstraints.EAST,
+		PanelConstraints.addComponent(runInfoPanel, runButton, 0, 0, 1, 1, 1, 1, GridBagConstraints.EAST,
 				GridBagConstraints.NONE, rightPadding, 0, 0);
 		PanelConstraints.addComponent(runInfoPanel, compareRunComboBox, 1, 0, 1, 1, 1, 1, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, noPadding, 0, 0);
@@ -115,8 +119,8 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent event) {
-		if (event.getSource() == this.cancelButton) {
-			setVisible(false);
+		if (event.getSource() == this.runButton) {
+			loadData();
 		} else if (event.getSource() == this.compareButton) {
 
 			if (this.mainFrameService.getMouseReady()) {

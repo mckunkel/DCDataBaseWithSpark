@@ -33,6 +33,12 @@ public class Example {
 			System.out.println("sector  " + statusChangeDB.getSector() + " local layer " + statusChangeDB.getLoclayer()
 					+ " superlayer " + statusChangeDB.getSuperlayer() + " wire number " + statusChangeDB.getLocwire());
 		}
+		System.out.println("#################################################");
+		List<StatusChangeDB> anotherChangeDBs = dbQuery.getBadWireList(762);
+		for (StatusChangeDB statusChangeDB : anotherChangeDBs) {
+			System.out.println("sector  " + statusChangeDB.getSector() + " local layer " + statusChangeDB.getLoclayer()
+					+ " superlayer " + statusChangeDB.getSuperlayer() + " wire number " + statusChangeDB.getLocwire());
+		}
 
 	}
 }
