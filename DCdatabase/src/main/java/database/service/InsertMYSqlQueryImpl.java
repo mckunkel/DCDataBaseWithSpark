@@ -52,7 +52,7 @@ public class InsertMYSqlQueryImpl implements InsertMYSqlQuery {
 		System.out.println(timestamp);
 		for (StatusChangeDB statusChangeDB : this.mainFrameService.getCompleteSQLList()) {
 			StatusChangeDB aChangeDBTest = null;
-			if (statusChangeDB.getStatus_change_type().equals("broken")) {
+			if (statusChangeDB.getStatus_change_type().equals("broke")) {
 				aChangeDBTest = dbQuery.filter(col("status_change_type").equalTo("broke")).first();
 			} else if (statusChangeDB.getStatus_change_type().equals("fixed")) {
 				aChangeDBTest = dbQuery.filter(col("status_change_type").equalTo("fixed")).first();
