@@ -13,5 +13,5 @@
 package database.objects;
 
 public enum Status_change_type {
-	broken, fixed
+	broke, fixed
 }

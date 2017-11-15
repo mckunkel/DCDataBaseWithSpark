@@ -196,10 +196,10 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (cb1.isSelected()) {
-			this.mainFrameService.setBrokenOrFixed(Status_change_type.broken);
+			this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
 		}
 		if (cb2.isSelected()) {
-			this.mainFrameService.setBrokenOrFixed(Status_change_type.broken);
+			this.mainFrameService.setBrokenOrFixed(Status_change_type.fixed);
 		}
 		if (event.getSource() == this.jRadioButton.get(0))
 			this.mainFrameService.setFault(0);

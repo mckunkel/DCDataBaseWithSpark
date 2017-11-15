@@ -20,7 +20,6 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -43,7 +42,7 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 			this.target = (JTable) e.getSource();
 			this.selection = target.getSelectedRows();
 		}
-		if (SwingUtilities.isRightMouseButton(e)) {
+		if (SwingUtilities.isRightMouseButton(e) && this.selection != null && this.selection.length > 0) {
 
 			int reply = JOptionPane.showConfirmDialog(e.getComponent(), "Add Selected Fault to DB list?",
 					"User Selected Add to List", JOptionPane.YES_NO_OPTION);
@@ -51,17 +50,23 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 				sendProcedure();
 				JOptionPane.showMessageDialog(e.getComponent(),
 						"Entering values selected by user " + this.mainFrameService.getUserName());
+				reset();
 			} else {
 				JOptionPane.showMessageDialog(e.getComponent(), "electrons do not grow on trees");
+				reset();
 			}
 
 		}
 
 	}
 
+	private void reset() {
+		this.selection = new int[0];
+		this.target = null;
+	}
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -88,6 +93,8 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 			statusChangeDB.setStatus_change_type(this.mainFrameService.getBrokenOrFixed().toString());
 			statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
 			queryList.add(statusChangeDB);
+			System.out.println(target.getValueAt(i, 1).toString());
+
 		}
 		this.mainFrameService.prepareMYSQLQuery(queryList);
 		this.mainFrameService.addToCompleteSQLList(queryList);

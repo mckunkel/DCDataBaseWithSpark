@@ -13,8 +13,6 @@
 package database.ui.panels;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -26,15 +24,13 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import database.objects.StatusChangeDB;
-import database.service.MainFrameService;
 import database.ui.SQLTableModel;
-import database.utils.MainFrameServiceManager;
 import database.utils.NumberConstants;
 import database.utils.SQLPanelMouseListener;
 import database.utils.StringConstants;
 
 public class SQLPanel extends JPanel {
-	private MainFrameService mainFrameService = null;
+	// private MainFrameService mainFrameService = null;
 
 	private JTable aTable;
 	private SQLTableModel tableModel;
@@ -48,16 +44,11 @@ public class SQLPanel extends JPanel {
 		constructLayout();
 		initializeTableAlignment();
 		initializeHeaderAlignment();
-		// mouseListener();
-		// setJTableColumnsWidth(this.aTable, 480, 10, 5, 7, 5, 3, 20, 20, 1);
 	}
 
 	private void initializeTableAlignment() {
 		DefaultTableCellRenderer tableCellRenderer = new DefaultTableCellRenderer();
 		tableCellRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
-		// int gapWidth = 10;
-		// int gapHeight = 5;
-		// this.aTable.setIntercellSpacing(new Dimension(gapWidth, gapHeight));
 
 		this.aTable.getColumnModel().getColumn(0).setCellRenderer(tableCellRenderer);
 		this.aTable.getColumnModel().getColumn(1).setCellRenderer(tableCellRenderer);
@@ -82,13 +73,15 @@ public class SQLPanel extends JPanel {
 	}
 
 	private void initializeVariables() {
-		this.mainFrameService = MainFrameServiceManager.getSession();
+		// this.mainFrameService = MainFrameServiceManager.getSession();
 
 		this.spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.SQL_FORM_LABEL);
 		this.tableModel = new SQLTableModel();
 		this.aTable = new JTable(tableModel);
-
+		// this.aTable.setRowSelectionAllowed(true);
+		// this.aTable.setColumnSelectionAllowed(false); //check
+		// TabelSelectionDemo in Testpackages
 		this.aTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		this.aTable.addMouseListener(new SQLPanelMouseListener());
 
@@ -106,32 +99,4 @@ public class SQLPanel extends JPanel {
 		this.tableModel.removeRow(statusChangeDBs);
 
 	}
-
-	private void mouseListener() {
-		TreeSet<StatusChangeDB> queryList = new TreeSet<>();
-
-		this.aTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					final JTable target = (JTable) e.getSource();
-					// target.setRowSelectionAllowed(true);
-					// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					int[] selection = target.getSelectedRows();
-					for (int i : selection) {
-						StatusChangeDB statusChangeDB = new StatusChangeDB();
-						statusChangeDB.setSector(target.getValueAt(i, 1).toString());
-						statusChangeDB.setSuperlayer(target.getValueAt(i, 2).toString());
-						statusChangeDB.setLoclayer(target.getValueAt(i, 3).toString());
-						statusChangeDB.setLocwire(target.getValueAt(i, 4).toString());
-						queryList.add(statusChangeDB);
-					}
-				}
-			}
-		});
-
-		this.mainFrameService.prepareAddBackList(queryList);
-
-	}
-
 }

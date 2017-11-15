@@ -267,15 +267,15 @@ public class StatusChangeDB implements Comparable<StatusChangeDB> {
 	public int compareTo(final StatusChangeDB other) {
 		return new CompareToBuilder().append(statchangeid, other.statchangeid).append(dateofentry, other.dateofentry)
 				.append(runno, other.runno).append(status_change_type, other.status_change_type)
-				.append(problem_type, other.problem_type).append(region, other.region).append(sector, other.sector)
-				.append(superlayer, other.superlayer).append(loclayer, other.loclayer).append(locwire, other.locwire)
-				.append(hvcrateid, other.hvcrateid).append(hvslotid, other.hvslotid)
-				.append(hvchannelid, other.hvchannelid).append(hvpinid_region, other.hvpinid_region)
-				.append(hvpinid_quad, other.hvpinid_quad).append(hvpinid_doublet, other.hvpinid_doublet)
-				.append(hvpinid_doublethalf, other.hvpinid_doublethalf).append(hvpinid_pin, other.hvpinid_pin)
-				.append(dcrbconnectorid_slot, other.dcrbconnectorid_slot)
+				.append(region, other.region).append(sector, other.sector).append(superlayer, other.superlayer)
+				.append(loclayer, other.loclayer).append(locwire, other.locwire).append(hvcrateid, other.hvcrateid)
+				.append(hvslotid, other.hvslotid).append(hvchannelid, other.hvchannelid)
+				.append(hvpinid_region, other.hvpinid_region).append(hvpinid_quad, other.hvpinid_quad)
+				.append(hvpinid_doublet, other.hvpinid_doublet).append(hvpinid_doublethalf, other.hvpinid_doublethalf)
+				.append(hvpinid_pin, other.hvpinid_pin).append(dcrbconnectorid_slot, other.dcrbconnectorid_slot)
 				.append(dcrbconnectorid_connector, other.dcrbconnectorid_connector)
 				.append(lvfuseid_row, other.lvfuseid_row).append(lvfuseid_col, other.lvfuseid_col).toComparison();
+		// .append(problem_type, other.problem_type)
 	}
 
 	@Override
@@ -297,7 +297,8 @@ public class StatusChangeDB implements Comparable<StatusChangeDB> {
 		result = prime * result + ((locwire == null) ? 0 : locwire.hashCode());
 		result = prime * result + ((lvfuseid_col == null) ? 0 : lvfuseid_col.hashCode());
 		result = prime * result + ((lvfuseid_row == null) ? 0 : lvfuseid_row.hashCode());
-		result = prime * result + ((problem_type == null) ? 0 : problem_type.hashCode());
+		// result = prime * result + ((problem_type == null) ? 0 :
+		// problem_type.hashCode());
 		result = prime * result + ((region == null) ? 0 : region.hashCode());
 		result = prime * result + runno;
 		result = prime * result + ((sector == null) ? 0 : sector.hashCode());
@@ -391,11 +392,11 @@ public class StatusChangeDB implements Comparable<StatusChangeDB> {
 				return false;
 		} else if (!lvfuseid_row.equals(other.lvfuseid_row))
 			return false;
-		if (problem_type == null) {
-			if (other.problem_type != null)
-				return false;
-		} else if (!problem_type.equals(other.problem_type))
-			return false;
+		// if (problem_type == null) {
+		// if (other.problem_type != null)
+		// return false;
+		// } else if (!problem_type.equals(other.problem_type))
+		// return false;
 		if (region == null) {
 			if (other.region != null)
 				return false;
