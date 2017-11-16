@@ -61,15 +61,15 @@ public class DataProcess {
 		if (nEvents == 0) {
 			nEvents = reader.getSize();
 		}
-		System.out.println("Will process + " + nEvents + " events");
+		System.out.println("Will process " + nEvents + " events");
 	}
 
 	public void processFile() {
 
-		checkNEvents();
+		// checkNEvents();
 
 		int counter = 0;
-		while (reader.hasEvent() && counter < nEvents) {// && counter < 400
+		while (reader.hasEvent()) {// && counter < 400 && counter < nEvents
 			if (counter % 10000 == 0) {
 				System.out.println("done " + counter + " events");
 			}
@@ -145,7 +145,17 @@ public class DataProcess {
 	}
 
 	public int getRunNumber() {
-		return this.reader.gotoEvent(1).getBank("RUN::config").getInt("run", 0);
+		checkNEvents();
+
+		int retValue = 0;
+		for (int i = 0; i < this.nEvents; i++) {
+
+			if (reader.gotoEvent(i).hasBank("TimeBasedTrkg::TBHits")) {
+				retValue = this.reader.gotoEvent(i).getBank("RUN::config").getInt("run", 0);
+				break;
+			}
+		}
+		return retValue;
 	}
 
 	public void setNEvents(int nEvents) {

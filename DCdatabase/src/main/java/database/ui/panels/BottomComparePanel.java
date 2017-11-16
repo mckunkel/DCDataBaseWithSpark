@@ -38,7 +38,6 @@ import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class BottomComparePanel extends JPanel implements ActionListener {
-	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
 
 	private JButton cancelButton;
@@ -52,7 +51,6 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 	private CompareRunFormService compareRunFormService;
 
 	public BottomComparePanel(MainFrame parentFrame) {
-		this.mainFrame = parentFrame;
 		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		initializeVariables();
@@ -126,9 +124,11 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 			if (this.mainFrameService.getMouseReady()) {
 				String str = (String) this.compareRunComboBox.getSelectedItem();
 				this.compareRunFormService.compareRun(str);
-				this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getComparedBySectorAndSuperLayer(
-						this.mainFrameService.getSelectedSector(), this.mainFrameService.getSelectedSuperlayer()));
-				this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+				this.mainFrameService.getDataPanel()
+						.setTableModel(this.mainFrameService.getComparedBySectorAndSuperLayer(
+								this.mainFrameService.getSelectedSector(),
+								this.mainFrameService.getSelectedSuperlayer()));
+				this.mainFrameService.getSQLPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
 
 			} else {
 				JFrame errorFrame = new JFrame("");

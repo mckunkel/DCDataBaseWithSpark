@@ -32,7 +32,6 @@ import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class BottomSortPanel extends JPanel implements ActionListener {
-	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
 	private JButton sortButton;
 
@@ -44,7 +43,6 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 	private JComboBox<String> superLayerList;
 
 	public BottomSortPanel(MainFrame parentFrame) {
-		this.mainFrame = parentFrame;
 		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		initializeVariables();
@@ -142,9 +140,9 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 
 	protected void updateQuery(int sectorSelection, int superLayerSelection) {
 
-		this.mainFrame.getDataPanel().compareWithSQLPanel(
+		this.mainFrameService.getDataPanel().compareWithSQLPanel(
 				this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
-		this.mainFrame.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
+		this.mainFrameService.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
 
 	}
 

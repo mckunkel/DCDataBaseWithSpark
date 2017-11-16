@@ -42,7 +42,6 @@ import database.utils.PanelConstraints;
 import database.utils.StringConstants;
 
 public class RunForm extends JDialog implements ActionListener {
-	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
 	private SortPanel sortPanel = null;
 
@@ -59,7 +58,6 @@ public class RunForm extends JDialog implements ActionListener {
 
 	public RunForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.RUN_FORM_TITLE, false);
-		this.mainFrame = parentFrame;
 		this.mainFrameService = MainFrameServiceManager.getSession();
 		this.sortPanel = new SortPanel();
 
@@ -105,6 +103,7 @@ public class RunForm extends JDialog implements ActionListener {
 
 		this.percentField = new JTextField(NumberConstants.PERCENT_FORM_WINDOW_FIELD_LENGTH);
 		this.percentLabel = new JLabel(StringConstants.RUNPERCENT);
+		this.percentField.setText(Double.toString(NumberConstants.DEFAULT_USER_PERCENTAGE));
 
 	}
 
@@ -189,7 +188,9 @@ public class RunForm extends JDialog implements ActionListener {
 				System.out.println("you enetered " + getUserPercent(percentField.getText()));
 				this.mainFrameService.setUserPercent(getUserPercent(percentField.getText()));
 				String str = (String) this.fileComboBox.getSelectedItem();
-				this.mainFrame.getDataProcess().openFile(dirLocation + str);
+				this.mainFrameService.createNewDataSets();
+				this.mainFrameService.createNewHistograms();
+				this.mainFrameService.getDataProcess().openFile(dirLocation + str);
 				this.mainFrameService.setMouseReady();
 				setVisible(false);
 
@@ -221,15 +222,14 @@ public class RunForm extends JDialog implements ActionListener {
 	private void processCommands() {
 		this.mainFrameService.setSentTodb(false);
 		this.mainFrameService.getCompleteSQLList().clear();
-		this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+		this.mainFrameService.getSQLPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+		this.mainFrameService.getDataProcess().processFile();
 
-		this.mainFrame.getDataProcess().processFile();
 		this.mainFrameService.setSelectedSector(Integer.parseInt(this.sortPanel.getSelectedSector()));
 		this.mainFrameService.setSelectedSuperlayer(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()));
-		this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getBySectorAndSuperLayer(
+		this.mainFrameService.getDataPanel().setTableModel(this.mainFrameService.getBySectorAndSuperLayer(
 				this.mainFrameService.getSelectedSector(), this.mainFrameService.getSelectedSuperlayer()));
-
-		this.mainFrame.getHistogramPanel().updateCanvas(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()),
+		this.mainFrameService.getHistogramPanel().updateCanvas(Integer.parseInt(this.sortPanel.getSelectedSuperLayer()),
 				Integer.parseInt(this.sortPanel.getSelectedSector()));
 	}
 }

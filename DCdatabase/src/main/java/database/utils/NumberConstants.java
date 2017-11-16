@@ -39,5 +39,6 @@ public class NumberConstants {
 	public static final Insets insets = new Insets(0, 0, 0, 0);
 	public static final int WINDOW_FIELD_LENGTH = 15;
 	public static final int PERCENT_FORM_WINDOW_FIELD_LENGTH = 5;
+	public static final double DEFAULT_USER_PERCENTAGE = 5;
 
 }

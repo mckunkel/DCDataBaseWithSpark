@@ -17,7 +17,9 @@ import database.faults.PinLogic;
 import database.faults.SignalLogic;
 import database.objects.StatusChangeDB;
 import database.objects.Status_change_type;
+import database.process.DataProcess;
 import database.ui.panels.DataPanel;
+import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
 import database.utils.Coordinate;
 import spark.utils.MainFrameQuery;
@@ -49,7 +51,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 	// testing passing panels ///I think this is the wrong idea
 	private DataPanel dataPanel;
 	private SQLPanel sqlPanel;
-
+	private DataProcess dataProcess;
+	private HistogramPanel histogramPanel;
 	private double userPercent;
 
 	public MainFrameServiceImpl() {
@@ -64,9 +67,6 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.intList = new TreeSet<>();
 
 		this.mouseReady = false;
-
-		createHistograms();
-		createDatasets();
 	}
 
 	public void setRunNumber(int runNumber) {
@@ -324,11 +324,36 @@ public class MainFrameServiceImpl implements MainFrameService {
 		return this.sqlPanel;
 	}
 
+	public void setDataProcess(DataProcess dataProcess) {
+		this.dataProcess = dataProcess;
+	}
+
+	public DataProcess getDataProcess() {
+		return this.dataProcess;
+	}
+
+	public void setHistogramPanel(HistogramPanel histogramPanel) {
+		this.histogramPanel = histogramPanel;
+	}
+
+	public HistogramPanel getHistogramPanel() {
+		return this.histogramPanel;
+	}
+
+	// histogramPanel
 	public void setUserPercent(double userPercent) {
 		this.userPercent = userPercent;
 	}
 
 	public double getUserPercent() {
 		return this.userPercent;
+	}
+
+	public void createNewDataSets() {
+		this.createDatasets();
+	}
+
+	public void createNewHistograms() {
+		this.createHistograms();
 	}
 }

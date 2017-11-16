@@ -33,7 +33,6 @@ import database.utils.StringConstants;
 
 public class SortQueryForm extends JDialog implements ActionListener {// implements
 	// ActionListener
-	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
 	private SortPanel sortPanel;
 	private JButton cancelButton;
@@ -43,7 +42,6 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 	public SortQueryForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.SORT_FORM_TITLE, false);
 
-		this.mainFrame = parentFrame;
 		this.mainFrameService = MainFrameServiceManager.getSession();
 		this.sortPanel = new SortPanel();
 
@@ -51,8 +49,6 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 		constructLayout();
 		setWindow(parentFrame);
 		pack();
-
-		// parentFrame.dataProcess.getDataset();
 	}
 
 	private void setWindow(JFrame parentFrame) {
@@ -136,9 +132,9 @@ public class SortQueryForm extends JDialog implements ActionListener {// impleme
 	protected void updateQuery(int sectorSelection, int superLayerSelection) {
 
 		this.setVisible(false);
-		this.mainFrame.getDataPanel().compareWithSQLPanel(
+		this.mainFrameService.getDataPanel().compareWithSQLPanel(
 				this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
-		this.mainFrame.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
+		this.mainFrameService.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
 
 	}
 

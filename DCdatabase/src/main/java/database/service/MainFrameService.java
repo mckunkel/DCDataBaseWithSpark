@@ -9,7 +9,9 @@ import org.jlab.groot.data.H2F;
 import database.faults.FaultLogic;
 import database.objects.StatusChangeDB;
 import database.objects.Status_change_type;
+import database.process.DataProcess;
 import database.ui.panels.DataPanel;
+import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
 import database.utils.Coordinate;
 
@@ -107,8 +109,20 @@ public interface MainFrameService {
 
 	public SQLPanel getSQLPanel();
 
+	public void setDataProcess(DataProcess dataProcess);
+
+	public DataProcess getDataProcess();
+
+	public void setHistogramPanel(HistogramPanel histogramPanel);
+
+	public HistogramPanel getHistogramPanel();
+
 	public void setUserPercent(double userPercent);
 
 	public double getUserPercent();
+
+	public void createNewDataSets();
+
+	public void createNewHistograms();
 
 }

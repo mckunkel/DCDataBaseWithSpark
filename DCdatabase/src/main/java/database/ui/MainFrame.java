@@ -100,22 +100,6 @@ public class MainFrame extends JFrame {
 
 	}
 
-	public DataProcess getDataProcess() {
-		return dataProcess;
-	}
-
-	public SQLPanel getSqlPanel() {
-		return sqlPanel;
-	}
-
-	public DataPanel getDataPanel() {
-		return dataPanel;
-	}
-
-	public HistogramPanel getHistogramPanel() {
-		return histogramPanel;
-	}
-
 	private JMenuBar createFrameMenu() {
 		menuBar = new JMenuBar();
 
@@ -164,6 +148,8 @@ public class MainFrame extends JFrame {
 
 		this.mainFrameService.setDataPanel(this.dataPanel);
 		this.mainFrameService.setSQLPanel(this.sqlPanel);
+		this.mainFrameService.setDataProcess(this.dataProcess);
+		this.mainFrameService.setHistogramPanel(this.histogramPanel);
 
 	}
 

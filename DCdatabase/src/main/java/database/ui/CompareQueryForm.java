@@ -30,7 +30,6 @@ import database.utils.StringConstants;
 
 public class CompareQueryForm extends JDialog implements ActionListener {// implements
 	// ActionListener
-	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
 
 	private JButton cancelButton;
@@ -44,7 +43,6 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 
 	public CompareQueryForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.COMPARE_FORM_TITLE, false);
-		this.mainFrame = parentFrame;
 		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		initializeVariables();
@@ -137,9 +135,11 @@ public class CompareQueryForm extends JDialog implements ActionListener {// impl
 			if (isReady) {
 				String str = (String) this.compareRunComboBox.getSelectedItem();
 				this.compareRunFormService.compareRun(str);
-				this.mainFrame.getDataPanel().setTableModel(this.mainFrameService.getComparedBySectorAndSuperLayer(
-						this.mainFrameService.getSelectedSector(), this.mainFrameService.getSelectedSuperlayer()));
-				this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+				this.mainFrameService.getDataPanel()
+						.setTableModel(this.mainFrameService.getComparedBySectorAndSuperLayer(
+								this.mainFrameService.getSelectedSector(),
+								this.mainFrameService.getSelectedSuperlayer()));
+				this.mainFrameService.getSQLPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
 
 			} else {
 				JFrame errorFrame = new JFrame("");

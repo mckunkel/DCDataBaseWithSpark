@@ -35,7 +35,6 @@ import spark.utils.SparkManager;
 
 public class DBSendPanel extends JPanel implements ActionListener {
 	private InsertMYSqlQuery insertMYSqlQuery = null;
-	private MainFrame mainFrame = null;
 	private MainFrameService mainFrameService = null;
 	final int space = NumberConstants.BORDER_SPACING;
 	Border spaceBorder = null;
@@ -44,7 +43,6 @@ public class DBSendPanel extends JPanel implements ActionListener {
 	JButton sendButton = null;
 
 	public DBSendPanel(MainFrame parentFrame) {
-		this.mainFrame = parentFrame;
 		initializeVariables();
 		initialLayout();
 	}
@@ -88,7 +86,7 @@ public class DBSendPanel extends JPanel implements ActionListener {
 			System.out.println("Will send the query with selected faults and wires from the sql panel");
 			this.insertMYSqlQuery.prepareMYSQLQuery();
 			this.mainFrameService.getCompleteSQLList().clear();
-			this.mainFrame.getSqlPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
+			this.mainFrameService.getSQLPanel().setTableModel(this.mainFrameService.getCompleteSQLList());
 			this.mainFrameService.setSentTodb(true);
 			SparkManager.restart();
 
