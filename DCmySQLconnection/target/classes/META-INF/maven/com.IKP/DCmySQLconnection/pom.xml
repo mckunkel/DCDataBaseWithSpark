@@ -1,17 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.IKP</groupId>
-  <artifactId>DCmySQLconnection</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  	<repositories>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.IKP</groupId>
+	<artifactId>DCmySQLconnection</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<!-- <repositories> <repository> <id>clas12maven</id> <url>https://clasweb.jlab.org/clas12maven</url> 
+		</repository> </repositories> -->
+	<repositories>
 		<repository>
-			<id>clas12maven</id>
-			<url>https://clasweb.jlab.org/clas12maven</url>
+			<id>local-maven-repo</id>
+			<url>file:////Users/michaelkunkel/.m2/repository</url>
 		</repository>
 	</repositories>
 	<properties>
-		<spark.version>2.1.1</spark.version>
+		<spark.version>2.2.1</spark.version>
 	</properties>
 	<dependencies>
 		<dependency>
