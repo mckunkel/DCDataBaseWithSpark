@@ -22,6 +22,7 @@ import database.ui.panels.DataPanel;
 import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
 import database.utils.Coordinate;
+import database.utils.NumberConstants;
 import spark.utils.MainFrameQuery;
 
 public class MainFrameServiceImpl implements MainFrameService {
@@ -111,7 +112,9 @@ public class MainFrameServiceImpl implements MainFrameService {
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
 				occupanciesByCoordinate.put(new Coordinate(i, j),
-						new H2F("Occupancy all hits SL" + i + "sector" + j, "", 112, 1, 113, 6, 1, 7));
+						new H2F("Occupancy all hits SL" + i + "sector" + j, "", NumberConstants.xBins,
+								NumberConstants.xMin, NumberConstants.xMax, NumberConstants.yBins, NumberConstants.yMin,
+								NumberConstants.yMax));
 				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleX("Wire");
 				occupanciesByCoordinate.get(new Coordinate(i, j)).setTitleY("Layer");
 				occupanciesByCoordinate.get(new Coordinate(i, j))

@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.ui.panels;
+
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

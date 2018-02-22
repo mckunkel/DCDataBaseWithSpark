@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package database.utils;
+
 
 import org.jlab.groot.math.Func1D;
 

@@ -41,4 +41,11 @@ public class NumberConstants {
 	public static final int PERCENT_FORM_WINDOW_FIELD_LENGTH = 5;
 	public static final double DEFAULT_USER_PERCENTAGE = 5;
 
+	public static final int xBins = 112;
+	public static final int xMin = 1;
+	public static final int xMax = 113;
+	public static final int yBins = 6;
+	public static final int yMin = 1;
+	public static final int yMax = 7;
+
 }
