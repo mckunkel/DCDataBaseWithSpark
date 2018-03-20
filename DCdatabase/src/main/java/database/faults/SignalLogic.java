@@ -1,6 +1,5 @@
 package database.faults;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -71,10 +70,11 @@ public class SignalLogic implements FaultLogic {
 		return SignalConnectors.getBundle(xBin, yBin);
 	}
 
-	@Override
-	public Map<Integer, List<Integer>> getFaultWires(int xBin, int yBin) {
-		Map<Integer, Pair<Integer, Integer>> aMap = SignalConnectors.findWireRange(xBin, yBin);
-		return null;
-	}
+	// @Override
+	// public Map<Integer, List<Integer>> getFaultWires(int xBin, int yBin) {
+	// Map<Integer, Pair<Integer, Integer>> aMap =
+	// SignalConnectors.findWireRange(xBin, yBin);
+	// return null;
+	// }
 
 }

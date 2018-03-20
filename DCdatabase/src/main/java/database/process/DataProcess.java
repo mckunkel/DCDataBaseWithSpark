@@ -89,6 +89,9 @@ public class DataProcess {
 			this.mainFrameService.getHistogramMap()
 					.get(new Coordinate(bnkHits.getInt("superlayer", i) - 1, bnkHits.getInt("sector", i) - 1))
 					.fill(bnkHits.getInt("wire", i), bnkHits.getInt("layer", i));
+			// System.out.println(bnkHits.getInt("superlayer", i) + " " +
+			// (bnkHits.getInt("sector", i) - 1) + " "
+			// + bnkHits.getInt("wire", i) + " " + bnkHits.getInt("layer", i));
 		}
 	}
 
