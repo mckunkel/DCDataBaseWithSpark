@@ -58,7 +58,7 @@
 			<groupId>org.jlab.coat</groupId>
 			<artifactId>coat-libs</artifactId>
 			<version>3.0-SNAPSHOT</version>
-			<exclusions>
+<!-- 			<exclusions>
 				<exclusion>
 					<artifactId>logback-classic</artifactId>
 					<groupId>ch.qos.logback</groupId>
@@ -67,7 +67,7 @@
 					<artifactId>log4j-over-slf4j</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
-			</exclusions>
+			</exclusions> -->
 		</dependency>
 		<!-- <dependency> <groupId>org.jlab.coda</groupId> <artifactId>jclara</artifactId> 
 			<version>4.3-SNAPSHOT</version> </dependency> -->
