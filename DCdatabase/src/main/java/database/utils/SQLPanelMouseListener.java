@@ -39,11 +39,19 @@ public class SQLPanelMouseListener implements MouseListener, MouseMotionListener
 	@Override
 	public void mousePressed(MouseEvent e) {
 
+		// if (e.getButton() == 1 && e.getClickCount() == 1) {
+		// this.target = (JTable) e.getSource();
+		// this.selection = target.getSelectedRows();
+		// }
+		// if (SwingUtilities.isRightMouseButton(e) && this.selection != null &&
+		// this.selection.length > 0) {
+
 		if (e.getButton() == 1 && e.getClickCount() == 1) {
 			this.target = (JTable) e.getSource();
-			this.selection = target.getSelectedRows();
 		}
-		if (SwingUtilities.isRightMouseButton(e) && this.selection != null && this.selection.length > 0) {
+		if (SwingUtilities.isRightMouseButton(e) && target.getSelectedRowCount() > 0) {
+			this.selection = target.getSelectedRows();
+
 			int reply = JOptionPane.showConfirmDialog(e.getComponent(), "Remove Selected Fault from DB list?",
 					"User Selected Remove from List", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {

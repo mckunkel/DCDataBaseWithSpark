@@ -125,4 +125,6 @@ public interface MainFrameService {
 
 	public void createNewHistograms();
 
+	// public int getInitialFault();
+
 }

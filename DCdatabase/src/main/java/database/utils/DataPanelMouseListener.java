@@ -40,10 +40,10 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 
 		if (e.getButton() == 1 && e.getClickCount() == 1) {
 			this.target = (JTable) e.getSource();
-			this.selection = target.getSelectedRows();
 		}
-		if (SwingUtilities.isRightMouseButton(e) && this.selection != null && this.selection.length > 0) {
+		if (SwingUtilities.isRightMouseButton(e) && target.getSelectedRowCount() > 0) {
 
+			this.selection = target.getSelectedRows();
 			int reply = JOptionPane.showConfirmDialog(e.getComponent(), "Add Selected Fault to DB list?",
 					"User Selected Add to List", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
@@ -89,11 +89,13 @@ public class DataPanelMouseListener implements MouseListener, MouseMotionListene
 			statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
 			statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
 			statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
+
 			statusChangeDB.setProblem_type(StringConstants.PROBLEM_TYPES[this.mainFrameService.getFaultNum() + 1]);
+
 			statusChangeDB.setStatus_change_type(this.mainFrameService.getBrokenOrFixed().toString());
 			statusChangeDB.setRunno(this.mainFrameService.getRunNumber());
 			queryList.add(statusChangeDB);
-			System.out.println(target.getValueAt(i, 1).toString());
+			// System.out.println(target.getValueAt(i, 1).toString());
 
 		}
 		this.mainFrameService.prepareMYSQLQuery(queryList);

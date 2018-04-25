@@ -40,6 +40,7 @@ import database.faults.ChannelBundles;
 import database.faults.FuseBundles;
 import database.faults.PinBundles;
 import database.faults.SignalConnectors;
+import database.objects.Status_change_type;
 import database.process.DataProcess;
 import database.service.MainFrameService;
 import database.ui.panels.BottomComparePanel;
@@ -119,6 +120,9 @@ public class MainFrame extends JFrame {
 
 		this.dataProcess = new DataProcess();
 		this.mainFrameService = MainFrameServiceManager.getSession();
+
+		this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
+		this.mainFrameService.setFault(this.mainFrameService.getFaultNum());
 
 		this.sqlPanel = new SQLPanel();
 		this.dataPanel = new DataPanel();

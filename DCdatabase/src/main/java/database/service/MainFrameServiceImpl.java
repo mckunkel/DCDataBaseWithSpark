@@ -43,7 +43,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private int superLayerNumber;
 	private boolean sentTodb;
 
-	private int fault = 0;
+	private int fault;
 	private int bundle = -1000;
 	private String userName = null;
 	private boolean mouseReady;
@@ -55,6 +55,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private DataProcess dataProcess;
 	private HistogramPanel histogramPanel;
 	private double userPercent;
+	// well lets give a initial fault
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -68,6 +69,12 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.intList = new TreeSet<>();
 
 		this.mouseReady = false;
+		this.fault = 4;
+		// this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
+		// this.mainFrameService.setFault(this.mainFrameService.getFaultNum());
+		// this.setBrokenOrFixed(Status_change_type.broke);
+		// this.setFault(this.getFaultNum());
+
 	}
 
 	public void setRunNumber(int runNumber) {
@@ -359,4 +366,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 	public void createNewHistograms() {
 		this.createHistograms();
 	}
+
+	// public int getInitialFault() {
+	// return this.intialFault;
+	// }
 }

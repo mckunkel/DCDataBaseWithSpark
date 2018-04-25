@@ -55,7 +55,6 @@ public class MouseOverrideCanvasListener implements ActionListener, MouseListene
 
 	public MouseOverrideCanvasListener() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
-		this.mainFrameService.setFault(0); // default
 	}
 
 	@Override

@@ -83,9 +83,10 @@ public class DataPanel extends JPanel {
 		this.titleBorder = BorderFactory.createTitledBorder(StringConstants.DATA_FORM_LABEL);
 		this.tableModel = new TableModel();
 		this.aTable = new JTable(tableModel);
-		// this.aTable.setRowSelectionAllowed(true);
 
 		this.aTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.aTable.setRowSelectionAllowed(true);
+		this.aTable.getTableHeader().setReorderingAllowed(false);
 		this.aTable.addMouseListener(new DataPanelMouseListener());
 	}
 

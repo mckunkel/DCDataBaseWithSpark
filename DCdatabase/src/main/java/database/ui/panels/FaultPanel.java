@@ -79,8 +79,9 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 		this.buttons = new ButtonGroup();
 
-		this.cb1 = new JCheckBox("broken");
-		this.cb2 = new JCheckBox("fixed");
+		// this.cb1 = new JCheckBox("broken");
+		this.cb1 = new JCheckBox(Status_change_type.broke.toString());
+		this.cb2 = new JCheckBox(Status_change_type.fixed.toString());
 		this.nameLabel = new JLabel(StringConstants.FORM_NAME);
 
 		this.nameField = new JTextField(NumberConstants.WINDOW_FIELD_LENGTH);
@@ -129,8 +130,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 			jButtons.add(aButton);
 
 		}
-		this.jRadioButton.get(0).setSelected(true);
-
+		this.jRadioButton.get(this.mainFrameService.getFaultNum()).setSelected(true);
 		return jPanel1;
 	}
 
@@ -189,6 +189,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		checkBoxGroup.add(this.cb1);
 		checkBoxGroup.add(this.cb2);
 		this.cb1.setSelected(true);
+
 		return checkBoxGroup;
 
 	}

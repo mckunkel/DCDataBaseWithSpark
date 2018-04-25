@@ -83,6 +83,8 @@ public class SQLPanel extends JPanel {
 		// this.aTable.setColumnSelectionAllowed(false); //check
 		// TabelSelectionDemo in Testpackages
 		this.aTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.aTable.getTableHeader().setReorderingAllowed(false);
+
 		this.aTable.addMouseListener(new SQLPanelMouseListener());
 
 	}
