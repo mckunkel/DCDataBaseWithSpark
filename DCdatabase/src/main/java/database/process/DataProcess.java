@@ -24,8 +24,9 @@ public class DataProcess {
 	private SparkSession spSession = null;
 	private List<StatusChangeDB> emptyDataPoints = null;
 	private HipoDataSource reader = null;
-
+	private HipoDataSource[] readers = null;
 	private int nEvents = 0;
+	private List<String> fileList = null;// = new ArrayList<>();
 
 	public DataProcess() {
 
@@ -38,19 +39,33 @@ public class DataProcess {
 
 	}
 
+	public void setFileList(List<String> list, int runNumber) {
+		this.readers = new HipoDataSource[list.size()];
+		init(runNumber);
+		this.fileList = list;
+	}
+
 	private void init() {
 		this.mainFrameService = MainFrameServiceManager.getSession();
-		this.mainFrameService.setRunNumber(getRunNumber());
 		this.spSession = SparkManager.getSession();
 		this.emptyDataPoints = new ArrayList<StatusChangeDB>();
+		this.mainFrameService.setRunNumber(getRunNumber());
+		// setMainFrameServiceNEvents();
 
-		setMainFrameServiceNEvents();
+	}
+
+	private void init(int runNumber) {
+		this.mainFrameService = MainFrameServiceManager.getSession();
+		this.spSession = SparkManager.getSession();
+		this.emptyDataPoints = new ArrayList<StatusChangeDB>();
+		this.mainFrameService.setRunNumber(runNumber);
+		// setMainFrameServiceNEvents();
 
 	}
 
 	private void checkNEvents() {
-		if (nEvents == 0) {
-			nEvents = reader.getSize();
+		if (this.nEvents == 0) {
+			this.nEvents = this.reader.getSize();
 		}
 		System.out.println("Will process " + nEvents + " events");
 	}
@@ -59,8 +74,37 @@ public class DataProcess {
 
 		// checkNEvents();
 
+		for (String string : fileList) {
+			this.reader = new HipoDataSource();
+			this.reader.open(string);
+			if (getRunNumber() != this.mainFrameService.getRunNumber()) {
+				System.out.println("We have a problem with the run numbers");
+				break;
+			}
+			fillData();
+			this.reader.close();
+		}
+		createDataset();
+		// int counter = 0;
+		//
+		// while (reader.hasEvent()) {// && counter < 400 && counter < nEvents
+		// if (counter % 10000 == 0) {
+		// System.out.println("done " + counter + " events");
+		// }
+		// DataEvent event = reader.getNextEvent();
+		// counter++;
+		// if (event.hasBank("TimeBasedTrkg::TBHits")) {
+		// processTBHits(event);
+		// }
+		//
+		// }
+		// createDataset();
+	}
+
+	private void fillData() {
 		int counter = 0;
-		while (reader.hasEvent()) {// && counter < 400 && counter < nEvents
+
+		while (this.reader.hasEvent()) {// && counter < 400 && counter < nEvents
 			if (counter % 10000 == 0) {
 				System.out.println("done " + counter + " events");
 			}
@@ -69,9 +113,7 @@ public class DataProcess {
 			if (event.hasBank("TimeBasedTrkg::TBHits")) {
 				processTBHits(event);
 			}
-
 		}
-		createDataset();
 	}
 
 	private void processTBHits(DataEvent event) {
@@ -156,9 +198,9 @@ public class DataProcess {
 		this.nEvents = nEvents;
 	}
 
-	private void setMainFrameServiceNEvents() {
-		this.mainFrameService.setnEventsInFile(reader.getSize());
-
-	}
+	// private void setMainFrameServiceNEvents() {
+	// this.mainFrameService.setnEventsInFile(reader.getSize());
+	//
+	// }
 
 }

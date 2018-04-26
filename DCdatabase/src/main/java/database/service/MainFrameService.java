@@ -61,9 +61,9 @@ public interface MainFrameService {
 
 	public void setSQLList();
 
-	public int getnEventsInFile();
+	// public int getnEventsInFile();
 
-	public void setnEventsInFile(int nEventsInFile);
+	// public void setnEventsInFile(int nEventsInFile);
 
 	public boolean sentToDB();
 

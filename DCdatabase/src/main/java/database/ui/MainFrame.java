@@ -169,7 +169,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				runForm.clearLists();
 				HipoFilter filter = new HipoFilter();
 				fileDialog.setFilenameFilter(filter);
 				fileDialog.setVisible(true);
@@ -178,8 +178,11 @@ public class MainFrame extends JFrame {
 				fileArray = new ArrayList<String>();
 				for (File file : fileList) {
 					fileArray.add(file.toString());
+					System.out.println(file.toString());
 
 				}
+				System.out.println("##########");
+
 				runForm.setDirectory(dir);
 				runForm.setFileList(fileArray);
 				compareRunForm.setReady();

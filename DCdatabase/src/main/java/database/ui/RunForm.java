@@ -20,6 +20,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,8 +34,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
-import org.apache.commons.lang3.StringUtils;
 
 import database.service.MainFrameService;
 import database.ui.panels.SortPanel;
@@ -56,6 +57,8 @@ public class RunForm extends JDialog implements ActionListener {
 
 	private JFrame errorFrame;
 
+	private Map<String, List<String>> aMap;
+
 	public RunForm(MainFrame parentFrame) {
 		super(parentFrame, StringConstants.RUN_FORM_TITLE, false);
 		this.mainFrameService = MainFrameServiceManager.getSession();
@@ -68,8 +71,30 @@ public class RunForm extends JDialog implements ActionListener {
 
 	}
 
+	public void clearLists() {
+		this.fileList.clear();
+		this.fileComboBox.removeAllItems();
+		this.aMap.clear();
+	}
+
 	public void setFileList(ArrayList<String> fileList) {
-		this.fileList = fileList;
+		// this.fileList = fileList;
+		// ok lets attempt to use multiple files
+
+		for (String s : fileList) {
+			String aPlacer = s.substring(s.indexOf("clas_") + 5, s.indexOf(".evio"));
+			if (aMap.containsKey(aPlacer)) {
+				aMap.get(aPlacer).add(s);
+			} else {
+				aMap.put(aPlacer, new ArrayList<String>());
+				aMap.get(aPlacer).add(s);
+			}
+		}
+		for (Map.Entry<String, List<String>> entry : aMap.entrySet()) {
+			String key = entry.getKey();
+			List<String> value = entry.getValue();
+			this.fileList.add("Run " + key + "\t\t\t ::: \t\t  N files: " + value.size());
+		}
 		loadData();
 	}
 
@@ -104,16 +129,14 @@ public class RunForm extends JDialog implements ActionListener {
 		this.percentField = new JTextField(NumberConstants.PERCENT_FORM_WINDOW_FIELD_LENGTH);
 		this.percentLabel = new JLabel(StringConstants.RUNPERCENT);
 		this.percentField.setText(Double.toString(NumberConstants.DEFAULT_USER_PERCENTAGE));
+		this.aMap = new TreeMap();
 
 	}
 
 	public void loadData() {
 
-		this.fileComboBox.removeAllItems();
-
 		for (String str : fileList) {
-			String diff = StringUtils.difference(dirLocation, str);
-			this.fileComboBox.addItem(diff);
+			this.fileComboBox.addItem(str);
 		}
 	}
 
@@ -185,12 +208,16 @@ public class RunForm extends JDialog implements ActionListener {
 		if (event.getSource() == this.okButton) {
 			if (checkValidFile()) {
 
-				System.out.println("you enetered " + getUserPercent(percentField.getText()));
+				System.out.println("you entered " + getUserPercent(percentField.getText()));
 				this.mainFrameService.setUserPercent(getUserPercent(percentField.getText()));
 				String str = (String) this.fileComboBox.getSelectedItem();
+				String runChosen = str.substring(str.indexOf("Run ") + 4, str.indexOf("\t")).replaceAll(" ", "");
 				this.mainFrameService.createNewDataSets();
 				this.mainFrameService.createNewHistograms();
-				this.mainFrameService.getDataProcess().openFile(dirLocation + str);
+				// this.mainFrameService.getDataProcess().openFile(dirLocation +
+				// str);
+
+				this.mainFrameService.getDataProcess().setFileList(aMap.get(runChosen), Integer.parseInt(runChosen));
 				this.mainFrameService.setMouseReady();
 				setVisible(false);
 

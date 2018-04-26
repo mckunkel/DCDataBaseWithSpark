@@ -37,7 +37,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private Status_change_type status_change_type = null;
 	private TreeSet<StatusChangeDB> completeQueryList = null;
 	private TreeSet<Integer> intList = null;
-	private int nEventsInFile;
+	// private int nEventsInFile;
 	private int runNumber;
 	private int sectorNumber;
 	private int superLayerNumber;
@@ -193,13 +193,13 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	};
 
-	public int getnEventsInFile() {
-		return nEventsInFile;
-	}
+	// public int getnEventsInFile() {
+	// return nEventsInFile;
+	// }
 
-	public void setnEventsInFile(int nEventsInFile) {
-		this.nEventsInFile = nEventsInFile;
-	}
+	// public void setnEventsInFile(int nEventsInFile) {
+	// this.nEventsInFile = nEventsInFile;
+	// }
 
 	public void setSentTodb(boolean sentTodb) {
 		this.sentTodb = sentTodb;
