@@ -1,5 +1,6 @@
 package database.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -124,6 +125,10 @@ public interface MainFrameService {
 	public void createNewDataSets();
 
 	public void createNewHistograms();
+
+	public void addRunToList(int runNumber);
+
+	public List<Integer> getRunList();
 
 	// public int getInitialFault();
 

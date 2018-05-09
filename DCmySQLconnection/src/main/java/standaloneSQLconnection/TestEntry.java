@@ -10,7 +10,7 @@
  * (________(                @author m.c.kunkel
  *  `------'
 */
-package databaseextras;
+package standaloneSQLconnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +27,19 @@ public class TestEntry {
 
 	private static Map<String, String> jdbcOptions() {
 		Map<String, String> jdbcOptions = new HashMap<String, String>();
-		jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test?jdbcCompliantTruncation=false");
+		// jdbcOptions.put("url",
+		// "jdbc:mysql://localhost:3306/test?jdbcCompliantTruncation=false");
+		// jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
+		// jdbcOptions.put("dbtable", "status_change");
+		// jdbcOptions.put("user", "root");
+		// jdbcOptions.put("password", "");
+
+		jdbcOptions.put("url", "jdbc:mysql://clas12reader@clasdb.jlab.org/clas12?jdbcCompliantTruncation=false");
 		jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
-		jdbcOptions.put("dbtable", "status_change");
-		jdbcOptions.put("user", "root");
+		jdbcOptions.put("dbtable", "runranges");
+		jdbcOptions.put("user", "mkunkel");
 		jdbcOptions.put("password", "");
+
 		return jdbcOptions;
 	}
 
@@ -43,8 +51,7 @@ public class TestEntry {
 			Dataset<Row> testDF = SparkManager.mySqlDataset();
 			testDF.createOrReplaceTempView("DataView");
 
-			Dataset<Row> dataDF = spSession.sql(
-					"SELECT COLUMN_NAME AS `Field`, COLUMN_TYPE AS `Type`, IS_NULLABLE AS `NULL`,         COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS `Extra` FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test' and TABLE_NAME = 'status_change' and COLUMN_NAME = 'problem_type' FROM DataView");
+			Dataset<Row> dataDF = spSession.sql("SELECT * FROM runranges");
 			dataDF.show();
 			// List<StatusChangeDB> list = new ArrayList<StatusChangeDB>();
 			// StatusChangeDB statusChangeDB = new StatusChangeDB();

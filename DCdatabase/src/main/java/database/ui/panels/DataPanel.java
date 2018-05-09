@@ -113,31 +113,4 @@ public class DataPanel extends JPanel {
 	public void compareWithSQLPanel(Dataset<StatusChangeDB> wireSet) {
 		this.tableModel.compareWithSQLPanel(wireSet, this.mainFrameService.getCompleteSQLList());
 	}
-
-	// private void mouseListener() {
-	// TreeSet<StatusChangeDB> queryList = new TreeSet<>();
-	// this.aTable.addMouseListener(new MouseAdapter() {
-	// @Override
-	// public void mouseClicked(final MouseEvent e) {
-	// if (e.getClickCount() == 1) {
-	// final JTable target = (JTable) e.getSource();
-	// // target.setRowSelectionAllowed(true);
-	// //
-	// target.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-	// int[] selection = target.getSelectedRows();
-	// for (int i : selection) {
-	// StatusChangeDB statusChangeDB = new StatusChangeDB();
-	// statusChangeDB.setSector(target.getValueAt(i, 0).toString());
-	// statusChangeDB.setSuperlayer(target.getValueAt(i, 1).toString());
-	// statusChangeDB.setLoclayer(target.getValueAt(i, 2).toString());
-	// statusChangeDB.setLocwire(target.getValueAt(i, 3).toString());
-	// queryList.add(statusChangeDB);
-	// }
-	// }
-	// }
-	// });
-	//
-	// this.mainFrameService.prepareMYSQLQuery(queryList);
-	//
-	// }
 }

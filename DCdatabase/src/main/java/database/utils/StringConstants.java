@@ -77,8 +77,8 @@ public class StringConstants {
 	public static final String HISTOGRAM_FORM_LABEL = "Histogram For Data:";
 	public static final String SQL_FORM_LABEL = "SQL Query";
 	public static final String DBSEND_FORM_REMOVE = "Remove Selected";
-	public static final String DBSEND_FORM_SEND = "Send to DB";
-	public static final String DBSEND_FORM_LABEL = "Send to MySQL Database";
+	public static final String DBSEND_FORM_SEND = "Send to MySql";
+	public static final String DBSEND_FORM_LABEL = "Send to Database";
 	public static final String CCDBSEND_FORM_LABEL = "CCDB Entry";
 	public static final String CCDBSEND_FORM_REMOVE = "Remove from Local List";
 	public static final String CCDBSEND_FORM_SEND = "Send to CCDB";

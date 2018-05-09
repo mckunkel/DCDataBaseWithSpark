@@ -1,0 +1,4 @@
+setenv CCDB_CONNECTION mysql://clas12reader@clasdb.jlab.org/clas12
+ccdb -i
+cd /calibration/dc/time_to_distanc
+cat tvsx_devel_v2

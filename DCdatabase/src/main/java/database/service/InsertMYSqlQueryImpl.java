@@ -49,7 +49,6 @@ public class InsertMYSqlQueryImpl implements InsertMYSqlQuery {
 		Dataset<StatusChangeDB> dbQuery = this.dbQuery.compareRunII("0");
 
 		Timestamp timestamp = java.sql.Timestamp.from(java.time.Instant.now());
-		System.out.println(timestamp);
 		for (StatusChangeDB statusChangeDB : this.mainFrameService.getCompleteSQLList()) {
 			StatusChangeDB aChangeDBTest = null;
 			if (statusChangeDB.getStatus_change_type().equals("broke")) {

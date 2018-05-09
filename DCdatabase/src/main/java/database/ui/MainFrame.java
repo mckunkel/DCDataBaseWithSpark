@@ -181,8 +181,6 @@ public class MainFrame extends JFrame {
 					System.out.println(file.toString());
 
 				}
-				System.out.println("##########");
-
 				runForm.setDirectory(dir);
 				runForm.setFileList(fileArray);
 				compareRunForm.setReady();
@@ -324,10 +322,12 @@ public class MainFrame extends JFrame {
 	private JPanel sqlControlsPanel() {
 		JPanel sqlControlsPanel = new JPanel(new GridBagLayout());
 		PanelConstraints.addComponent(sqlControlsPanel, sqlPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH, 0, 300);
+				GridBagConstraints.BOTH, 0, 325);
+
 		// PanelConstraints.addComponent(sqlControlsPanel, ccdbSendPanel, 0, 1,
 		// 1, 1, GridBagConstraints.PAGE_END,
 		// GridBagConstraints.REMAINDER, 0, 0);
+
 		PanelConstraints.addComponent(sqlControlsPanel, dbSendPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
 				GridBagConstraints.REMAINDER, 0, 0);
 		return sqlControlsPanel;

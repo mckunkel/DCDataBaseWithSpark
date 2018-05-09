@@ -12,6 +12,7 @@ import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import database.objects.CCDBWireStatusObject;
 import database.objects.StatusChangeDB;
 import database.utils.StringConstants;
 
@@ -82,6 +83,10 @@ public enum SparkManager {
 
 	public static Encoder<StatusChangeDB> statusChangeDBEncoder() {
 		return Encoders.bean(StatusChangeDB.class);
+	}
+
+	public static Encoder<CCDBWireStatusObject> CCDBWireStatusEncoder() {
+		return Encoders.bean(CCDBWireStatusObject.class);
 	}
 
 	private static String getHostName() {

@@ -2,6 +2,7 @@ package database.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -56,6 +57,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private HistogramPanel histogramPanel;
 	private double userPercent;
 	// well lets give a initial fault
+	private List<Integer> runsComplete;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -67,6 +69,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.addBackList = new TreeSet<>();
 		this.completeQueryList = new TreeSet<>();
 		this.intList = new TreeSet<>();
+		this.runsComplete = new ArrayList<>();
 
 		this.mouseReady = false;
 		this.fault = 4;
@@ -367,6 +370,15 @@ public class MainFrameServiceImpl implements MainFrameService {
 		this.createHistograms();
 	}
 
+	@Override
+	public void addRunToList(int runNumber) {
+		this.runsComplete.add(runNumber);
+
+	}
+
+	public List<Integer> getRunList() {
+		return this.runsComplete;
+	}
 	// public int getInitialFault() {
 	// return this.intialFault;
 	// }
