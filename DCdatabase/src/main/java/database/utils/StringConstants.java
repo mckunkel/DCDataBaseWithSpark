@@ -87,5 +87,7 @@ public class StringConstants {
 	public static final String SORTCOMPARE_FORM_SUBTITLE = "Sort/Compare";
 	public static final String RUNPERCENT = "Percent Inefficiency";
 	public static final String COMPARE_FORM_LOADRUN = "Load";
+	public static final String SEND_SCRIPT = "Make Script";
+	public static final String EXECUTE_SCRIPT = "Send to CCDB";
 
 }

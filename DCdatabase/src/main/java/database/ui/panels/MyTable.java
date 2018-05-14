@@ -12,65 +12,102 @@
 */
 package database.ui.panels;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.util.List;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
-import database.query.DBQuery;
+import database.utils.NumberConstants;
+import database.utils.PanelConstraints;
+import database.utils.StringConstants;
 
-public class MyTable {
-	private DBQuery dbQuery = new DBQuery();
+public class MyTable extends JPanel implements ActionListener {
+	// private DBQuery dbQuery = new DBQuery();
 	private JButton scriptButton;
 	private JButton executeButton;
 	private JButton cancelButton;
 
+	private JPanel panel = null;
+
 	public MyTable() {
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(new JScrollPane(createTable()));
-		JFrame frame = new JFrame("My Table");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(panel);
-		frame.setSize(new Dimension(400, 130));
-		frame.setVisible(true);
-		// JDialog jDialog = new JDialog();
-		// jDialog.setLocationRelativeTo(null);
-		// jDialog.setLayout(new BorderLayout());
-		// jDialog.add(new JScrollPane(createTable(),
-		// JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		// JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
-		// jDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		// // setModalityType(ModalityType.APPLICATION_MODAL);
-		// jDialog.pack();
-		// jDialog.setVisible(true);
-		// JTable aJTable = createTable();
-		//
-		// JOptionPane.showInputDialog(new JFrame(""), "Please Select which
-		// Run", "Customized Dialog",
-		// JOptionPane.PLAIN_MESSAGE, null, new JScrollPane(aJTable),
-		// aJTable.getValueAt(0, 0));
-		//
-		// JOptionPane.showMessageDialog(null, new JScrollPane(aJTable), "Slect
-		// this", JOptionPane.ERROR_MESSAGE);
-		// JOptionPane.showMessageDialog(null, new JScrollPane(aJTable));
+		initializeVariables();
+	}
+
+	private void initializeVariables() {
+		this.scriptButton = new JButton(StringConstants.SEND_SCRIPT);
+		this.scriptButton.addActionListener(this);
+		this.scriptButton.setToolTipText(
+				"Used to create a script that the user\nwill use to manully tranposrt and\nexecute on the Jlab cluster");
+		this.executeButton = new JButton(StringConstants.EXECUTE_SCRIPT);
+		this.executeButton.addActionListener(this);
+		this.executeButton.setToolTipText(
+				"Used to have this application send to CCDB\nAssumes that user is running on\nJlab cluster and has CCDB permissions.");
+		this.cancelButton = new JButton("Cancel");
+		this.cancelButton.addActionListener(this);
+
+		constructLayout();
+		setWindow();
+		// pack();
+
+	}
+
+	private void setWindow() {
+		setSize(NumberConstants.SORT_FORM_WINDOW_SIZE_WIDTH, NumberConstants.SORT_FORM_WINDOW_SIZE_HEIGHT);
+		// setLocationRelativeTo(parentFrame);
+	}
+
+	private void constructLayout() {
+
+		JPanel fileInfoPanel = new JPanel();
+		Border spaceBorder = BorderFactory.createEmptyBorder(NumberConstants.BORDER_SPACING,
+				NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING);
+		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.FILE_FORM_SELECT);
+		fileInfoPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
+		fileInfoPanel.setLayout(new GridBagLayout());
+
+		Insets leftPadding = new Insets(0, 0, 0, 0);
+
+		PanelConstraints.addComponent(fileInfoPanel, new JScrollPane(createTable()), 0, 0, 1, 1,
+				GridBagConstraints.LINE_START, GridBagConstraints.BOTH, leftPadding, 0, 0);
+		// ////////// Buttons Panel ///////////////
+		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		Dimension btnSize = scriptButton.getPreferredSize();
+		scriptButton.setPreferredSize(btnSize);
+		buttonsPanel.add(scriptButton);
+		buttonsPanel.add(executeButton);
+		buttonsPanel.add(cancelButton);
+
+		setLayout(new GridBagLayout());// BorderLayout
+		PanelConstraints.addComponent(this, fileInfoPanel, 1, 0, 1, 1, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, 0, 100);
+		PanelConstraints.addComponent(this, buttonsPanel, 1, 1, 1, 1, GridBagConstraints.LAST_LINE_END,
+				GridBagConstraints.BOTH, 0, 0);
 	}
 
 	private JTable createTable() {
-		List<String> runList = dbQuery.getAllRuns();
-		Object[][] data = new Object[runList.size()][runList.size()];
-		for (int i = 0; i < runList.size(); i++) {
-			for (int j = 0; j < runList.size(); j++) {
-				data[i][j] = runList.get(i);
-			}
-		}
+		// List<String> runList = dbQuery.getAllRuns();
+		// Object[][] data = new Object[runList.size()][runList.size()];
+		// for (int i = 0; i < runList.size(); i++) {
+		// for (int j = 0; j < runList.size(); j++) {
+		// data[i][j] = runList.get(i);
+		// }
+		// }
+		Object[][] data = { { "3105" }, { "3222" } };
 		String[] columnNames = { "Runs" };
 
 		DefaultTableModel model = new DefaultTableModel(data, columnNames) {
@@ -102,8 +139,18 @@ public class MyTable {
 
 			@Override
 			public void run() {
-				MyTable myTable = new MyTable();
+				JFrame frame = new JFrame("My Table");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.getContentPane().add(new MyTable());
+				frame.setSize(new Dimension(400, 130));
+				frame.setVisible(true);
 			}
 		});
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }
