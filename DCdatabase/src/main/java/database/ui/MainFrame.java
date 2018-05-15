@@ -13,7 +13,6 @@
 package database.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -25,7 +24,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -33,7 +31,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 
 import database.faults.ChannelBundles;
@@ -105,12 +102,12 @@ public class MainFrame extends JFrame {
 		menuBar = new JMenuBar();
 
 		menuBar.add(createFileMenu());
-		menuBar.add(createOptionsMenu());
+		// menuBar.add(createOptionsMenu());
 		menuBar.add(createRunMenu());
 
 		menuBar.add(createSortMenu());
 		// menuBar.add(createTestMenu());
-		menuBar.add(createCompareMenu());
+		// menuBar.add(createCompareMenu());
 
 		return menuBar;
 
@@ -178,8 +175,6 @@ public class MainFrame extends JFrame {
 				fileArray = new ArrayList<String>();
 				for (File file : fileList) {
 					fileArray.add(file.toString());
-					System.out.println(file.toString());
-
 				}
 				runForm.setDirectory(dir);
 				runForm.setFileList(fileArray);
@@ -292,30 +287,39 @@ public class MainFrame extends JFrame {
 	}
 
 	private JPanel dataControlsPanel() {
-		JButton b = new JButton("Just fake button");
-		Dimension buttonSize = b.getPreferredSize();
-		int maxGap = 10;
-
 		JPanel dataControlsPanel = new JPanel(new GridBagLayout());
 		PanelConstraints.addComponent(dataControlsPanel, dataPanel, 0, 0, 1, 1, GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH, 200, 405);
-		// PanelConstraints.addComponent(dataControlsPanel, dbSendPanel, 0, 1,
+				GridBagConstraints.BOTH, 200, 390);
+		// I am removing the ability to compare, until a better AI feature is
+		// thought of
+
+		// Border spaceBorder =
+		// BorderFactory.createEmptyBorder(NumberConstants.BORDER_SPACING,
+		// NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING,
+		// NumberConstants.BORDER_SPACING);
+		// Border titleBorder =
+		// BorderFactory.createTitledBorder(StringConstants.SORTCOMPARE_FORM_SUBTITLE);
+		// JTabbedPane aJTabbedPane = new JTabbedPane();
+		// aJTabbedPane.setBorder(BorderFactory.createCompoundBorder(spaceBorder,
+		// titleBorder));
+		//
+		// aJTabbedPane.addTab("Sort", null, this.bottomSortPanel, "panel for
+		// sorting");
+		// aJTabbedPane.addTab("Compare", null, this.bottomComparePanel, "panel
+		// for comparing");
+
+		// PanelConstraints.addComponent(dataControlsPanel, aJTabbedPane, 0, 1,
 		// 1, 1, GridBagConstraints.PAGE_END,
-		// GridBagConstraints.REMAINDER, 0, 0);
+		// GridBagConstraints.REMAINDER, 0, 30);
+
 		Border spaceBorder = BorderFactory.createEmptyBorder(NumberConstants.BORDER_SPACING,
 				NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING, NumberConstants.BORDER_SPACING);
-		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.SORTCOMPARE_FORM_SUBTITLE);
-		JTabbedPane aJTabbedPane = new JTabbedPane();
-		aJTabbedPane.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
+		Border titleBorder = BorderFactory.createTitledBorder(StringConstants.SORT_FORM_SUBTITLE);
+		this.bottomSortPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
 
-		aJTabbedPane.addTab("Sort", null, this.bottomSortPanel, "panel for sorting");
-		aJTabbedPane.addTab("Compare", null, this.bottomComparePanel, "panel for comparing");
+		PanelConstraints.addComponent(dataControlsPanel, this.bottomSortPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
+				GridBagConstraints.REMAINDER, 0, 70);
 
-		// PanelConstraints.addComponent(dataControlsPanel,
-		// this.bottomSortPanel, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
-		// GridBagConstraints.REMAINDER, 0, 70);
-		PanelConstraints.addComponent(dataControlsPanel, aJTabbedPane, 0, 1, 1, 1, GridBagConstraints.PAGE_END,
-				GridBagConstraints.REMAINDER, 0, 30);
 		return dataControlsPanel;
 	}
 

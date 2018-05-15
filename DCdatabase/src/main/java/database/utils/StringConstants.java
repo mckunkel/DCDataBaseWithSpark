@@ -90,4 +90,6 @@ public class StringConstants {
 	public static final String SEND_SCRIPT = "Make Script";
 	public static final String EXECUTE_SCRIPT = "Send to CCDB";
 
+	public static final String RUNS_SELECTED = "Select Run(s)";
+
 }

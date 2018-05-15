@@ -1,10 +1,22 @@
 package database.service;
 
+import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
+import javax.swing.ImageIcon;
 
 import org.apache.spark.sql.Dataset;
 import org.jlab.groot.data.H2F;
@@ -16,9 +28,11 @@ import database.faults.FuseLogic;
 import database.faults.HotWireLogic;
 import database.faults.PinLogic;
 import database.faults.SignalLogic;
+import database.objects.CCDBWireStatusObject;
 import database.objects.StatusChangeDB;
 import database.objects.Status_change_type;
 import database.process.DataProcess;
+import database.query.DBQuery;
 import database.ui.panels.DataPanel;
 import database.ui.panels.HistogramPanel;
 import database.ui.panels.SQLPanel;
@@ -58,6 +72,10 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private double userPercent;
 	// well lets give a initial fault
 	private List<Integer> runsComplete;
+	private BufferedWriter writer = null;
+
+	private Image clasImage = null;
+	private ImageIcon clasIcon = null;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -73,10 +91,10 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 		this.mouseReady = false;
 		this.fault = 4;
-		// this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
-		// this.mainFrameService.setFault(this.mainFrameService.getFaultNum());
-		// this.setBrokenOrFixed(Status_change_type.broke);
-		// this.setFault(this.getFaultNum());
+
+		URL url = getClass().getResource("/images/CLAS-negatif-high.jpg");
+		this.clasImage = new ImageIcon(url).getImage();
+		this.clasIcon = new ImageIcon(clasImage.getScaledInstance(120, 100, java.awt.Image.SCALE_SMOOTH));
 
 	}
 
@@ -379,7 +397,157 @@ public class MainFrameServiceImpl implements MainFrameService {
 	public List<Integer> getRunList() {
 		return this.runsComplete;
 	}
+
 	// public int getInitialFault() {
 	// return this.intialFault;
 	// }
+	private void openFile() {
+		try {
+			this.writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream("SubmitStatusTablesToCCDB.sh"), "utf-8"));
+		} catch (Exception e) {
+		}
+	}
+
+	private void appendFile() {
+		try {
+			this.writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream("SubmitStatusTablesToCCDB.sh", true), "utf-8"));
+		} catch (Exception e) {
+		}
+	}
+
+	private void makeFileHeader() {
+		try {
+			writer.write("#!/bin/csh");
+			writer.newLine();
+			writer.write("source /group/clas12/gemc/environment.csh");
+			writer.newLine();
+			writer.write("setenv CCDB_CONNECTION mysql://clas12writer:geom3try@clasdb.jlab.org/clas12");
+			writer.newLine();
+		} catch (Exception e) {
+		}
+	}
+
+	private void closeFile() {
+		try {
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void fileDelete() {
+		File file = new File("SubmitStatusTablesToCCDB.sh");
+		if (file.exists() && !file.isDirectory()) {
+			file.delete();
+		}
+	}
+
+	private boolean fileExist() {
+		File file = new File("SubmitStatusTablesToCCDB.sh");
+		return file.exists();
+	}
+
+	private void processCCDBRequest(List<Integer> runList) {
+		DBQuery dbQuery = new DBQuery();
+		// for (Integer i : this.mainFrameService.getRunList()) {
+
+		for (Integer i : runList) {
+			System.out.println(i + " in processCCDB");
+			List<CCDBWireStatusObject> aList = dbQuery.getBadComponentList(i);
+			List<CCDBWireStatusObject> allComponents = new ArrayList<>();
+
+			for (int sector = 1; sector <= 6; sector++) {
+				for (int superLayer = 1; superLayer <= 6; superLayer++) {
+					for (int locLayer = 1; locLayer <= 6; locLayer++) {
+						int layer = (superLayer - 1) * 6 + locLayer;
+						for (int wire = 1; wire <= 112; wire++) {
+							allComponents.add(findLike(sector, layer, wire, aList));
+						}
+					}
+				}
+			}
+
+			createCCDBFile(i, allComponents);
+			addToQueryFile(i);
+		}
+
+	}
+
+	private void addToQueryFile(Integer i) {
+		try {
+			writer.write("ccdb add calibration/dc/tracking/wire_status -r " + i + "-2147483647 Run_" + i
+					+ ".txt #Adding run " + i);
+			writer.newLine();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private CCDBWireStatusObject findLike(int sector, int layer, int wire, List<CCDBWireStatusObject> aList) {
+		for (int status = 1; status <= 7; status++) {
+			if (aList.contains(new CCDBWireStatusObject(sector, layer, wire, status))) {
+				return new CCDBWireStatusObject(sector, layer, wire, status);
+			}
+		}
+		return new CCDBWireStatusObject(sector, layer, wire, 0);
+	}
+
+	private void createCCDBFile(Integer i, List<CCDBWireStatusObject> allComponents) {
+		try (BufferedWriter runWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream("Run_" + i + ".txt"), "utf-8"))) {
+			runWriter.write("#& sector layer component status");
+			runWriter.newLine();
+			for (CCDBWireStatusObject ccdbWireStatusObject : allComponents) {
+				runWriter.write(ccdbWireStatusObject.getSector() + " " + ccdbWireStatusObject.getLayer() + " "
+						+ ccdbWireStatusObject.getComponent() + " " + ccdbWireStatusObject.getStatus());
+				runWriter.newLine();
+			}
+			runWriter.close();
+		} catch (
+
+		UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void runWriteProcess() {
+		fileDelete();
+		openFile();
+		makeFileHeader();
+		processCCDBRequest(getRunList());
+		closeFile();
+	}
+
+	public ImageIcon getClasIcon() {
+		return clasIcon;
+	}
+
+	public void runScript() throws IOException, InterruptedException {
+		String commandOne = "chmod +x SubmitStatusTablesToCCDB.sh";
+		String commandTwo = "./SubmitStatusTablesToCCDB.sh";
+		ProcessBuilder processBuilder = new ProcessBuilder(commandOne, commandTwo);
+		// Sets the source and destination for subprocess standard I/O to be the
+		// same as those of the current Java process.
+		processBuilder.inheritIO();
+		Process process = processBuilder.start();
+
+		int exitValue = process.waitFor();
+		if (exitValue != 0) {
+			// check for errors
+			new BufferedInputStream(process.getErrorStream());
+			throw new RuntimeException("execution of script failed!");
+		}
+	}
 }

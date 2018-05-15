@@ -1,8 +1,11 @@
 package database.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
+import javax.swing.ImageIcon;
 
 import org.apache.spark.sql.Dataset;
 import org.jlab.groot.data.H2F;
@@ -130,6 +133,9 @@ public interface MainFrameService {
 
 	public List<Integer> getRunList();
 
-	// public int getInitialFault();
+	public void runWriteProcess();
 
+	public ImageIcon getClasIcon();
+
+	public void runScript() throws IOException, InterruptedException;
 }

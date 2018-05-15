@@ -108,6 +108,10 @@ public enum SparkManager {
 		return retString;
 	}
 
+	public static boolean onJlab() {
+		return getHostName().contains("jlab.org") ? true : false;
+	}
+
 	private static Map<String, String> findDomain(String str) {
 		Map<String, String> jdbcOptions = new HashMap<String, String>();
 

@@ -31,6 +31,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
@@ -97,7 +98,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 		add(makeSubmitPanel(), BorderLayout.PAGE_START);
 
-		add(makeSpacerPanel(), BorderLayout.CENTER);
+		// add(makeSpacerPanel(), BorderLayout.CENTER);
 
 		add(makeButtonGroup(), BorderLayout.PAGE_END);
 
@@ -105,6 +106,7 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	private JPanel makeButtonGroup() {
 		JPanel jPanel1 = new JPanel();
+
 		jPanel1.setLayout(
 				new GridLayout(StringConstants.PROBLEM_TYPES.length / 2, StringConstants.PROBLEM_TYPES.length / 2));
 		JPanel jPanel = new JPanel();
@@ -158,16 +160,20 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 		this.setNameButton.setForeground(Color.BLUE);
 		this.setNameButton.addActionListener(e -> {
 			if (this.nameField.getText().equals("")) {
+				JOptionPane.showMessageDialog(null, "Name cannot be empty", "Not in a house, not with a mouse",
+						JOptionPane.ERROR_MESSAGE);
 				System.out.println("Name not set correctly");
 			} else {
 				this.mainFrameService.setUserName(this.nameField.getText());
+				this.setNameButton.setText("Reset");
+				this.setNameButton.setForeground(Color.RED);
 			}
 		});
 
 		PanelConstraints.addComponent(namePanel, setNameButton, 2, 0, 1, 1, GridBagConstraints.LINE_END,
 				GridBagConstraints.BOTH, 0, 0);
 
-		submitPanel.add(checkBoxPanel());
+		// submitPanel.add(checkBoxPanel());
 		submitPanel.add(namePanel);
 		return submitPanel;
 
@@ -196,12 +202,16 @@ public class FaultPanel extends JPanel implements ActionListener {// implements
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if (cb1.isSelected()) {
-			this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
-		}
-		if (cb2.isSelected()) {
-			this.mainFrameService.setBrokenOrFixed(Status_change_type.fixed);
-		}
+		// I am removing the ability to set things as fixed
+		// when a better idea on how to compare->seeFixed->setFixed is thought
+		// of I will reinstate this functionality
+		this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
+		// if (cb1.isSelected()) {
+		// this.mainFrameService.setBrokenOrFixed(Status_change_type.broke);
+		// }
+		// if (cb2.isSelected()) {
+		// this.mainFrameService.setBrokenOrFixed(Status_change_type.fixed);
+		// }
 		if (event.getSource() == this.jRadioButton.get(0))
 			this.mainFrameService.setFault(0);
 		if (event.getSource() == this.jRadioButton.get(1))

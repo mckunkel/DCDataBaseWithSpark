@@ -6,4 +6,4 @@ df <- read.table("/Users/michaelkunkel/WORK/GIT_HUB/DCDataBaseWithSpark/DCdataba
 head(df)
 subdf<- subset(df,V4!=0)
 pl<-ggplot(subdf,aes(x=V4))+geom_histogram()
-
+pl
