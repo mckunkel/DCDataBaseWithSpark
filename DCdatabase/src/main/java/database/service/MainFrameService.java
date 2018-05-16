@@ -137,5 +137,11 @@ public interface MainFrameService {
 
 	public ImageIcon getClasIcon();
 
+	public boolean getIsOnJlab();
+
+	public void setWantsToExecute(boolean wantsToExecute);
+
+	public boolean getWantsToExecute();
+
 	public void runScript() throws IOException, InterruptedException;
 }

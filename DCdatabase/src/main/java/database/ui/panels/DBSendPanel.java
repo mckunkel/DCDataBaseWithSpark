@@ -16,7 +16,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -48,11 +47,14 @@ public class DBSendPanel extends JPanel implements ActionListener {
 	private JFrame errorFrame;
 
 	private MainFrame parentFrame = null;
+	private boolean processJlab = false;
 
 	public DBSendPanel(MainFrame parentFrame) {
+		this.parentFrame = parentFrame;
+
 		initializeVariables();
 		initialLayout();
-		this.parentFrame = parentFrame;
+
 	}
 
 	private void initializeVariables() {
@@ -99,6 +101,8 @@ public class DBSendPanel extends JPanel implements ActionListener {
 
 		}
 		if (event.getSource() == this.ccDBButton) {
+			this.mainFrameService.setWantsToExecute(false);
+
 			Object[] choices = { "Cancel", "Manual", "Automatic" };
 			int n = JOptionPane.showOptionDialog(errorFrame,
 					"Manual or Automatic insertation into the CCDB? \n\tManual: will create scripts for user. \n\tUser will follow standard Jlab protocal to insert values to CCDB \n\n\tAutomatic: assumes user in on Jlab cluster and has permissions to send to CCDB",
@@ -109,24 +113,14 @@ public class DBSendPanel extends JPanel implements ActionListener {
 			}
 			if (n == 2) {// Automatic
 				if (SparkManager.onJlab()) {
+					this.mainFrameService.setWantsToExecute(true);
 					runProcess();
-					try {
-						this.mainFrameService.runScript();
-					} catch (IOException | InterruptedException e) {
-						System.err
-								.println("This error is in the running at the Jlab cluster. Do you have permissions?");
-						e.printStackTrace();
-					}
 				} else {
-					JOptionPane.showMessageDialog(errorFrame, "Your host apperas not to be Jlab.",
+					JOptionPane.showMessageDialog(errorFrame, "Your host appears not to be Jlab.",
 							"Eggs are not supposed to be green.", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
-	}
-
-	private void executeOnCluster() {
-
 	}
 
 	private void runProcess() {

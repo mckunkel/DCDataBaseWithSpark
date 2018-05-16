@@ -39,6 +39,7 @@ import database.ui.panels.SQLPanel;
 import database.utils.Coordinate;
 import database.utils.NumberConstants;
 import spark.utils.MainFrameQuery;
+import spark.utils.SparkManager;
 
 public class MainFrameServiceImpl implements MainFrameService {
 
@@ -62,6 +63,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private int bundle = -1000;
 	private String userName = null;
 	private boolean mouseReady;
+	private boolean isOnJlab;
 
 	private FaultLogic faultLogic = null;
 	// testing passing panels ///I think this is the wrong idea
@@ -77,6 +79,8 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private Image clasImage = null;
 	private ImageIcon clasIcon = null;
 
+	public boolean wantsToExecute;
+
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
 		this.occupanciesByCoordinate = new HashMap<Coordinate, H2F>();
@@ -91,10 +95,12 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 		this.mouseReady = false;
 		this.fault = 4;
-
+		this.isOnJlab = SparkManager.onJlab();
 		URL url = getClass().getResource("/images/CLAS-negatif-high.jpg");
 		this.clasImage = new ImageIcon(url).getImage();
 		this.clasIcon = new ImageIcon(clasImage.getScaledInstance(120, 100, java.awt.Image.SCALE_SMOOTH));
+
+		this.wantsToExecute = false;
 
 	}
 
@@ -421,7 +427,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 		try {
 			writer.write("#!/bin/csh");
 			writer.newLine();
-			writer.write("source /group/clas12/gemc/environment.csh");
+			writer.write("source /group/clas12/gemc/environment.csh 4a.2.3");
 			writer.newLine();
 			writer.write("setenv CCDB_CONNECTION mysql://clas12writer:geom3try@clasdb.jlab.org/clas12");
 			writer.newLine();
@@ -482,7 +488,6 @@ public class MainFrameServiceImpl implements MainFrameService {
 			writer.newLine();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -511,13 +516,10 @@ public class MainFrameServiceImpl implements MainFrameService {
 		} catch (
 
 		UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -528,26 +530,61 @@ public class MainFrameServiceImpl implements MainFrameService {
 		makeFileHeader();
 		processCCDBRequest(getRunList());
 		closeFile();
+		this.runsComplete.clear();
+		if (getWantsToExecute()) {
+			try {
+				runScript();
+			} catch (IOException | InterruptedException e) {
+				System.err.println("This error is in the running at the Jlab cluster. Do you have permissions?");
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public ImageIcon getClasIcon() {
 		return clasIcon;
 	}
 
-	public void runScript() throws IOException, InterruptedException {
-		String commandOne = "chmod +x SubmitStatusTablesToCCDB.sh";
-		String commandTwo = "./SubmitStatusTablesToCCDB.sh";
-		ProcessBuilder processBuilder = new ProcessBuilder(commandOne, commandTwo);
-		// Sets the source and destination for subprocess standard I/O to be the
-		// same as those of the current Java process.
-		processBuilder.inheritIO();
-		Process process = processBuilder.start();
+	public boolean getIsOnJlab() {
+		return isOnJlab;
+	}
 
-		int exitValue = process.waitFor();
-		if (exitValue != 0) {
-			// check for errors
-			new BufferedInputStream(process.getErrorStream());
-			throw new RuntimeException("execution of script failed!");
+	public void setWantsToExecute(boolean wantsToExecute) {
+		this.wantsToExecute = wantsToExecute;
+	}
+
+	public boolean getWantsToExecute() {
+		return wantsToExecute;
+	}
+
+	public void runScript() throws IOException, InterruptedException {
+		String scriptName = "SubmitStatusTablesToCCDB.sh";// Hello.bash
+		// String scriptName = "Hello.bash";
+
+		File file = new File(scriptName);
+
+		if (file.exists()) {
+			if (!file.canExecute()) {
+				file.setExecutable(true);
+				file.setReadable(true);
+				file.setWritable(true);
+			}
+
+			String command = "./" + scriptName;
+
+			ProcessBuilder processBuilder = new ProcessBuilder(command);
+			// Sets the source and destination for subprocess standard I/O to be
+			// the
+			// same as those of the current Java process.
+			processBuilder.inheritIO();
+			Process process = processBuilder.start();
+
+			int exitValue = process.waitFor();
+			if (exitValue != 0) {
+				// check for errors
+				new BufferedInputStream(process.getErrorStream());
+				throw new RuntimeException("execution of script failed!");
+			}
 		}
 	}
 }
