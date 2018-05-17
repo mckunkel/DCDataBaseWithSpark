@@ -37,7 +37,7 @@ public class StringConstants {
 
 	public static final String MAIN_MENU_EXIT_TEXT = "Do you really want to exit?";
 	public static final String MAIN_MENU_EXIT_TITLE = "Confirm Exit";
-	public static final String STATUS_PANEL_TEXT = "mkunkel@fz-juelich.de";
+	public static final String STATUS_PANEL_TEXT = "mkunkel@jlab.org";
 
 	public static final String FORM_CANCEL = "Cancel";
 	public static final String FORM_SAVE = "Save";
