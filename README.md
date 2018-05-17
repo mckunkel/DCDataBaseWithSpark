@@ -1,4 +1,11 @@
 # DCDataBaseWithSpark
+Java based project that utilzes SparkSQL, GROOT, Apache Commons, JBDC, Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults.
+
+
+
+perform the querying and updating on CLAS12 MySQL database for broken wires found in the Drift Chambers (DC). 
+
+
 This is a maven project.
 CLAS12 dependancies should be changed in the pom.xml file
 
@@ -16,3 +23,5 @@ If the user is not on the JLab cluster, the user has the option of just creating
 user has a verison of MySQL built with user as root and null password
 
 please email mkunkel@jlab.org for problems or feature requests
+
+
