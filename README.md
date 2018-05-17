@@ -1,8 +1,12 @@
 # DCDataBaseWithSpark
-Java based project that utilzes SparkSQL, GROOT, Apache Commons, JBDC, Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults.
+Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults.
 
+## Data Processing and Visualization
+- Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
+- Visulaization uses the groot package to create histograms of "Layer vs. Wire" for each segment of Sector and Superlayer. It should be noted that "Layer" in the graphical display is "Local Layer", i.e. for each Sector and Superlayer there are 6 "Local Layers" This can be seen on the right side panel of ###NEED IMAGE REFERENCE###
 
-
+## Fault Categorization 
+- At the lowest level there is a AI that searches for dead wires according to a set value of percent efficiecny given by the user. A generated table of possible dead wires will be initially displayed based upon this criertion 
 perform the querying and updating on CLAS12 MySQL database for broken wires found in the Drift Chambers (DC). 
 
 
