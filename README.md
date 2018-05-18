@@ -2,7 +2,7 @@
 Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults.
 
 ## The GUI consists of 6 panels
-<img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/InitialStartUp.png" width="800">
+<img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/InitialStartUpLabeled.png" width="800">
 
 
 - The left-top panel is a table that will contain possible wire faults
