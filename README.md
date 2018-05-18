@@ -3,7 +3,17 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 
 ## The GUI consists of 6 panels
 <img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/InitialStartUp.png" width="800">
-- The left-top panel is a table that possible 
+
+
+- The left-top panel is a table that will contain possible wire faults
+- The left-bottom panel is a control panel to cycle through the Sectors and Superlayers
+
+- The middle-top panel is a table that will contain the wires to be sent to the MySQL database
+- The middle-bottom panel is a control panel with 2 buttons
+--
+
+- The right-top panel is a table that will containt possible wire faults
+- The right-bottom panel is a control panel to cycle through the Sectors and Superlayers
 
 ## Data Processing and Visualization
 - Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
