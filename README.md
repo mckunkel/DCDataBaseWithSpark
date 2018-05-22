@@ -1,6 +1,7 @@
 # DCDataBaseWithSpark
 Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults for the CLAS12 detector
 ### Available for Linux and MacOSX 
+#### Runs on Jlab computing farm cluster
 # Quick-Start and Reference 
 ## To Build
 * This is a maven project.
@@ -12,12 +13,10 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 1. There will be a jar file in the target directory /target/DCFaultFinderApp-jar-with-dependencies.jar
   1. Run this jar as java -jar DCFaultFinderApp-jar-with-dependencies.jar
 
-* If running on the JLab cluster, this should run and show a image similar to:
-
 
 <img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/LabeledProcessedPlot.png" width="800">
 
-* This program can be ran on MacOSX and Linux 
+* If this program is to ran NOT on the Jlab cluster, please ensure that the MySQL database from JLab 
 
 ## Data Processing and Visualization
 * Processing uses the clas12-offline-software HipoDataSource found in the COATJava package

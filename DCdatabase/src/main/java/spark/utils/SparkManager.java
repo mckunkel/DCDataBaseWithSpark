@@ -139,9 +139,14 @@ public enum SparkManager {
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "clasuser");
 			jdbcOptions.put("password", "");
-		} // pool-90-49-zam2168.wlan.kfa-juelich.de
-		else {
+		} else {
 			System.err.println("On an unknown server. Please use on ifarm1402 or ifarm1401");
+
+			jdbcOptions.put("url", "jdbc:mysql://clasdb:3306/dc_chan_status?jdbcCompliantTruncation=false");
+			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
+			jdbcOptions.put("dbtable", "status_change");
+			jdbcOptions.put("user", "root");
+			jdbcOptions.put("password", "");
 			System.exit(-1);
 		}
 		return jdbcOptions;
