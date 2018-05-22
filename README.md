@@ -2,12 +2,12 @@
 Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults for the CLAS12 detector
 
 # Quick-Start and Reference 
-
+<img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/LabeledProcessedPlot.png" width="800">
 ## Data Processing and Visualization
 * Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
-* Visualization uses the groot package to create histograms of "Layer vs. Wire" for each segment of Sector and Superlayer. It should be noted that "Layer" in the graphical display is "Local Layer", i.e. for each Sector and Superlayer there are 6 "Local Layers" This can be seen on the Top-Right panel of the folowing figure.
+* Visualization uses the groot package to create histograms of "Layer vs. Wire" for each segment of Sector and Superlayer. It should be noted that "Layer" in the graphical display is "Local Layer", i.e. for each Sector and Superlayer there are 6 "Local Layers" This can be seen on the Top-Right panel of the figure.
 
-<img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/LabeledProcessedPlot.png" width="800">
+
 ## Fault Categorization 
 * At the lowest level there is a A.I. that searches for dead wires according to a set value of percent efficiency given by the user. A generated table of possible dead wires will be initially displayed based upon this criterion. This table is the left side panel of the GUI. 
 The user is responsible for ensuring the proper fault is selected for the given section of faults displayed on the "Histogram Panel". 
