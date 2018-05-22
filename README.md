@@ -1,19 +1,22 @@
 # DCDataBaseWithSpark
-Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults.
+Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults for the CLAS12 detector
+
+# Documentation
+Check out the [Wiki](https://github.com/mkunkel/DCFaultFinder/wiki "DCFaultFinder Wiki")!
 
 ## The GUI consists of 6 panels
 <img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/InitialStartUpLabeled.png" width="800">
 
 
-- The left-top panel is a table that will contain possible wire faults
-- The left-bottom panel is a control panel to cycle through the Sectors and Superlayers
+- The top-left panel is a table that will contain possible wire faults
+- The bottom-left panel is a control panel to cycle through the Sectors and Superlayers
 
-- The middle-top panel is a table that will contain the wires to be sent to the MySQL database
-- The middle-bottom panel is a control panel with 2 buttons
+- The top-middle panel is a table that will contain the wires to be sent to the MySQL database
+- The bottom-middle panel is a control panel with 2 buttons
 --
 
-- The right-top panel is a table that will containt possible wire faults
-- The right-bottom panel is a control panel to cycle through the Sectors and Superlayers
+- The top-middle panel is a table that will containt possible wire faults
+- The bottom-middle panel is a control panel to cycle through the Sectors and Superlayers
 
 ## Data Processing and Visualization
 - Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
