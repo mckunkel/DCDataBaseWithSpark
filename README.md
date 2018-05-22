@@ -3,6 +3,7 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 
 # Quick-Start and Reference 
 <img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/LabeledProcessedPlot.png" width="800">
+
 ## Data Processing and Visualization
 * Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
 * Visualization uses the groot package to create histograms of "Layer vs. Wire" for each segment of Sector and Superlayer. It should be noted that "Layer" in the graphical display is "Local Layer", i.e. for each Sector and Superlayer there are 6 "Local Layers" This can be seen on the Top-Right panel of the figure.
