@@ -1,7 +1,7 @@
 # DCDataBaseWithSpark
 Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults for the CLAS12 detector
 
-#Quick-Start and Reference 
+# Quick-Start and Reference 
 
 ## Data Processing and Visualization
 - Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
