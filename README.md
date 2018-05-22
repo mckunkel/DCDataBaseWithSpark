@@ -1,8 +1,23 @@
 # DCDataBaseWithSpark
 Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groot](https://github.com/gavalian/groot/), [clas12-offline software](https://github.com/JeffersonLab/clas12-offline-software), [Apache Commons](https://commons.apache.org/), [JDBC](https://en.wikipedia.org/wiki/JDBC_driver), Swing and AWT to provide a GUI for the user to visualize, categorize and document Drift Chamber (DC) wire faults for the CLAS12 detector
-
+### Available for Linux and MacOSX 
 # Quick-Start and Reference 
+## To Build
+* This is a maven project.
+* CLAS12 dependancies should be changed in the pom.xml file
+* As of writing this, there was no software management tool available to ensure this projects CLAS12 dependencies statyed upto date. Therefore it is recommended that the pom.mxl file be changed to point to the latest CLAS12 COATJava needed to analyze data.
+1. Clone the repository 
+1. Update pom.xml to latest COATJava
+1. Perform a mvn package in the main directory of the project (i.e. where the pom.xml file is)
+1. There will be a jar file in the target directory /target/DCFaultFinderApp-jar-with-dependencies.jar
+  1. Run this jar as java -jar DCFaultFinderApp-jar-with-dependencies.jar
+
+* If running on the JLab cluster, this should run and show a image similar to:
+
+
 <img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/LabeledProcessedPlot.png" width="800">
+
+* This program can be ran on MacOSX and Linux 
 
 ## Data Processing and Visualization
 * Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
@@ -24,39 +39,6 @@ The user is responsible for ensuring the proper fault is selected for the given 
 
 # Documentation
 Check out the [Wiki](https://github.com/mckunkel/DCFaultFinder/wiki "DCFaultFinder Wiki")!
-
-## The GUI consists of 6 panels
-<img src="https://github.com/mckunkel/DCFaultFinder/blob/master/images/InitialStartUpLabeled.png" width="800">
-
-
-- The top-left panel is a table that will contain possible wire faults
-- The bottom-left panel is a control panel to cycle through the Sectors and Superlayers
-
-- The top-middle panel is a table that will contain the wires to be sent to the MySQL database
-- The bottom-middle panel is a control panel with 2 buttons
---
-
-- The top-middle panel is a table that will containt possible wire faults
-- The bottom-middle panel is a control panel to cycle through the Sectors and Superlayers
-
-
-
-
-This is a maven project.
-CLAS12 dependancies should be changed in the pom.xml file
-
-This project creates a GUI that a user can use to interject broken wires into a MySQL and CCDB database.
-
-The entrance point for this GUI is DCFaultFinderApp found under the package database.ui.
-Maven will package a fat-jar wil all dependencies with mvn package is invoked. 
-Be sure the CLAS12 COATJava dependency is set in the pom.xml file
-
-Once packaged with maven
-run this command in a terminal
-java -jar DCFaultFinderApp-jar-with-dependencies.jar
-
-If the user is not on the JLab cluster, the user has the option of just creating the scripts for the CCDB, dependent if the
-user has a verison of MySQL built with user as root and null password
 
 please email mkunkel@jlab.org for problems or feature requests
 
