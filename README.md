@@ -12,11 +12,13 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 The user is responsible for ensuring the proper fault is selected for the given section of faults displayed on the "Histogram Panel". 
 * To aide the user, there is a "Type of Fault" panel (Bottom-Right). 
 * Once a fault is selected, the user can place the mouse over the provided histogram to see what that specific fault would appear to be.
-* Double click the histogram panel, with the proper fault and place the selected wires into the "SQL Query" panel (Top-Middle)
+  * Double click the histogram panel, with the proper fault and place the selected wires into the "SQL Query" panel (Top-Middle)
 
 ## Fault Documentation
 * Once a run's entire sector and superlayer has been investigated for possible faults and those possible faults have been proper categorized and placed into the "SQL Query" panel, the entries should be placed into the MySQL database but clicking the button located in the "Send to Database" panel (Bottom-Middle)
   * To place faults into the CCDB, faults must be placed into the MySQL database first.
+* Placing entries into the CCDB can be done only after faults into MySQL has been pushed into the database.
+  * If entires are in the MySQL database, and the user does not want to process data, just the CCDB entry list, the "Send to CCDB" can be used
 
 # Documentation
 Check out the [Wiki](https://github.com/mckunkel/DCFaultFinder/wiki "DCFaultFinder Wiki")!
