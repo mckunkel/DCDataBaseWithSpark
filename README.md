@@ -4,15 +4,19 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 # Quick-Start and Reference 
 
 ## Data Processing and Visualization
-- Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
-- Visualization uses the groot package to create histograms of "Layer vs. Wire" for each segment of Sector and Superlayer. It should be noted that "Layer" in the graphical display is "Local Layer", i.e. for each Sector and Superlayer there are 6 "Local Layers" This can be seen on the right side panel of ###NEED IMAGE REFERENCE###
+* Processing uses the clas12-offline-software HipoDataSource found in the COATJava package
+* Visualization uses the groot package to create histograms of "Layer vs. Wire" for each segment of Sector and Superlayer. It should be noted that "Layer" in the graphical display is "Local Layer", i.e. for each Sector and Superlayer there are 6 "Local Layers" This can be seen on the right side panel of ###NEED IMAGE REFERENCE###
 
 ## Fault Categorization 
-1. At the lowest level there is a A.I. that searches for dead wires according to a set value of percent efficiency given by the user. A generated table of possible dead wires will be initially displayed based upon this criterion. This table is the left side panel of the GUI. 
+* At the lowest level there is a A.I. that searches for dead wires according to a set value of percent efficiency given by the user. A generated table of possible dead wires will be initially displayed based upon this criterion. This table is the left side panel of the GUI. 
 The user is responsible for ensuring the proper fault is selected for the given section of faults displayed on the "Histogram Panel". 
-1. To aide the user, there is a "Type of Fault" panel (Bottom-Right). 
-1. Once a fault is selected, the user can place the mouse over the provided histogram to see what that specific fault would appear to be.
-  1. Double click the histogram panel, with the proper fault and place the selected wires into the "SQL Query" panel (Top-Middle)
+* To aide the user, there is a "Type of Fault" panel (Bottom-Right). 
+* Once a fault is selected, the user can place the mouse over the provided histogram to see what that specific fault would appear to be.
+* Double click the histogram panel, with the proper fault and place the selected wires into the "SQL Query" panel (Top-Middle)
+
+## Fault Documentation
+* Once a run's entire sector and superlayer has been investigated for possible faults and those possible faults have been proper categorized and placed into the "SQL Query" panel, the entries should be placed into the MySQL database but clicking the button located in the "Send to Database" panel (Bottom-Middle)
+  * To place faults into the CCDB, faults must be placed into the MySQL database first.
 
 # Documentation
 Check out the [Wiki](https://github.com/mckunkel/DCFaultFinder/wiki "DCFaultFinder Wiki")!
