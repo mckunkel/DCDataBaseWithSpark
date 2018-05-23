@@ -3,6 +3,8 @@ package spark.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,15 @@ public enum SparkManager {
 		return SparkManager.jdbcOptions().get("url") + "&user=" + SparkManager.jdbcOptions().get("user") + "&password="
 				+ SparkManager.jdbcOptions().get("password");
 
+	}
+
+	public static boolean isMySQLOpen() {
+		try {
+			DriverManager.getConnection(jdbcAppendOptions());
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
 	}
 
 	public static Dataset<Row> mySqlDataset() {
@@ -116,7 +127,7 @@ public enum SparkManager {
 		Map<String, String> jdbcOptions = new HashMap<String, String>();
 
 		if (str.contains("ikp")) {
-			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test?jdbcCompliantTruncation=false");
+			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/dc_chan_status?jdbcCompliantTruncation=false");
 			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "root");

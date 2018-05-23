@@ -69,7 +69,7 @@ public class BottomComparePanel extends JPanel implements ActionListener {
 		// I am removing the 1st element because these are test elements
 		// for copying the object StatusChangeDB to add the queries properly
 		// Spark encoder does not like the enum :(
-		this.compareRunComboBox.removeItemAt(0);
+		// this.compareRunComboBox.removeItemAt(0);
 	}
 
 	private void initializeVariables() {

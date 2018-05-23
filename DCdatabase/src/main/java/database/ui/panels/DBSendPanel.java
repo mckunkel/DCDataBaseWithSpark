@@ -137,8 +137,14 @@ public class DBSendPanel extends JPanel implements ActionListener {
 				"Eggs are not supposed to be green.", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
 				this.mainFrameService.getClasIcon());
 		if (n == 0) {
-			TestTable testTable = new TestTable(this.parentFrame, this.dbQuery);
-			testTable.setVisible(true);
+			if (this.dbQuery.getAllRuns().size() != 0) {
+				TestTable testTable = new TestTable(this.parentFrame, this.dbQuery);
+				testTable.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(errorFrame, "No past MySQL entries.",
+						"Eggs are not supposed to be green.", JOptionPane.ERROR_MESSAGE);
+			}
+
 		}
 	}
 }

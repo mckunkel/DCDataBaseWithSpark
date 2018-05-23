@@ -25,6 +25,8 @@ public class DBQuery {
 	public List<String> getAllRuns() {
 		Dataset<Row> dataDF = SparkManager.mySqlDataset().select("runno").filter("runno!=0").sort(asc("runno"))
 				.distinct();
+		// Dataset<Row> dataDF =
+		// SparkManager.mySqlDataset().select("runno").sort(asc("runno")).distinct();
 		return dataDF.map(row -> row.mkString(), Encoders.STRING()).collectAsList();
 	}
 
