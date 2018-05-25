@@ -21,6 +21,7 @@ public class DCFaultFinderApp {
 				Logger.getLogger("org.apache.spark.SparkContext").setLevel(Level.WARN);
 				Logger.getLogger("org").setLevel(Level.OFF);
 				Logger.getLogger("akka").setLevel(Level.OFF);
+
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

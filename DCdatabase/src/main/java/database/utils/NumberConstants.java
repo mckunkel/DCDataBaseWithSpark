@@ -23,8 +23,8 @@ public class NumberConstants {
 	}
 
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	public static final int APP_WINDOW_SIZE_WIDTH = (int) screenSize.getWidth() - (int) screenSize.getWidth() / 3;
-	public static final int APP_WINDOW_SIZE_HEIGHT = (int) screenSize.getHeight() - (int) screenSize.getHeight() / 3;
+	public static final int APP_WINDOW_SIZE_WIDTH = (int) screenSize.getWidth() - (int) screenSize.getWidth() / 16;
+	public static final int APP_WINDOW_SIZE_HEIGHT = (int) screenSize.getHeight() - (int) screenSize.getHeight() / 16;
 	public static final int NUM_OF_COLUMNS = 4;
 
 	public static final int SORT_FORM_WINDOW_SIZE_HEIGHT = APP_WINDOW_SIZE_HEIGHT / 3;

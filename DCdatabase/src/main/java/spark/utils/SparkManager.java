@@ -138,7 +138,7 @@ public enum SparkManager {
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "clasuser");
 			jdbcOptions.put("password", "");
-		} else if (str.contains("Mike-Kunkels")) {
+		} else if (str.contains("Mike-Kunkels") || str.contains("Mike")) {
 			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/dc_chan_status?jdbcCompliantTruncation=false");
 			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 			jdbcOptions.put("dbtable", "status_change");
