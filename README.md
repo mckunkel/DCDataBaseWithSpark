@@ -7,7 +7,7 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 * This is a maven project.
 * CLAS12 dependancies should be changed in the pom.xml file
 * As of writing this, the CLAS12 maven repository was up to date. However there was no software management tool available to ensure this projects CLAS12 dependencies stayed upto date. Therefore it is recommended that the pom.mxl file be changed to point to the latest CLAS12 COATJava needed to analyze data if CLAS12 does not update their Maven repository. See [class12-offline-software](https://github.com/mckunkel/clas12-offline-software) for instructions on how to build the COATJava libraries.
-* _If building on the JLab cluster for the first time, it is needed to run_** ''' perl setupMaven.pl ```  
+* _If building on the JLab cluster for the first time, it is needed to run_** ``` perl setupMaven.pl ```  
 
 1. Clone the repository 
 1. Update pom.xml to latest COATJava
