@@ -8,9 +8,19 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
 * CLAS12 dependancies should be changed in the pom.xml file
 * As of writing this, the CLAS12 maven repository was up to date. However there was no software management tool available to ensure this projects CLAS12 dependencies stayed upto date. Therefore it is recommended that the pom.mxl file be changed to point to the latest CLAS12 COATJava needed to analyze data if CLAS12 does not update their Maven repository. See [class12-offline-software](https://github.com/mckunkel/clas12-offline-software) for instructions on how to build the COATJava libraries.
   * If you are building the clas12-offline-software from source, the following is needed
-    * Once COATJava is build, run this command in the clas12-offline-software directory
-      * ```
-        mvn install:install-file -Dfile=coatjava/lib/clas/coat-libs-5.1-SNAPSHOT.jar -DgroupId=org.jlab.coat -DartifactId=coat-libs -Dversion=5.1-SNAPSHOT -Dpackaging=jar 
+    * Once COATJava is built
+      * Run this command in the clas12-offline-software directory to install COATJava into your .m2 directory
+        * ```
+          mvn install:install-file -Dfile=coatjava/lib/clas/coat-libs-5.1-SNAPSHOT.jar -DgroupId=org.jlab.coat -DartifactId=coat-libs -Dversion=5.1-SNAPSHOT -Dpackaging=jar 
+          ```
+      * Remove these lines from the pom.xml file located in the FaultFinder directory
+        * ```
+          <repositories>
+            <repository>
+              <id>clas12maven</id>
+              <url>https://clasweb.jlab.org/clas12maven</url>
+            </repository>
+          </repositories>
         ```
 
 1. Clone the repository 
