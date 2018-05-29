@@ -10,7 +10,8 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
   * If you are building the clas12-offline-software from source, the following is needed
     * Once COATJava is build, run this command in the clas12-offline-software directory
       * ```
-mvn install:install-file -Dfile=coatjava/lib/clas/coat-libs-5.1-SNAPSHOT.jar -DgroupId=org.jlab.coat -DartifactId=coat-libs -Dversion=5.1-SNAPSHOT -Dpackaging=jar ```
+        mvn install:install-file -Dfile=coatjava/lib/clas/coat-libs-5.1-SNAPSHOT.jar -DgroupId=org.jlab.coat -DartifactId=coat-libs -Dversion=5.1-SNAPSHOT -Dpackaging=jar 
+        ```
 
 1. Clone the repository 
 1. Update pom.xml to latest COATJava
