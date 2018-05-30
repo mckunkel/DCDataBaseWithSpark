@@ -115,5 +115,10 @@ sub CheckSettingsFile {
 }
 
 sub BuildDCFaultFinder {
-	system("cd scripts ; ./build_DCFaultFinder.cshrc");
+	system("cp scripts/build_DCFaultFinder.cshrc . ");
+	system("cp scripts/environment.cshrc . ");
+	system("./build_DCFaultFinder.cshrc");
+	system ("rm build_DCFaultFinder.cshrc");
+	system ("rm environment.cshrc");
+	
 }
