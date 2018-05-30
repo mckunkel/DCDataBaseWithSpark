@@ -116,6 +116,6 @@ sub CheckSettingsFile {
 
 sub BuildDCFaultFinder {
 
-	system("source build_DCFaultFinder.cshrc");
+	system("./build_DCFaultFinder.cshrc");
 	#system("mvn package");
 }
