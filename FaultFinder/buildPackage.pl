@@ -3,7 +3,15 @@ use strict;
 use warnings;
 use feature qw{ say };
 use XML::Twig;
-use Data::Dumper;
+
+#Ok, I dont understand how to use POD:Usage along with other options, so I will hard code the usage here
+
+if ( defined $ARGV[0] && $ARGV[0] eq "--help" ) {
+	print STDOUT "Options:\n",
+	  "--help				this \n \n",
+	  "Usage:\n",
+	  "./buildPackage.pl  \n";
+}
 
 #Global variables
 my $maven_Dir = "$ENV{HOME}/.m2";
@@ -12,13 +20,13 @@ my $settings_File = "settings.xml";
 
 #Check if you are building on jlab
 if ( `hostname` =~ m/.jlab.org/ ) {
-ProcessJLab();
+	ProcessJLab();
 }
 
 sub ProcessJLab {
 	if ( CheckMaven() ) {
 		print("Maven directory is ready. \n");
-		#BuildDCFaultFinder();
+		BuildDCFaultFinder();
 	}
 	else {
 		print STDERR "There is an error, \n
@@ -106,6 +114,7 @@ sub CheckSettingsFile {
 
 }
 
-sub BuildDCFaultFinder{
+sub BuildDCFaultFinder {
+	system("source makeBuild/environment.cshrc");
 	system("mvn package");
 }
