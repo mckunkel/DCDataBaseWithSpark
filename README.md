@@ -13,7 +13,7 @@ Java based project that utilzes [SparkSQL](https://spark.apache.org/sql/), [groo
     1. Update pom.xml to latest COATJava
     2. Execute the buildPackage.pl to build the package on the JLab cluster
         1. ```
-        ./buildPackage.pl
+           ./buildPackage.pl
            ```
     3. Execute the runDCFaultFinder.pl to run the GUI
         1. ```
