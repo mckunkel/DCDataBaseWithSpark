@@ -115,6 +115,6 @@ sub CheckSettingsFile {
 }
 
 sub BuildDCFaultFinder {
-
-	system("./scripts/build_DCFaultFinder.cshrc");
+	system("cd scripts");
+	system("./build_DCFaultFinder.cshrc");
 }
