@@ -5,11 +5,14 @@ use feature qw{ say };
 use XML::Twig;
 
 #Global Variable
-	my $scriptDir  = "target/";
-	my $javaScript = $scriptDir."DCFaultFinderApp-jar-with-dependencies.jar";
-	my $envFile    = "environment.cshrc";
+my $scriptDir  = "scripts/";
+my $envFile    = $scriptDir . "environment.cshrc";
+my $runScript  = $scriptDir . "run_DCFaultFinder.cshrc";
+my $javaDir    = "target/";
+my $javaScript = $javaDir . "DCFaultFinderApp-jar-with-dependencies.jar";
 
-#Ok, I dont understand how to use POD:Usage along with other options, so I will hard code the usage here
+#Ok, I dont understand how to use POD:Usage along with other options, 
+#so I will hard code the usage here
 
 if ( defined $ARGV[0] && $ARGV[0] eq "--help" ) {
 	print STDOUT "Options:\n",
@@ -22,17 +25,19 @@ if ( defined $ARGV[0] && $ARGV[0] eq "--help" ) {
 	  ;
 }
 if ( CheckFiles() ) {
-
-	system("source $envFile");
-	system("java -Xms1024m -jar $javaScript");
+	system("./$runScript $javaScript");
 }
 
 sub CheckFiles {
 
-
 	if ( !( -d $scriptDir ) ) {
 		print STDERR "Script not running in parent directory \n",
-		  "or package is not built";
+		  "or script directory is missing";
+		return 0;
+	}
+	if ( !( -d $javaDir ) ) {
+		print STDERR "Problem: Script not running in parent directory \n",
+		  "or target directory is missing. Possible rebuild of package needed.";
 		return 0;
 	}
 	elsif ( !( -e $javaScript ) ) {
@@ -41,7 +46,13 @@ sub CheckFiles {
 	elsif ( !( -e $envFile ) ) {
 		print STDERR
 		  "It appears that the environment.cshrc is ",
-		  "missing from this directory \n";
+		  "missing from the script directory \n";
+		return 0;
+	}
+	elsif ( !( -e $runScript ) ) {
+		print STDERR
+		  "It appears that therun_DCFaultFinder.cshrc is ",
+		  "missing from the script directory \n";
 		return 0;
 	}
 	else {
