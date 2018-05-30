@@ -115,8 +115,7 @@ sub CheckSettingsFile {
 }
 
 sub BuildDCFaultFinder {
-	$ENV{'MAVEN'} = "/apps/maven/PRO";
-	$ENV{'PATH'} = "\${MAVEN}/bin";
-	#system("source environment.cshrc");
-	system("mvn package");
+
+	system("source build_DCFaultFinder.cshrc");
+	#system("mvn package");
 }
