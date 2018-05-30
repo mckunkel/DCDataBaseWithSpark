@@ -115,6 +115,6 @@ sub CheckSettingsFile {
 }
 
 sub BuildDCFaultFinder {
-	system("source makeBuild/environment.cshrc");
+	system("source environment.cshrc");
 	system("mvn package");
 }
