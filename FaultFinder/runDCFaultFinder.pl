@@ -11,7 +11,7 @@ my $runScript  = $scriptDir . "run_DCFaultFinder.cshrc";
 my $javaDir    = "target/";
 my $javaScript = $javaDir . "DCFaultFinderApp-jar-with-dependencies.jar";
 
-#Ok, I dont understand how to use POD:Usage along with other options, 
+#Ok, I dont understand how to use POD:Usage along with other options,
 #so I will hard code the usage here
 
 if ( defined $ARGV[0] && $ARGV[0] eq "--help" ) {
@@ -25,7 +25,12 @@ if ( defined $ARGV[0] && $ARGV[0] eq "--help" ) {
 	  ;
 }
 if ( CheckFiles() ) {
-	system("./$runScript $javaScript");
+
+	system("cp $runScript . ");
+	system("cp $envFile . ");
+	system("./run_DCFaultFinder.cshrc $javaScript");
+	system("rm run_DCFaultFinder.cshrc");
+	system("rm environment.cshrc");
 }
 
 sub CheckFiles {
