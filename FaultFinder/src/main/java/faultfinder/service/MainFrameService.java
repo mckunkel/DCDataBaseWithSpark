@@ -144,4 +144,8 @@ public interface MainFrameService {
 	public boolean getWantsToExecute();
 
 	public void runScript() throws IOException, InterruptedException;
+
+	public String getServiceProvided();
+
+	public void setServiceProvided(String serviceProvided);
 }

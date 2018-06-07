@@ -80,6 +80,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 	private ImageIcon clasIcon = null;
 
 	public boolean wantsToExecute;
+	private String serviceProvided = null;
 
 	public MainFrameServiceImpl() {
 		this.mainFrameQuery = new MainFrameQuery();
@@ -586,5 +587,13 @@ public class MainFrameServiceImpl implements MainFrameService {
 				throw new RuntimeException("execution of script failed!");
 			}
 		}
+	}
+
+	public String getServiceProvided() {
+		return serviceProvided;
+	}
+
+	public void setServiceProvided(String serviceProvided) {
+		this.serviceProvided = serviceProvided;
 	}
 }

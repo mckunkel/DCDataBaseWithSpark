@@ -98,8 +98,17 @@ public class HistogramPanel extends JPanel implements UpdatePanel {
 
 	}
 
+	public void removeMouseListeners() {
+		this.removeListeners();
+	}
+
 	@Override
 	public void updatePanel(int superLayer, int sector) {
 		this.updateCanvas(superLayer, sector);
 	}
+
+	public void setPalette(String str) {
+		this.canvas.getPad().setPalette(str);
+	}
+
 }

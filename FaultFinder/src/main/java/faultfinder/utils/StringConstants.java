@@ -91,5 +91,6 @@ public class StringConstants {
 	public static final String EXECUTE_SCRIPT = "Send to CCDB";
 
 	public static final String RUNS_SELECTED = "Select Run(s)";
+	public static final String APP_NAME4DISPLAY = "DC CCDB FAULTS";
 
 }

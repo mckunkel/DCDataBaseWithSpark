@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import faultfinder.service.MainFrameService;
-import faultfinder.ui.MainFrame;
 import faultfinder.utils.MainFrameServiceManager;
 import faultfinder.utils.PanelConstraints;
 import faultfinder.utils.StringConstants;
@@ -42,7 +41,7 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 	private JComboBox<String> sectorList;
 	private JComboBox<String> superLayerList;
 
-	public BottomSortPanel(MainFrame parentFrame) {
+	public BottomSortPanel(JFrame parentFrame) {
 		this.mainFrameService = MainFrameServiceManager.getSession();
 
 		initializeVariables();
@@ -140,8 +139,12 @@ public class BottomSortPanel extends JPanel implements ActionListener {
 
 	protected void updateQuery(int sectorSelection, int superLayerSelection) {
 
-		this.mainFrameService.getDataPanel().compareWithSQLPanel(
-				this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
+		if (this.mainFrameService.getServiceProvided() == null) {
+			this.mainFrameService.getDataPanel().compareWithSQLPanel(
+					this.mainFrameService.getBySectorAndSuperLayer(sectorSelection, superLayerSelection));
+
+		}
+
 		this.mainFrameService.getHistogramPanel().updateCanvas(superLayerSelection, sectorSelection);
 
 	}

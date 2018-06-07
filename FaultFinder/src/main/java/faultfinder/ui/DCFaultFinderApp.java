@@ -7,7 +7,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import spark.utils.SparkManager;
 
 public class DCFaultFinderApp {
