@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -84,6 +85,7 @@ public class MainFrame extends JFrame {
 
 	private FileDialog fileDialog = null;
 
+	private JFileChooser fc = null;
 	private File[] fileList = null;
 	private ArrayList<String> fileArray = null;
 
@@ -182,6 +184,26 @@ public class MainFrame extends JFrame {
 				sortQueryForm.setReady();
 
 			}
+			// @Override
+			// public void actionPerformed(ActionEvent e) {
+			// runForm.clearLists();
+			// HipoFilter filter = new HipoFilter();
+			// fc.addChoosableFileFilter(new FileNameExtensionFilter("Hipo
+			// Files", "hipo"));
+			// fc.showOpenDialog(fc);
+			// fileList = fc.getSelectedFiles();
+			// String dir = fc.getCurrentDirectory().getAbsolutePath();//
+			// fileDialog.getDirectory();
+			// fileArray = new ArrayList<String>();
+			// for (File file : fileList) {
+			// fileArray.add(file.toString());
+			// }
+			// runForm.setDirectory(dir);
+			// runForm.setFileList(fileArray);
+			// compareRunForm.setReady();
+			// sortQueryForm.setReady();
+			//
+			// }
 		});
 		exitItem.addActionListener(new ActionListener() {
 
@@ -284,6 +306,9 @@ public class MainFrame extends JFrame {
 	private void createFileChooser() {
 		this.fileDialog = new FileDialog(this, "FileDialog", FileDialog.LOAD);
 		fileDialog.setMultipleMode(true);
+
+		this.fc = new JFileChooser();
+		fc.setMultiSelectionEnabled(true);
 	}
 
 	private JPanel dataControlsPanel() {
