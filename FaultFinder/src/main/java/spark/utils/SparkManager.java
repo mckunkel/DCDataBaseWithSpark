@@ -3,7 +3,10 @@ package spark.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +31,8 @@ public enum SparkManager {
 	private static String tempDir = StringConstants.TEMP_DIR;
 
 	private static SparkSession sparkSession = null;
+
+	private static Connection mySqlConnection = null;
 
 	private static void getConnection() {
 
@@ -55,15 +60,63 @@ public enum SparkManager {
 
 	public static String jdbcAppendOptions() {
 
-		return SparkManager.jdbcOptions().get("url") + "&user=" + SparkManager.jdbcOptions().get("user") + "&password="
-				+ SparkManager.jdbcOptions().get("password");
+		return jdbcOptions().get("url") + "&user=" + jdbcOptions().get("user") + "&password="
+				+ jdbcOptions().get("password");
 
 	}
 
 	public static boolean isMySQLOpen() {
+		String url = "jdbc:mysql://localhost:3306?jdbcCompliantTruncation=false";
+		String user = "root";
+
 		try {
-			DriverManager.getConnection(jdbcAppendOptions());
+			// DriverManager.getConnection(jdbcAppendOptions());
+			DriverManager.getConnection(url, user, "");
+			setSQLConnection(DriverManager.getConnection(url, user, ""));
 			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+
+	private static void setSQLConnection(Connection connection) {
+		mySqlConnection = connection;
+	}
+
+	public static boolean hasDataBase() {
+		if (isMySQLOpen()) {
+			ResultSet resultSet;
+			try {
+				resultSet = mySqlConnection.getMetaData().getCatalogs();
+				// iterate each catalog in the ResultSet
+				while (resultSet.next()) {
+					// Get the database name, which is at position 1
+					String databaseName = resultSet.getString(1);
+					if (databaseName.equals("dc_chan_status")) {
+						return true;
+					}
+				}
+				resultSet.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return false;
+
+	}
+
+	public static boolean hasTable() {
+		try {
+			DatabaseMetaData md = DriverManager.getConnection(jdbcAppendOptions()).getMetaData();
+			ResultSet rs = md.getTables(null, null, jdbcOptions().get("dbtable"), null);
+			if (rs.next()) {
+				return true;
+			} else {
+				return false;
+			}
+
 		} catch (SQLException e) {
 			return false;
 		}
@@ -126,41 +179,59 @@ public enum SparkManager {
 	private static Map<String, String> findDomain(String str) {
 		Map<String, String> jdbcOptions = new HashMap<String, String>();
 
-		if (str.contains("ikp")) {
-			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/dc_chan_status?jdbcCompliantTruncation=false");
-			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
-			jdbcOptions.put("dbtable", "status_change");
-			jdbcOptions.put("user", "root");
-			jdbcOptions.put("password", "");
-		} else if (str.contains("jlab.org")) {
+		if (str.contains("jlab.org")) {
 			jdbcOptions.put("url", "jdbc:mysql://clasdb:3306/dc_chan_status?jdbcCompliantTruncation=false");
 			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "clasuser");
 			jdbcOptions.put("password", "");
-		} else if (str.contains("Mike-Kunkels") || str.contains("Mike")) {
+		}
+		// else if (str.contains("Mike-Kunkels") || str.contains("Mike")) {
+		// jdbcOptions.put("url",
+		// "jdbc:mysql://localhost:3306/dc_chan_status?jdbcCompliantTruncation=false");
+		// jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
+		// jdbcOptions.put("dbtable", "status_change");
+		// jdbcOptions.put("user", "root");
+		// jdbcOptions.put("password", "");
+		// }
+		else if (str.contains("ikp")) {
 			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/dc_chan_status?jdbcCompliantTruncation=false");
 			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "root");
-			jdbcOptions.put("password", "");
-		} else if (str.contains("pool")) {
-			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/test?jdbcCompliantTruncation=false");
-			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
-			jdbcOptions.put("dbtable", "status_change");
-			jdbcOptions.put("user", "clasuser");
 			jdbcOptions.put("password", "");
 		} else {
-			System.err.println("On an unknown server. Please use on ifarm1402 or ifarm1401");
-
-			jdbcOptions.put("url", "jdbc:mysql://clasdb:3306/dc_chan_status?jdbcCompliantTruncation=false");
+			jdbcOptions.put("url", "jdbc:mysql://localhost:3306/dc_chan_status?jdbcCompliantTruncation=false");
 			jdbcOptions.put("driver", "com.mysql.jdbc.Driver");
 			jdbcOptions.put("dbtable", "status_change");
 			jdbcOptions.put("user", "root");
 			jdbcOptions.put("password", "");
-			System.exit(-1);
+			// if (!isMySQLOpen()) {
+			//
+			// JOptionPane.showMessageDialog(null, "computer", "Eggs are not
+			// supposed to be green.",
+			// JOptionPane.ERROR_MESSAGE);
+			// // System.exit(-1);
+			// }
 		}
 		return jdbcOptions;
+	}
+
+	public static int sqlCorrectConfig() {
+
+		if (!isMySQLOpen()) { // Mysql not open
+			return 0;
+		} else { // Mysql open
+			if (!hasDataBase()) { // database not defined
+				return 1;
+			} else { // database defined
+				if (!hasTable()) { // table not defined
+					return 2;
+				} else { // table defined
+					return 3;
+				}
+			}
+		}
 	}
 
 	public void shutdown() {
