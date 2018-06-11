@@ -5,7 +5,7 @@ use feature qw{ say };
 use XML::Twig;
 
 #Global Variable
-my $scriptDir  = "scripts/";
+my $scriptDir  = "scripts/JLabCluster/";
 my $envFile    = $scriptDir . "environment.cshrc";
 my $runScript  = $scriptDir . "run_DCFaultFinder.cshrc";
 my $javaDir    = "target/";

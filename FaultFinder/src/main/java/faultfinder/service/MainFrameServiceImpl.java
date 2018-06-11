@@ -484,7 +484,7 @@ public class MainFrameServiceImpl implements MainFrameService {
 
 	private void addToQueryFile(Integer i) {
 		try {
-			writer.write("ccdb add calibration/dc/tracking/wire_status -r " + i + "-2147483647 Run_" + i
+			writer.write("ccdb add calibration/dc/tracking/wire_status -r " + i + "-" + i + "Run_" + i
 					+ ".txt #Adding run " + i);
 			writer.newLine();
 

@@ -4,6 +4,11 @@ use warnings;
 use feature qw{ say };
 use XML::Twig;
 
+#Global Variable
+my $scriptDir  = "scripts/JLabCluster/";
+my $envFile    = $scriptDir . "environment.cshrc";
+my $buildScript  = $scriptDir . "build_DCFaultFinder.cshrc";
+
 #Ok, I dont understand how to use POD:Usage along with other options, so I will hard code the usage here
 
 if ( defined $ARGV[0] && $ARGV[0] eq "--help" ) {
@@ -115,8 +120,8 @@ sub CheckSettingsFile {
 }
 
 sub BuildDCFaultFinder {
-	system("cp scripts/build_DCFaultFinder.cshrc . ");
-	system("cp scripts/environment.cshrc . ");
+  system("cp $buildScript . ");
+  system("cp $envFile . ");
 	system("./build_DCFaultFinder.cshrc");
 	system ("rm build_DCFaultFinder.cshrc");
 	system ("rm environment.cshrc");
