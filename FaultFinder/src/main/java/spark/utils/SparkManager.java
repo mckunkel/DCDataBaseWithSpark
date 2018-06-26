@@ -34,6 +34,11 @@ public enum SparkManager {
 
 	private static Connection mySqlConnection = null;
 
+	// String url = "jdbc:mysql://localhost:3306?jdbcCompliantTruncation=false";
+	// String user = "root";
+	private static String url = getUrl();
+	private static String user = getUser();
+
 	private static void getConnection() {
 
 		if (sparkSession == null) {
@@ -66,8 +71,6 @@ public enum SparkManager {
 	}
 
 	public static boolean isMySQLOpen() {
-		String url = "jdbc:mysql://localhost:3306?jdbcCompliantTruncation=false";
-		String user = "root";
 
 		try {
 			// DriverManager.getConnection(jdbcAppendOptions());
@@ -215,6 +218,22 @@ public enum SparkManager {
 			// }
 		}
 		return jdbcOptions;
+	}
+
+	private static String getUrl() {
+		if (getHostName().contains("jlab.org")) {
+			return "jdbc:mysql://clasdb:3306?jdbcCompliantTruncation=false";
+		} else {
+			return "jdbc:mysql://localhost:3306?jdbcCompliantTruncation=false";
+		}
+	}
+
+	private static String getUser() {
+		if (getHostName().contains("jlab.org")) {
+			return "clasuser";
+		} else {
+			return "root";
+		}
 	}
 
 	public static int sqlCorrectConfig() {
