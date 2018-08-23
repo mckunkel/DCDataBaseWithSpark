@@ -91,4 +91,8 @@ public class DisplayFaults extends JFrame {
 		setVisible(true);
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
+
+	public static void main(String[] args) {
+		new DisplayFaults(3923);
+	}
 }
