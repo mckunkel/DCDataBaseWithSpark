@@ -124,11 +124,18 @@ public class DBSendPanel extends JPanel implements ActionListener {
 	}
 
 	private void runProcess() {
+		checkVariation();
 		if (this.mainFrameService.getRunList() == null || this.mainFrameService.getRunList().size() == 0) {
 			showNoDataChoice();
 		} else {
 			this.mainFrameService.runWriteProcess();
 		}
+	}
+
+	private void checkVariation() {
+		String variation = JOptionPane.showInputDialog(errorFrame,
+				"Variation? Leave blank if submitting to default variation");
+		this.mainFrameService.setVariation(variation);
 	}
 
 	private void showNoDataChoice() {

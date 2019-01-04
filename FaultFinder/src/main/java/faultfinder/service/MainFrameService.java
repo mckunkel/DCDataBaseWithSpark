@@ -148,4 +148,6 @@ public interface MainFrameService {
 	public String getServiceProvided();
 
 	public void setServiceProvided(String serviceProvided);
+
+	public void setVariation(String variation);
 }
